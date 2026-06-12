@@ -11,6 +11,7 @@ import ParentInfoStep from './ParentInfoStep';
 import ProgramSelectionStep from './ProgramSelectionStep';
 import ScheduleStep from './ScheduleStep';
 import PaymentStep from './PaymentStep';
+import PricingStep from './PricingStep';
 import ReviewStep from './ReviewStep';
 
 const steps = [
@@ -19,6 +20,7 @@ const steps = [
   'Programs',
   'Schedule',
   'Payment',
+  'Pricing',
   'Review',
 ];
 
@@ -60,7 +62,11 @@ export default function RegistrationForm({ standalone = false }: { standalone?: 
     },
   });
 
-  const { trigger, formState: { isValid } } = methods;
+  const { trigger, formState: { isValid }, watch } = methods;
+  
+  // Watch for coupon to conditionally skip pricing step
+  const coupon = watch('payment.coupon');
+  const hasCoupon = coupon && coupon.trim() !== '';
 
   const handleNext = async () => {
     const fieldsToValidate = [
@@ -69,17 +75,32 @@ export default function RegistrationForm({ standalone = false }: { standalone?: 
       ['programs'],
       ['schedule'],
       ['payment'],
-      [],
+      [], // Pricing step - no validation needed
+      [], // Review step
     ];
 
     const isStepValid = await trigger(fieldsToValidate[currentStep] as any);
     if (isStepValid) {
-      setCurrentStep((prev) => Math.min(prev + 1, steps.length - 1));
+      let nextStep = currentStep + 1;
+      
+      // Skip pricing step if coupon is applied
+      if (nextStep === 5 && hasCoupon) {
+        nextStep = 6; // Skip to Review
+      }
+      
+      setCurrentStep(Math.min(nextStep, steps.length - 1));
     }
   };
 
   const handlePrevious = () => {
-    setCurrentStep((prev) => Math.max(prev - 1, 0));
+    let prevStep = currentStep - 1;
+    
+    // Skip pricing step when going back if coupon is applied
+    if (prevStep === 5 && hasCoupon) {
+      prevStep = 4; // Go back to Payment
+    }
+    
+    setCurrentStep(Math.max(prevStep, 0));
   };
 
   const handleSubmit = async (data: RegistrationFormData) => {
@@ -137,6 +158,8 @@ export default function RegistrationForm({ standalone = false }: { standalone?: 
       case 4:
         return <PaymentStep />;
       case 5:
+        return <PricingStep />;
+      case 6:
         return <ReviewStep />;
       default:
         return null;
