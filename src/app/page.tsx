@@ -1,20 +1,51 @@
-import Hero from '@/components/sections/Hero';
-import Statistics from '@/components/sections/Statistics';
-import WhyChooseUs from '@/components/sections/WhyChooseUs';
-import Testimonials from '@/components/sections/Testimonials';
-import FAQ from '@/components/sections/FAQ';
-import TrustBadges from '@/components/sections/TrustBadges';
+import dynamic from 'next/dynamic';
 import Link from 'next/link';
+import { Suspense } from 'react';
+
+// Static imports for above-fold content
+import Hero from '@/components/sections/Hero';
+
+// Dynamic imports for below-fold content (reduces initial bundle)
+const Statistics = dynamic(() => import('@/components/sections/Statistics'), {
+  loading: () => <div className="h-64 bg-gray-100 animate-pulse" />,
+  ssr: false,
+});
+
+const WhyChooseUs = dynamic(() => import('@/components/sections/WhyChooseUs'), {
+  loading: () => <div className="h-96 bg-gray-100 animate-pulse" />,
+});
+
+const Testimonials = dynamic(() => import('@/components/sections/Testimonials'), {
+  loading: () => <div className="h-80 bg-gray-100 animate-pulse" />,
+});
+
+const FAQ = dynamic(() => import('@/components/sections/FAQ'), {
+  loading: () => <div className="h-64 bg-gray-100 animate-pulse" />,
+});
+
+const TrustBadges = dynamic(() => import('@/components/sections/TrustBadges'), {
+  loading: () => <div className="h-32 bg-gray-100 animate-pulse" />,
+});
 
 export default function Home() {
   return (
     <main className="min-h-screen">
       <Hero />
-      <Statistics />
-      <WhyChooseUs />
-      <Testimonials />
-      <FAQ />
-      <TrustBadges />
+      <Suspense fallback={<div className="h-64 bg-gray-100 animate-pulse" />}>
+        <Statistics />
+      </Suspense>
+      <Suspense fallback={<div className="h-96 bg-gray-100 animate-pulse" />}>
+        <WhyChooseUs />
+      </Suspense>
+      <Suspense fallback={<div className="h-80 bg-gray-100 animate-pulse" />}>
+        <Testimonials />
+      </Suspense>
+      <Suspense fallback={<div className="h-64 bg-gray-100 animate-pulse" />}>
+        <FAQ />
+      </Suspense>
+      <Suspense fallback={<div className="h-32 bg-gray-100 animate-pulse" />}>
+        <TrustBadges />
+      </Suspense>
 
       {/* Register CTA section */}
       <section id="register" className="py-20 bg-gradient-to-br from-indigo-600 via-purple-600 to-indigo-800">
