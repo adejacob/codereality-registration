@@ -96,7 +96,7 @@ export async function POST(request: NextRequest) {
     // Save to database
     const registration = await Registration.create(validatedData);
 
-    // Send emails (non-blocking — don't fail the registration if email fails)
+    // Send emails (blocking in serverless to ensure delivery)
     const emailData = {
       parentName:     registration.parent.fullName,
       studentName:    `${registration.student.firstName} ${registration.student.lastName}`,
@@ -110,9 +110,13 @@ export async function POST(request: NextRequest) {
       coupon:         registration.payment.coupon,
     };
 
-    sendRegistrationEmails(emailData, registration.parent.email).catch((err) =>
-      console.error('Email dispatch error:', err)
-    );
+    try {
+      await sendRegistrationEmails(emailData, registration.parent.email);
+      console.log('[Register] Emails sent successfully');
+    } catch (emailErr) {
+      // Log email error but don't fail the registration
+      console.error('[Register] Email sending failed (registration saved):', emailErr);
+    }
 
     return NextResponse.json(
       {

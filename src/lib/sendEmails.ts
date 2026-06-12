@@ -14,6 +14,11 @@ function createTransporter() {
     port: 465,
     secure: true,
     auth: { user, pass },
+    connectionTimeout: 30000, // 30 seconds for serverless cold starts
+    greetingTimeout: 30000,
+    socketTimeout: 30000,
+    debug: process.env.NODE_ENV === 'development',
+    logger: process.env.NODE_ENV === 'development',
   });
 }
 
