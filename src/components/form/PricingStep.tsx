@@ -1,6 +1,5 @@
 'use client';
 
-import { motion } from 'framer-motion';
 import { Check, Clock, GraduationCap, Star, Award, Users } from 'lucide-react';
 import { useFormContext } from 'react-hook-form';
 
