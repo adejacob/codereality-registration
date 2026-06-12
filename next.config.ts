@@ -54,30 +54,6 @@ const nextConfig: NextConfig = {
     optimizePackageImports: ['lucide-react', 'framer-motion'],
   },
 
-  // Webpack optimization
-  webpack: (config, { isServer }) => {
-    // Split chunks for better caching
-    if (!isServer) {
-      config.optimization.splitChunks = {
-        chunks: 'all',
-        cacheGroups: {
-          vendor: {
-            test: /[\\/]node_modules[\\/]/,
-            name: 'vendors',
-            chunks: 'all',
-            priority: 10,
-          },
-          framerMotion: {
-            test: /[\\/]node_modules[\\/]framer-motion/,
-            name: 'framer-motion',
-            chunks: 'all',
-            priority: 20,
-          },
-        },
-      };
-    }
-    return config;
-  },
 
   async headers() {
     return [
