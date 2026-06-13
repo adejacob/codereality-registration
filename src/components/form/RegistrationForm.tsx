@@ -74,8 +74,8 @@ export default function RegistrationForm({ standalone = false }: { standalone?: 
       ['parent'],
       ['programs'],
       ['schedule'],
-      ['payment'],
-      [], // Pricing step - no validation needed
+      ['payment.paymentType', 'payment.coupon'], // Payment step - validate specific fields
+      ['payment.selectedPlan'], // Pricing step - validate plan selection
       [], // Review step
     ];
 

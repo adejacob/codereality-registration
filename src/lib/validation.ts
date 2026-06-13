@@ -40,19 +40,7 @@ export const paymentSchema = z.object({
   paymentType: z.enum(['full', 'installment']).optional(),
   coupon: z.string().max(50).optional(),
   selectedPlan: z.enum(['growth', 'short', 'mastery', 'platinum']).optional(),
-}).refine(
-  (data) => {
-    // If coupon is provided, paymentType is optional
-    // If no coupon, paymentType OR selectedPlan indicates payment preference
-    const hasCoupon = data.coupon && data.coupon.trim() !== '';
-    const hasPaymentType = data.paymentType !== undefined;
-    return hasCoupon || hasPaymentType;
-  },
-  {
-    message: 'Please select a payment option',
-    path: ['paymentType'],
-  }
-);
+});
 
 export const registrationSchema = z.object({
   student: studentSchema,
