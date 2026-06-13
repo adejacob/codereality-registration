@@ -10,7 +10,6 @@ const pricingPlans = [
     duration: '3 Months (12 Weeks)',
     totalFee: '₦150,000',
     features: [
-      '2 days per week (1 hour daily)',
       'Comprehensive skill building across STEM modules',
       'Hands-on coding, robotics & AI projects',
       'Monthly progress reports & parent updates',
@@ -26,7 +25,6 @@ const pricingPlans = [
     duration: '2 Months (8 Weeks)',
     totalFee: '₦100,000',
     features: [
-      '2 days per week (1 hour daily)',
       'Intensive focused learning track',
       'Project-based curriculum with real-world applications',
       'Skill certification on completion',
@@ -41,7 +39,6 @@ const pricingPlans = [
     duration: '6 Months (24 Weeks)',
     totalFee: '₦250,000',
     features: [
-      '2 days per week (1 hour daily)',
       'Advanced comprehensive curriculum',
       'Professional portfolio development',
       'Industry-standard project experience',
@@ -54,11 +51,10 @@ const pricingPlans = [
   {
     id: 'platinum',
     name: 'Platinum Plan',
-    duration: '12 Months (48 Weeks)',
+    duration: '6 Months (24 Weeks)',
     totalFee: '₦300,000',
     features: [
-      '2 days per week (1 hour daily)',
-      'One full year of continuous learning',
+      'Extended comprehensive learning experience',
       'All-inclusive premium curriculum access',
       'Advanced specialization tracks (Coding, AI, Robotics)',
       'Guaranteed internship placement',

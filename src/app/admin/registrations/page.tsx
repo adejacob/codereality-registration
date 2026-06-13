@@ -316,7 +316,7 @@ function DetailModal({ reg, onClose, onUpdate }: { reg: Registration; onClose: (
                       growth: 'Growth Plan (₦150,000) - 3 Months',
                       short: 'Short Program (₦100,000) - 2 Months',
                       mastery: 'Mastery Plan (₦250,000) - 6 Months',
-                      platinum: 'Platinum Plan (₦300,000) - 12 Months',
+                      platinum: 'Platinum Plan (₦300,000) - 6 Months',
                     }[reg.payment.selectedPlan] || reg.payment.selectedPlan} 
                   />
                 </>
