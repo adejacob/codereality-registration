@@ -96,6 +96,14 @@ export async function POST(request: NextRequest) {
     // Save to database
     const registration = await Registration.create(validatedData);
 
+    // Get plan amount for email
+    const planAmounts: Record<string, string> = {
+      growth: '₦150,000',
+      short: '₦100,000',
+      mastery: '₦250,000',
+      platinum: '₦300,000',
+    };
+
     // Send emails (blocking in serverless to ensure delivery)
     const emailData = {
       parentName:     registration.parent.fullName,
@@ -108,6 +116,8 @@ export async function POST(request: NextRequest) {
         day: 'numeric', month: 'long', year: 'numeric',
       }),
       coupon:         registration.payment.coupon,
+      selectedPlan:   registration.payment.selectedPlan,
+      planAmount:     registration.payment.selectedPlan ? planAmounts[registration.payment.selectedPlan] : undefined,
     };
 
     try {

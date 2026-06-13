@@ -39,16 +39,17 @@ export const scheduleSchema = z.object({
 export const paymentSchema = z.object({
   paymentType: z.enum(['full', 'installment']).optional(),
   coupon: z.string().max(50).optional(),
+  selectedPlan: z.enum(['growth', 'short', 'mastery', 'platinum']).optional(),
 }).refine(
   (data) => {
-    // If coupon is provided, paymentType is optional
-    // If no coupon, paymentType is required
+    // If coupon is provided, paymentType and selectedPlan are optional
+    // If no coupon, selectedPlan is required (paymentType handled separately)
     const hasCoupon = data.coupon && data.coupon.trim() !== '';
-    return hasCoupon || data.paymentType !== undefined;
+    return hasCoupon || data.selectedPlan !== undefined;
   },
   {
-    message: 'Please select a payment option or enter a coupon code',
-    path: ['paymentType'],
+    message: 'Please select a pricing plan',
+    path: ['selectedPlan'],
   }
 );
 

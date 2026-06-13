@@ -17,6 +17,8 @@ export interface EmailData {
   paymentType: string;
   submittedDate: string;
   coupon?: string;
+  selectedPlan?: string;
+  planAmount?: string;
 }
 
 function formatSchedule(s: string) {
@@ -31,6 +33,16 @@ function formatSchedule(s: string) {
 
 function formatPayment(p: string) {
   return p === 'full' ? 'Full Payment' : 'Installment Plan';
+}
+
+function formatPlan(planId?: string): { name: string; amount: string } {
+  const plans: Record<string, { name: string; amount: string }> = {
+    growth: { name: 'Growth Plan', amount: '₦150,000' },
+    short: { name: 'Short Program', amount: '₦100,000' },
+    mastery: { name: 'Mastery Plan', amount: '₦250,000' },
+    platinum: { name: 'Platinum Plan', amount: '₦300,000' },
+  };
+  return planId ? plans[planId] : { name: 'Not selected', amount: 'N/A' };
 }
 
 function programList(programs: string[]) {
@@ -128,6 +140,14 @@ export function parentConfirmationEmail(data: EmailData): string {
               <tr>
                 <td style="padding:6px 0;color:#6b7280;font-size:14px;">Payment Plan</td>
                 <td style="padding:6px 0;color:#111827;font-size:14px;font-weight:600;">${formatPayment(data.paymentType)}</td>
+              </tr>
+              <tr>
+                <td style="padding:6px 0;color:#6b7280;font-size:14px;">Selected Plan</td>
+                <td style="padding:6px 0;color:#111827;font-size:14px;font-weight:600;">${formatPlan(data.selectedPlan).name}</td>
+              </tr>
+              <tr>
+                <td style="padding:6px 0;color:#6b7280;font-size:14px;">Amount to Pay</td>
+                <td style="padding:6px 0;color:#059669;font-size:16px;font-weight:800;">${data.planAmount || formatPlan(data.selectedPlan).amount}</td>
               </tr>
               ` : ''}
               <tr>
@@ -292,6 +312,10 @@ export function adminNotificationEmail(data: EmailData): string {
             <tr><td style="padding:5px 0;color:#6b7280;font-size:13px;width:40%;">Programs</td><td style="padding:5px 0;color:#111827;font-size:13px;font-weight:600;">${data.programs.join(', ')}</td></tr>
             <tr><td style="padding:5px 0;color:#6b7280;font-size:13px;">Schedule</td><td style="padding:5px 0;color:#111827;font-size:13px;font-weight:600;">${data.schedule}</td></tr>
             <tr><td style="padding:5px 0;color:#6b7280;font-size:13px;">Payment Option</td><td style="padding:5px 0;color:#111827;font-size:13px;font-weight:600;">${data.paymentType}</td></tr>
+            ${data.selectedPlan ? `
+            <tr><td style="padding:5px 0;color:#6b7280;font-size:13px;">Selected Plan</td><td style="padding:5px 0;color:#111827;font-size:13px;font-weight:600;">${formatPlan(data.selectedPlan).name}</td></tr>
+            <tr><td style="padding:5px 0;color:#6b7280;font-size:13px;">Amount</td><td style="padding:5px 0;color:#059669;font-size:13px;font-weight:700;">${data.planAmount || formatPlan(data.selectedPlan).amount}</td></tr>
+            ` : ''}
           </table>
         </td></tr>
 

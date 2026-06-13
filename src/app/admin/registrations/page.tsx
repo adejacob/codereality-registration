@@ -21,7 +21,7 @@ interface Registration {
   parent:  { fullName: string; email: string; phone: string; whatsapp: string; address: string; occupation: string };
   programs: { programs: string[] };
   schedule: { schedule: string };
-  payment:  { paymentType: string; coupon?: string };
+  payment:  { paymentType: string; coupon?: string; selectedPlan?: 'growth' | 'short' | 'mastery' | 'platinum' };
   createdAt: string;
 }
 
@@ -308,6 +308,19 @@ function DetailModal({ reg, onClose, onUpdate }: { reg: Registration; onClose: (
               </div>
               <Field label="Schedule"     value={reg.schedule.schedule}  />
               <Field label="Payment Type" value={reg.payment.paymentType} />
+              {reg.payment.selectedPlan && (
+                <>
+                  <Field 
+                    label="Selected Plan" 
+                    value={{
+                      growth: 'Growth Plan (₦150,000) - 3 Months',
+                      short: 'Short Program (₦100,000) - 2 Months',
+                      mastery: 'Mastery Plan (₦250,000) - 6 Months',
+                      platinum: 'Platinum Plan (₦300,000) - 12 Months',
+                    }[reg.payment.selectedPlan] || reg.payment.selectedPlan} 
+                  />
+                </>
+              )}
               {reg.payment.coupon && <Field label="Coupon" value={reg.payment.coupon} />}
             </div>
           </section>
