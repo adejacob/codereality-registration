@@ -187,7 +187,7 @@ export default function RegistrationForm({ standalone = false }: { standalone?: 
         )}
 
         <FormProvider {...methods}>
-          <form onSubmit={methods.handleSubmit(handleSubmit)}>
+          <form onSubmit={(e) => e.preventDefault()}>
             <div className="max-w-4xl mx-auto">
               <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-2xl p-5 sm:p-8 md:p-12 border border-gray-100 dark:border-gray-700">
                 <StepIndicator steps={steps} currentStep={currentStep} />
@@ -230,8 +230,9 @@ export default function RegistrationForm({ standalone = false }: { standalone?: 
                     </button>
                   ) : (
                     <button
-                      type="submit"
+                      type="button"
                       disabled={isSubmitting}
+                      onClick={methods.handleSubmit(handleSubmit)}
                       className="px-6 py-3 rounded-xl bg-gradient-to-r from-green-500 to-emerald-500 text-white hover:from-green-600 hover:to-emerald-600 transition-all font-semibold shadow-lg shadow-green-500/30 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       {isSubmitting ? 'Submitting...' : 'Confirm & Submit Registration'}
