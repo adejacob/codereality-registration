@@ -104,6 +104,13 @@ export async function POST(request: NextRequest) {
       platinum: '₦300,000',
     };
 
+    // Calculate total amount
+    const registrationFee = '₦5,000';
+    const planAmount = registration.payment.selectedPlan ? planAmounts[registration.payment.selectedPlan] : undefined;
+    const totalAmount = planAmount
+      ? `₦${(parseInt(planAmount.replace(/[^0-9]/g, '')) + 5000).toLocaleString()}`
+      : undefined;
+
     // Send emails (blocking in serverless to ensure delivery)
     const emailData = {
       parentName:     registration.parent.fullName,
@@ -117,7 +124,9 @@ export async function POST(request: NextRequest) {
       }),
       coupon:         registration.payment.coupon,
       selectedPlan:   registration.payment.selectedPlan,
-      planAmount:     registration.payment.selectedPlan ? planAmounts[registration.payment.selectedPlan] : undefined,
+      planAmount:     planAmount,
+      registrationFee: registrationFee,
+      totalAmount:    totalAmount,
     };
 
     try {

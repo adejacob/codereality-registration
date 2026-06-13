@@ -33,6 +33,20 @@ export default function ReviewStep() {
     installment: 'Installment Plan',
   };
 
+  const planAmounts: Record<string, string> = {
+    growth: '₦150,000',
+    short: '₦100,000',
+    mastery: '₦250,000',
+    platinum: '₦300,000',
+  };
+
+  const planNames: Record<string, string> = {
+    growth: 'Growth Plan',
+    short: 'Short Program',
+    mastery: 'Mastery Plan',
+    platinum: 'Platinum Plan',
+  };
+
   const selectedPrograms = formData.programs?.programs || [];
   const selectedProgramNames = selectedPrograms.map((id: string) => 
     programs.find(p => p.id === id)?.name || id
@@ -163,6 +177,37 @@ export default function ReviewStep() {
                 {payments[formData.payment?.paymentType as keyof typeof payments]}
               </p>
             </div>
+            {formData.payment?.selectedPlan && !formData.payment?.coupon && (
+              <div className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4 space-y-2">
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-gray-600 dark:text-gray-400">Selected Plan</span>
+                  <span className="font-medium text-gray-900 dark:text-white">
+                    {planNames[formData.payment.selectedPlan]}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-gray-600 dark:text-gray-400">Plan Amount</span>
+                  <span className="font-medium text-gray-900 dark:text-white">
+                    {planAmounts[formData.payment.selectedPlan]}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-gray-600 dark:text-gray-400">Registration Fee</span>
+                  <span className="font-medium text-gray-900 dark:text-white">₦5,000</span>
+                </div>
+                <div className="border-t border-gray-200 dark:border-gray-600 pt-2 mt-2">
+                  <div className="flex justify-between items-center">
+                    <span className="font-semibold text-gray-900 dark:text-white">Total Amount</span>
+                    <span className="font-bold text-lg text-green-600 dark:text-green-400">
+                      {(() => {
+                        const planAmount = parseInt(planAmounts[formData.payment!.selectedPlan!].replace(/[^0-9]/g, ''));
+                        return `₦${(planAmount + 5000).toLocaleString()}`;
+                      })()}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            )}
             {formData.payment?.coupon && (
               <div>
                 <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">Coupon Code</p>

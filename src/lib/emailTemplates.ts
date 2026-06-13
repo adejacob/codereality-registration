@@ -19,6 +19,8 @@ export interface EmailData {
   coupon?: string;
   selectedPlan?: string;
   planAmount?: string;
+  registrationFee?: string;
+  totalAmount?: string;
 }
 
 function formatSchedule(s: string) {
@@ -146,8 +148,16 @@ export function parentConfirmationEmail(data: EmailData): string {
                 <td style="padding:6px 0;color:#111827;font-size:14px;font-weight:600;">${formatPlan(data.selectedPlan).name}</td>
               </tr>
               <tr>
-                <td style="padding:6px 0;color:#6b7280;font-size:14px;">Amount to Pay</td>
-                <td style="padding:6px 0;color:#059669;font-size:16px;font-weight:800;">${data.planAmount || formatPlan(data.selectedPlan).amount}</td>
+                <td style="padding:6px 0;color:#6b7280;font-size:14px;">Plan Amount</td>
+                <td style="padding:6px 0;color:#111827;font-size:14px;font-weight:600;">${data.planAmount || formatPlan(data.selectedPlan).amount}</td>
+              </tr>
+              <tr>
+                <td style="padding:6px 0;color:#6b7280;font-size:14px;">Registration Fee</td>
+                <td style="padding:6px 0;color:#111827;font-size:14px;font-weight:600;">${data.registrationFee || '₦5,000'}</td>
+              </tr>
+              <tr>
+                <td style="padding:8px 0;border-top:2px solid #e0e7ff;"><strong style="color:#111827;font-size:15px;">Total Amount to Pay</strong></td>
+                <td style="padding:8px 0;border-top:2px solid #e0e7ff;color:#059669;font-size:18px;font-weight:800;">${data.totalAmount || '₦' + (parseInt((data.planAmount || formatPlan(data.selectedPlan).amount).replace(/[^0-9]/g, '')) + 5000).toLocaleString()}</td>
               </tr>
               ` : ''}
               <tr>
@@ -314,7 +324,9 @@ export function adminNotificationEmail(data: EmailData): string {
             <tr><td style="padding:5px 0;color:#6b7280;font-size:13px;">Payment Option</td><td style="padding:5px 0;color:#111827;font-size:13px;font-weight:600;">${data.paymentType}</td></tr>
             ${data.selectedPlan ? `
             <tr><td style="padding:5px 0;color:#6b7280;font-size:13px;">Selected Plan</td><td style="padding:5px 0;color:#111827;font-size:13px;font-weight:600;">${formatPlan(data.selectedPlan).name}</td></tr>
-            <tr><td style="padding:5px 0;color:#6b7280;font-size:13px;">Amount</td><td style="padding:5px 0;color:#059669;font-size:13px;font-weight:700;">${data.planAmount || formatPlan(data.selectedPlan).amount}</td></tr>
+            <tr><td style="padding:5px 0;color:#6b7280;font-size:13px;">Plan Amount</td><td style="padding:5px 0;color:#111827;font-size:13px;font-weight:600;">${data.planAmount || formatPlan(data.selectedPlan).amount}</td></tr>
+            <tr><td style="padding:5px 0;color:#6b7280;font-size:13px;">Registration Fee</td><td style="padding:5px 0;color:#111827;font-size:13px;font-weight:600;">${data.registrationFee || '₦5,000'}</td></tr>
+            <tr><td style="padding:5px 0;color:#6b7280;font-size:13px;"><strong>Total Amount</strong></td><td style="padding:5px 0;color:#059669;font-size:14px;font-weight:800;">${data.totalAmount || '₦' + (parseInt((data.planAmount || formatPlan(data.selectedPlan).amount).replace(/[^0-9]/g, '')) + 5000).toLocaleString()}</td></tr>
             ` : ''}
           </table>
         </td></tr>
