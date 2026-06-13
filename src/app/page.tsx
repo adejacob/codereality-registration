@@ -8,7 +8,6 @@ import Hero from '@/components/sections/Hero';
 // Dynamic imports for below-fold content (reduces initial bundle)
 const Statistics = dynamic(() => import('@/components/sections/Statistics'), {
   loading: () => <div className="h-64 bg-gray-100 animate-pulse" />,
-  ssr: false,
 });
 
 const WhyChooseUs = dynamic(() => import('@/components/sections/WhyChooseUs'), {
