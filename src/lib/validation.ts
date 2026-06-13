@@ -42,14 +42,15 @@ export const paymentSchema = z.object({
   selectedPlan: z.enum(['growth', 'short', 'mastery', 'platinum']).optional(),
 }).refine(
   (data) => {
-    // If coupon is provided, paymentType and selectedPlan are optional
-    // If no coupon, selectedPlan is required (paymentType handled separately)
+    // If coupon is provided, paymentType is optional
+    // If no coupon, paymentType OR selectedPlan indicates payment preference
     const hasCoupon = data.coupon && data.coupon.trim() !== '';
-    return hasCoupon || data.selectedPlan !== undefined;
+    const hasPaymentType = data.paymentType !== undefined;
+    return hasCoupon || hasPaymentType;
   },
   {
-    message: 'Please select a pricing plan',
-    path: ['selectedPlan'],
+    message: 'Please select a payment option',
+    path: ['paymentType'],
   }
 );
 
@@ -59,6 +60,16 @@ export const registrationSchema = z.object({
   programs: programSchema,
   schedule: scheduleSchema,
   payment: paymentSchema,
-});
+}).refine(
+  (data) => {
+    // On final submission, require selectedPlan if no coupon
+    const hasCoupon = data.payment.coupon && data.payment.coupon.trim() !== '';
+    return hasCoupon || data.payment.selectedPlan !== undefined;
+  },
+  {
+    message: 'Please select a pricing plan before submitting',
+    path: ['payment', 'selectedPlan'],
+  }
+);
 
 export type RegistrationFormData = z.infer<typeof registrationSchema>;
