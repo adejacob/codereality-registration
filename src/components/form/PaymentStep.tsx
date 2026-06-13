@@ -93,8 +93,11 @@ export default function PaymentStep() {
                 }`}
                 onClick={() => {
                   if (option.comingSoon) return;
-                  const radio = document.getElementById(`payment-${option.id}`) as HTMLInputElement;
-                  radio.click();
+                  setValue('payment.paymentType', option.id as 'full' | 'installment', {
+                    shouldValidate: true,
+                    shouldDirty: true,
+                    shouldTouch: true,
+                  });
                 }}
               >
                 {option.comingSoon && (
