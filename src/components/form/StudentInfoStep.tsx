@@ -1,11 +1,17 @@
 'use client';
 
+import { useState, useRef } from 'react';
 import { useFormContext } from 'react-hook-form';
+import { Camera, X, Upload, User } from 'lucide-react';
 import Input from '../ui/Input';
 import Select from '../ui/Select';
 
 export default function StudentInfoStep() {
-  const { register, formState: { errors } } = useFormContext();
+  const { register, formState: { errors }, setValue, watch } = useFormContext();
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const photo = watch('student.photo');
 
   const genderOptions = [
     { value: 'male', label: 'Male' },
@@ -16,6 +22,46 @@ export default function StudentInfoStep() {
   const getError = (field: string) => {
     const error = errors.student as any;
     return error?.[field]?.message as string;
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      // Validate file size (10MB max)
+      if (file.size > 10 * 1024 * 1024) {
+        alert('File size must be less than 10MB');
+        return;
+      }
+      
+      // Create preview URL
+      const url = URL.createObjectURL(file);
+      setPreviewUrl(url);
+      
+      // Set value in form
+      setValue('student.photo', file, { shouldValidate: true });
+    }
+  };
+
+  const handleRemovePhoto = () => {
+    setPreviewUrl(null);
+    setValue('student.photo', undefined, { shouldValidate: true });
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    const file = e.dataTransfer.files?.[0];
+    if (file && file.type.startsWith('image/')) {
+      if (file.size > 10 * 1024 * 1024) {
+        alert('File size must be less than 10MB');
+        return;
+      }
+      const url = URL.createObjectURL(file);
+      setPreviewUrl(url);
+      setValue('student.photo', file, { shouldValidate: true });
+    }
   };
 
   return (
@@ -68,45 +114,64 @@ export default function StudentInfoStep() {
         />
       </div>
 
-      <div>
-        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-          Student Photo (Optional)
+      {/* Photo Upload Section */}
+      <div className="mt-8">
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+          <span className="flex items-center gap-2">
+            <Camera size={18} className="text-indigo-500" />
+            Student Photo <span className="text-gray-400 font-normal">(Optional)</span>
+          </span>
         </label>
-        <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 dark:border-gray-600 border-dashed rounded-xl hover:border-indigo-500 transition-colors">
-          <div className="space-y-1 text-center">
-            <svg
-              className="mx-auto h-12 w-12 text-gray-400"
-              stroke="currentColor"
-              fill="none"
-              viewBox="0 0 48 48"
-            >
-              <path
-                d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02"
-                strokeWidth={2}
-                strokeLinecap="round"
-                strokeLinejoin="round"
+        
+        {previewUrl ? (
+          /* Photo Preview */
+          <div className="relative w-48 h-48 mx-auto">
+            <div className="w-full h-full rounded-2xl overflow-hidden border-4 border-indigo-100 shadow-lg">
+              <img
+                src={previewUrl}
+                alt="Student preview"
+                className="w-full h-full object-cover"
               />
-            </svg>
-            <div className="flex text-sm text-gray-600 dark:text-gray-400">
-              <label
-                htmlFor="photo-upload"
-                className="relative cursor-pointer bg-white dark:bg-gray-800 rounded-md font-medium text-indigo-600 hover:text-indigo-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-indigo-500"
-              >
-                <span>Upload a file</span>
-                <input
-                  id="photo-upload"
-                  type="file"
-                  accept="image/*"
-                  className="sr-only"
-                />
-              </label>
-              <p className="pl-1">or drag and drop</p>
             </div>
-            <p className="text-xs text-gray-500 dark:text-gray-400">
-              PNG, JPG, GIF up to 10MB
+            <button
+              type="button"
+              onClick={handleRemovePhoto}
+              className="absolute -top-2 -right-2 p-1.5 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors shadow-md"
+            >
+              <X size={16} />
+            </button>
+            <p className="text-center text-xs text-gray-500 mt-2">
+              Click the X to remove and upload a different photo
             </p>
           </div>
-        </div>
+        ) : (
+          /* Upload Area */
+          <div
+            onDrop={handleDrop}
+            onDragOver={(e) => e.preventDefault()}
+            className="relative group cursor-pointer"
+            onClick={() => fileInputRef.current?.click()}
+          >
+            <div className="flex flex-col items-center justify-center w-full h-48 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-2xl bg-gray-50 dark:bg-gray-800/50 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 hover:border-indigo-400 transition-all duration-300">
+              <div className="p-4 bg-indigo-100 dark:bg-indigo-900/30 rounded-full mb-3 group-hover:scale-110 transition-transform">
+                <Upload className="w-8 h-8 text-indigo-600 dark:text-indigo-400" />
+              </div>
+              <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                Click to upload or drag and drop
+              </p>
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                PNG, JPG, GIF up to 10MB
+              </p>
+            </div>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              onChange={handleFileChange}
+              className="hidden"
+            />
+          </div>
+        )}
       </div>
     </div>
   );

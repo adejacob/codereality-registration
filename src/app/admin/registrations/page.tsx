@@ -17,7 +17,7 @@ interface Registration {
   notes: string;
   enrollmentNumber?: string;
   enrollmentDate?: string;
-  student: { firstName: string; lastName: string; gender: string; dateOfBirth: string; schoolName: string; classGrade: string };
+  student: { firstName: string; lastName: string; gender: string; dateOfBirth: string; schoolName: string; classGrade: string; photoUrl?: string };
   parent:  { fullName: string; email: string; phone: string; whatsapp: string; address: string; occupation: string };
   programs: { programs: string[] };
   schedule: { schedule: string };
@@ -271,13 +271,40 @@ function DetailModal({ reg, onClose, onUpdate }: { reg: Registration; onClose: (
           {/* Student */}
           <section>
             <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">Student Information</h3>
-            <div className="grid grid-cols-2 gap-4 bg-gray-50 rounded-2xl p-4">
-              <Field label="First Name"   value={reg.student.firstName} />
-              <Field label="Last Name"    value={reg.student.lastName}  />
-              <Field label="Gender"       value={reg.student.gender}    />
-              <Field label="Date of Birth" value={reg.student.dateOfBirth} />
-              <Field label="School"       value={reg.student.schoolName} />
-              <Field label="Class/Grade"  value={reg.student.classGrade} />
+            <div className="bg-gray-50 rounded-2xl p-4">
+              {/* Student Photo */}
+              <div className="flex justify-center mb-4">
+                {reg.student.photoUrl ? (
+                  <div className="relative">
+                    <div className="w-24 h-24 rounded-2xl overflow-hidden border-4 border-white shadow-lg">
+                      <img
+                        src={reg.student.photoUrl}
+                        alt={`${reg.student.firstName} ${reg.student.lastName}`}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-green-500 rounded-full border-2 border-white flex items-center justify-center">
+                      <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                      </svg>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="w-24 h-24 rounded-2xl bg-gradient-to-br from-indigo-100 to-purple-100 border-4 border-white shadow-lg flex items-center justify-center">
+                    <span className="text-2xl font-bold text-indigo-400">
+                      {reg.student.firstName?.charAt(0)}{reg.student.lastName?.charAt(0)}
+                    </span>
+                  </div>
+                )}
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <Field label="First Name"   value={reg.student.firstName} />
+                <Field label="Last Name"    value={reg.student.lastName}  />
+                <Field label="Gender"       value={reg.student.gender}    />
+                <Field label="Date of Birth" value={reg.student.dateOfBirth} />
+                <Field label="School"       value={reg.student.schoolName} />
+                <Field label="Class/Grade"  value={reg.student.classGrade} />
+              </div>
             </div>
           </section>
 

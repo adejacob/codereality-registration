@@ -231,10 +231,10 @@ export default function RegistrationForm({ standalone = false }: { standalone?: 
                   ) : (
                     <button
                       type="submit"
-                      disabled={isSubmitting || !isValid}
+                      disabled={isSubmitting}
                       className="px-6 py-3 rounded-xl bg-gradient-to-r from-green-500 to-emerald-500 text-white hover:from-green-600 hover:to-emerald-600 transition-all font-semibold shadow-lg shadow-green-500/30 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      {isSubmitting ? 'Submitting...' : 'Submit Registration'}
+                      {isSubmitting ? 'Submitting...' : 'Confirm & Submit Registration'}
                     </button>
                   )}
                 </div>
