@@ -27,7 +27,7 @@ export interface IRegistration extends Document {
   payment: {
     paymentType: 'full' | 'installment';
     coupon?: string;
-    selectedPlan?: 'growth' | 'short' | 'mastery' | 'platinum';
+    selectedPlan?: 'growth' | 'short' | 'mastery' | 'platinum' | 'holiday-explorer' | 'holiday-innovator';
   };
   status: 'pending' | 'contacted' | 'approved' | 'enrolled' | 'rejected';
   paymentStatus: 'pending_payment' | 'payment_submitted' | 'payment_confirmed';
