@@ -43,6 +43,8 @@ export default function ReviewStep() {
     short: '₦100,000',
     mastery: '₦250,000',
     platinum: '₦300,000',
+    'holiday-explorer': '₦50,000',
+    'holiday-innovator': '₦80,000',
   };
 
   const planNames: Record<string, string> = {
@@ -50,6 +52,8 @@ export default function ReviewStep() {
     short: 'Short Program',
     mastery: 'Mastery Plan',
     platinum: 'Platinum Plan',
+    'holiday-explorer': 'Holiday Explorer Track',
+    'holiday-innovator': 'Holiday Innovator Track',
   };
 
   const selectedPrograms = formData.programs?.programs || [];
@@ -236,8 +240,7 @@ export default function ReviewStep() {
                   <p className="font-semibold text-gray-900">{payments[formData.payment?.paymentType as keyof typeof payments]}</p>
                 </div>
               </div>
-              
-              <div className="bg-gray-50 dark:bg-gray-800/50 rounded-xl p-5 space-y-3">
+                            <div className="bg-gray-50 dark:bg-gray-800/50 rounded-xl p-5 space-y-3">
                 <div className="flex justify-between items-center">
                   <span className="text-gray-600 dark:text-gray-400">Selected Plan</span>
                   <span className="font-semibold text-gray-900 dark:text-white">{planNames[formData.payment.selectedPlan]}</span>
@@ -249,6 +252,8 @@ export default function ReviewStep() {
                     {formData.payment.selectedPlan === 'short' && '2 Months'}
                     {formData.payment.selectedPlan === 'mastery' && '6 Months'}
                     {formData.payment.selectedPlan === 'platinum' && '6 Months'}
+                    {formData.payment.selectedPlan === 'holiday-explorer' && '1 Month (Online)'}
+                    {formData.payment.selectedPlan === 'holiday-innovator' && '2 Months (Online)'}
                   </span>
                 </div>
                 <div className="flex justify-between items-center">

@@ -102,6 +102,8 @@ export async function POST(request: NextRequest) {
       short: '₦100,000',
       mastery: '₦250,000',
       platinum: '₦300,000',
+      'holiday-explorer': '₦50,000',
+      'holiday-innovator': '₦80,000',
     };
 
     // Calculate total amount

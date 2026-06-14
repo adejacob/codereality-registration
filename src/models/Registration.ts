@@ -73,7 +73,7 @@ const RegistrationSchema = new Schema<IRegistration>(
       coupon:      { type: String },
       selectedPlan: {
         type: String,
-        enum: ['growth', 'short', 'mastery', 'platinum'],
+        enum: ['growth', 'short', 'mastery', 'platinum', 'holiday-explorer', 'holiday-innovator'],
       },
     },
     status: {

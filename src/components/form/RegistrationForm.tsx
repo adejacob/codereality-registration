@@ -12,6 +12,7 @@ import ProgramSelectionStep from './ProgramSelectionStep';
 import ScheduleStep from './ScheduleStep';
 import PaymentStep from './PaymentStep';
 import PricingStep from './PricingStep';
+import HolidayPricingStep from './HolidayPricingStep';
 import ReviewStep from './ReviewStep';
 
 const steps = [
@@ -67,6 +68,10 @@ export default function RegistrationForm({ standalone = false }: { standalone?: 
   // Watch for coupon to conditionally skip pricing step
   const coupon = watch('payment.coupon');
   const hasCoupon = coupon && coupon.trim() !== '';
+  
+  // Watch for schedule to determine which pricing step to show
+  const selectedSchedule = watch('schedule.schedule');
+  const isHolidayBootcamp = selectedSchedule === 'holiday';
 
   const handleNext = async () => {
     const fieldsToValidate = [
@@ -171,7 +176,7 @@ export default function RegistrationForm({ standalone = false }: { standalone?: 
       case 4:
         return <PaymentStep />;
       case 5:
-        return <PricingStep />;
+        return isHolidayBootcamp ? <HolidayPricingStep /> : <PricingStep />;
       case 6:
         return <ReviewStep />;
       default:

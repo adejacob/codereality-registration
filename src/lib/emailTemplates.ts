@@ -37,12 +37,14 @@ function formatPayment(p: string) {
   return p === 'full' ? 'Full Payment' : 'Installment Plan';
 }
 
-function formatPlan(planId?: string): { name: string; amount: string } {
-  const plans: Record<string, { name: string; amount: string }> = {
-    growth: { name: 'Growth Plan', amount: '₦150,000' },
-    short: { name: 'Short Program', amount: '₦100,000' },
-    mastery: { name: 'Mastery Plan', amount: '₦250,000' },
-    platinum: { name: 'Platinum Plan', amount: '₦300,000' },
+function formatPlan(planId?: string): { name: string; amount: string; duration?: string } {
+  const plans: Record<string, { name: string; amount: string; duration?: string }> = {
+    growth: { name: 'Growth Plan', amount: '₦150,000', duration: '3 Months' },
+    short: { name: 'Short Program', amount: '₦100,000', duration: '2 Months' },
+    mastery: { name: 'Mastery Plan', amount: '₦250,000', duration: '6 Months' },
+    platinum: { name: 'Platinum Plan', amount: '₦300,000', duration: '6 Months' },
+    'holiday-explorer': { name: 'Holiday Explorer Track', amount: '₦50,000', duration: '1 Month' },
+    'holiday-innovator': { name: 'Holiday Innovator Track', amount: '₦80,000', duration: '2 Months' },
   };
   return planId ? plans[planId] : { name: 'Not selected', amount: 'N/A' };
 }

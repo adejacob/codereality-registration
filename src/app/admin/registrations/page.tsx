@@ -21,7 +21,7 @@ interface Registration {
   parent:  { fullName: string; email: string; phone: string; whatsapp: string; address: string; occupation: string };
   programs: { programs: string[] };
   schedule: { schedule: string };
-  payment:  { paymentType: string; coupon?: string; selectedPlan?: 'growth' | 'short' | 'mastery' | 'platinum' };
+  payment:  { paymentType: string; coupon?: string; selectedPlan?: 'growth' | 'short' | 'mastery' | 'platinum' | 'holiday-explorer' | 'holiday-innovator' };
   createdAt: string;
 }
 
@@ -344,6 +344,8 @@ function DetailModal({ reg, onClose, onUpdate }: { reg: Registration; onClose: (
                       short: 'Short Program (₦100,000) - 2 Months',
                       mastery: 'Mastery Plan (₦250,000) - 6 Months',
                       platinum: 'Platinum Plan (₦300,000) - 6 Months',
+                      'holiday-explorer': 'Holiday Explorer Track (₦50,000) - 1 Month Online',
+                      'holiday-innovator': 'Holiday Innovator Track (₦80,000) - 2 Months Online',
                     }[reg.payment.selectedPlan] || reg.payment.selectedPlan} 
                   />
                 </>
