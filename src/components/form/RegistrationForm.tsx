@@ -107,10 +107,23 @@ export default function RegistrationForm({ standalone = false }: { standalone?: 
     setIsSubmitting(true);
     setSubmitError('');
     try {
-      // Strip the photo FileList — it cannot be JSON-serialised or stored as a string
+      // Upload photo to Cloudinary if one was selected
+      let photoUrl: string | undefined;
+      const photoFile = data.student?.photo;
+      if (photoFile instanceof File) {
+        const fd = new FormData();
+        fd.append('file', photoFile);
+        const uploadRes = await fetch('/api/upload-photo', { method: 'POST', body: fd });
+        const uploadJson = await uploadRes.json();
+        if (uploadRes.ok && uploadJson.success) {
+          photoUrl = uploadJson.url;
+        }
+        // If upload fails we continue without photo — not a blocker
+      }
+
       const payload = {
         ...data,
-        student: { ...data.student, photo: undefined },
+        student: { ...data.student, photo: photoUrl },
       };
 
       const response = await fetch('/api/register', {

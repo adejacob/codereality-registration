@@ -17,7 +17,7 @@ interface Registration {
   notes: string;
   enrollmentNumber?: string;
   enrollmentDate?: string;
-  student: { firstName: string; lastName: string; gender: string; dateOfBirth: string; schoolName: string; classGrade: string; photoUrl?: string };
+  student: { firstName: string; lastName: string; gender: string; dateOfBirth: string; schoolName: string; classGrade: string; photo?: string };
   parent:  { fullName: string; email: string; phone: string; whatsapp: string; address: string; occupation: string };
   programs: { programs: string[] };
   schedule: { schedule: string };
@@ -274,11 +274,11 @@ function DetailModal({ reg, onClose, onUpdate }: { reg: Registration; onClose: (
             <div className="bg-gray-50 rounded-2xl p-4">
               {/* Student Photo */}
               <div className="flex justify-center mb-4">
-                {reg.student.photoUrl ? (
+                {reg.student.photo ? (
                   <div className="relative">
                     <div className="w-24 h-24 rounded-2xl overflow-hidden border-4 border-white shadow-lg">
                       <img
-                        src={reg.student.photoUrl}
+                        src={reg.student.photo}
                         alt={`${reg.student.firstName} ${reg.student.lastName}`}
                         className="w-full h-full object-cover"
                       />
