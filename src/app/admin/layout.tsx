@@ -4,7 +4,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import {
   LayoutDashboard, Users, LogOut, ShieldCheck, Menu,
-  ChevronRight, Bell, Tag,
+  ChevronRight, Bell, Tag, X,
 } from 'lucide-react';
 import { useState } from 'react';
 
@@ -47,22 +47,31 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
       {/* ── Sidebar ─────────────────────────────────────────── */}
       <aside
-        className={`fixed top-0 left-0 h-full w-64 z-30 flex flex-col
+        className={`fixed top-0 left-0 h-[100dvh] min-h-[100dvh] w-64 z-30 flex flex-col
           bg-gradient-to-b from-slate-900 via-indigo-950 to-slate-900
           border-r border-white/5 shadow-2xl
-          transform transition-transform duration-300 ease-in-out
+          transform transition-transform duration-300 ease-in-out will-change-transform
           ${open ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 lg:static lg:z-auto`}
       >
         {/* Brand */}
         <div className="px-5 py-6 border-b border-white/8">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg shadow-indigo-500/30 flex-shrink-0">
-              <ShieldCheck size={20} className="text-white" />
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg shadow-indigo-500/30 flex-shrink-0">
+                <ShieldCheck size={20} className="text-white" />
+              </div>
+              <div>
+                <p className="text-white font-black text-sm tracking-tight leading-tight">Codereality</p>
+                <p className="text-indigo-300/60 text-[10px] font-semibold uppercase tracking-[2px]">Admin Portal</p>
+              </div>
             </div>
-            <div>
-              <p className="text-white font-black text-sm tracking-tight leading-tight">Codereality</p>
-              <p className="text-indigo-300/60 text-[10px] font-semibold uppercase tracking-[2px]">Admin Portal</p>
-            </div>
+            <button
+              onClick={() => setOpen(false)}
+              className="lg:hidden p-2 rounded-xl text-white/50 hover:text-white hover:bg-white/10 transition-colors"
+              aria-label="Close sidebar"
+            >
+              <X size={20} />
+            </button>
           </div>
         </div>
 
