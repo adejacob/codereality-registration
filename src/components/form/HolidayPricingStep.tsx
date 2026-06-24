@@ -8,9 +8,9 @@ import Card from '../ui/Card';
 const holidayPlans = [
   {
     id: 'holiday-explorer',
-    name: 'Explorer Track',
+    name: 'Starter Plan',
     mode: 'Online',
-    duration: '1 Month',
+    duration: '1 Month (4 Weeks)',
     totalFee: '₦50,000',
     features: [
       'Live interactive online classes',
@@ -24,9 +24,9 @@ const holidayPlans = [
   },
   {
     id: 'holiday-innovator',
-    name: 'Innovator Track',
+    name: 'STEM Explorer Program',
     mode: 'Online',
-    duration: '2 Months',
+    duration: '2 Months (8 Weeks)',
     totalFee: '₦80,000',
     features: [
       'Advanced online coding curriculum',

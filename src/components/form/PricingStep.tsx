@@ -5,6 +5,34 @@ import { useFormContext, Controller } from 'react-hook-form';
 
 const pricingPlans = [
   {
+    id: 'starter',
+    name: 'Starter Plan',
+    duration: '1 Month (4 Weeks)',
+    totalFee: '₦50,000',
+    features: [
+      'Introduction to STEM fundamentals',
+      'Hands-on beginner coding projects',
+      'Creative problem-solving activities',
+      'Certificate of Participation',
+      'Flexible learning schedule'
+    ],
+    popular: false,
+  },
+  {
+    id: 'stem-explorer',
+    name: 'STEM Explorer Program',
+    duration: '2 Months (8 Weeks)',
+    totalFee: '₦80,000',
+    features: [
+      'Project-based STEM curriculum',
+      'Coding, robotics & AI fundamentals',
+      'Real-world applications & activities',
+      'Skill certification on completion',
+      'Perfect for semester break learning'
+    ],
+    popular: true,
+  },
+  {
     id: 'growth',
     name: 'Growth Plan',
     duration: '3 Months (12 Weeks)',
@@ -16,20 +44,6 @@ const pricingPlans = [
       'Personalized learning pathway',
       'Access to all course materials & resources',
       'Certificate of Participation upon completion'
-    ],
-    popular: true,
-  },
-  {
-    id: 'short',
-    name: 'Short Program',
-    duration: '2 Months (8 Weeks)',
-    totalFee: '₦100,000',
-    features: [
-      'Intensive focused learning track',
-      'Project-based curriculum with real-world applications',
-      'Skill certification on completion',
-      'Flexible scheduling options',
-      'Perfect for holiday or semester break learning'
     ],
     popular: false,
   },

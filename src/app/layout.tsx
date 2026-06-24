@@ -15,6 +15,11 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Register - Codereality Academy",
   description: "Join Codereality Academy's STEM programs and equip your child with the digital, creative, and problem-solving skills needed for tomorrow's world.",
+  icons: {
+    icon: '/title-logo.jpeg',
+    shortcut: '/title-logo.jpeg',
+    apple: '/title-logo.jpeg',
+  },
 };
 
 export default function RootLayout({

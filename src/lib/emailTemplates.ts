@@ -39,6 +39,8 @@ function formatPayment(p: string) {
 
 function formatPlan(planId?: string): { name: string; amount: string; duration?: string } {
   const plans: Record<string, { name: string; amount: string; duration?: string }> = {
+    starter: { name: 'Starter Plan', amount: '₦50,000', duration: '1 Month' },
+    'stem-explorer': { name: 'STEM Explorer Program', amount: '₦80,000', duration: '2 Months' },
     growth: { name: 'Growth Plan', amount: '₦150,000', duration: '3 Months' },
     short: { name: 'Short Program', amount: '₦100,000', duration: '2 Months' },
     mastery: { name: 'Mastery Plan', amount: '₦250,000', duration: '6 Months' },

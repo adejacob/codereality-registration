@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { Bot, Code, Brain, Box, Gamepad2, Cpu } from 'lucide-react';
+import Image from 'next/image';
 import Button from '../ui/Button';
 import { useRouter } from 'next/navigation';
 
@@ -82,6 +83,24 @@ export default function Hero() {
           transition={{ duration: 0.8 }}
           className="text-center max-w-4xl mx-auto"
         >
+          <motion.div
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            transition={{ delay: 0.1, type: "spring", stiffness: 200 }}
+            className="mb-6"
+          >
+            <div className="w-20 h-20 md:w-24 md:h-24 mx-auto rounded-3xl overflow-hidden bg-white shadow-xl shadow-indigo-500/20">
+              <Image
+                src="/title-logo.jpeg"
+                alt="Codereality Academy"
+                width={96}
+                height={96}
+                className="w-full h-full object-cover"
+                priority
+              />
+            </div>
+          </motion.div>
+
           <motion.div
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}

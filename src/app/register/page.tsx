@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Image from 'next/image';
 import RegistrationForm from '@/components/form/RegistrationForm';
 
 export const metadata: Metadata = {
@@ -13,8 +14,15 @@ export default function RegisterPage() {
       <header className="bg-white border-b border-gray-100 px-4 py-4 sticky top-0 z-20 shadow-sm">
         <div className="max-w-5xl mx-auto flex items-center justify-between">
           <a href="/" className="flex items-center gap-2.5">
-            <div className="w-9 h-9 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-xl flex items-center justify-center text-white font-black text-sm shadow">
-              CR
+            <div className="w-9 h-9 rounded-xl overflow-hidden bg-white shadow">
+              <Image
+                src="/title-logo.jpeg"
+                alt="Codereality Academy"
+                width={36}
+                height={36}
+                className="w-full h-full object-cover"
+                priority
+              />
             </div>
             <div className="leading-tight">
               <p className="font-black text-gray-900 text-sm tracking-tight">Codereality</p>

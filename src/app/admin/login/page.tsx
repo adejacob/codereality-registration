@@ -3,7 +3,8 @@
 import { useState, FormEvent, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { motion } from 'framer-motion';
-import { Lock, Eye, EyeOff, Loader2, ShieldCheck } from 'lucide-react';
+import { Lock, Eye, EyeOff, Loader2 } from 'lucide-react';
+import Image from 'next/image';
 
 function LoginForm() {
   const router = useRouter();
@@ -59,8 +60,15 @@ function LoginForm() {
         <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-8 shadow-2xl">
           {/* Logo */}
           <div className="text-center mb-8">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-indigo-400 to-purple-500 rounded-2xl mb-4 shadow-lg">
-              <ShieldCheck className="text-white" size={32} />
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl overflow-hidden bg-white shadow-lg mb-4">
+              <Image
+                src="/title-logo.jpeg"
+                alt="Codereality Academy"
+                width={64}
+                height={64}
+                className="w-full h-full object-cover"
+                priority
+              />
             </div>
             <h1 className="text-2xl font-bold text-white">Admin Portal</h1>
             <p className="text-white/60 text-sm mt-1">Codereality Academy</p>

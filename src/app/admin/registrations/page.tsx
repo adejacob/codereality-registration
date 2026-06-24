@@ -21,7 +21,7 @@ interface Registration {
   parent:  { fullName: string; email: string; phone: string; whatsapp: string; address: string; occupation: string };
   programs: { programs: string[] };
   schedule: { schedule: string };
-  payment:  { paymentType: string; coupon?: string; selectedPlan?: 'growth' | 'short' | 'mastery' | 'platinum' | 'holiday-explorer' | 'holiday-innovator' };
+  payment:  { paymentType: string; coupon?: string; selectedPlan?: 'starter' | 'stem-explorer' | 'growth' | 'short' | 'mastery' | 'platinum' | 'holiday-explorer' | 'holiday-innovator' };
   createdAt: string;
 }
 
@@ -340,10 +340,12 @@ function DetailModal({ reg, onClose, onUpdate }: { reg: Registration; onClose: (
                   <Field 
                     label="Selected Plan" 
                     value={{
-                      growth: 'Growth Plan (₦150,000) - 3 Months',
-                      short: 'Short Program (₦100,000) - 2 Months',
-                      mastery: 'Mastery Plan (₦250,000) - 6 Months',
-                      platinum: 'Platinum Plan (₦300,000) - 6 Months',
+                      starter: 'Starter Plan (₦50,000) - 1 Month (4 Weeks)',
+                      'stem-explorer': 'STEM Explorer Program (₦80,000) - 2 Months (8 Weeks)',
+                      growth: 'Growth Plan (₦150,000) - 3 Months (12 Weeks)',
+                      short: 'Short Program (₦100,000) - 2 Months (8 Weeks)',
+                      mastery: 'Mastery Plan (₦250,000) - 6 Months (12 Weeks)',
+                      platinum: 'Platinum Plan (₦300,000) - 6 Months (24 Weeks)',
                       'holiday-explorer': 'Holiday Explorer Track (₦50,000) - 1 Month Online',
                       'holiday-innovator': 'Holiday Innovator Track (₦80,000) - 2 Months Online',
                     }[reg.payment.selectedPlan] || reg.payment.selectedPlan} 

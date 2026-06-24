@@ -98,6 +98,8 @@ export async function POST(request: NextRequest) {
 
     // Get plan amount for email
     const planAmounts: Record<string, string> = {
+      starter: '₦50,000',
+      'stem-explorer': '₦80,000',
       growth: '₦150,000',
       short: '₦100,000',
       mastery: '₦250,000',

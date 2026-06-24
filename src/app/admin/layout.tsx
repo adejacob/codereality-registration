@@ -6,6 +6,7 @@ import {
   LayoutDashboard, Users, LogOut, ShieldCheck, Menu,
   ChevronRight, Bell, Tag, X,
 } from 'lucide-react';
+import Image from 'next/image';
 import { useState } from 'react';
 
 const navItems = [
@@ -57,8 +58,15 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         <div className="px-5 py-6 border-b border-white/8">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg shadow-indigo-500/30 flex-shrink-0">
-                <ShieldCheck size={20} className="text-white" />
+              <div className="w-10 h-10 rounded-2xl overflow-hidden bg-white flex items-center justify-center shadow-lg shadow-indigo-500/30 flex-shrink-0">
+                <Image
+                  src="/title-logo.jpeg"
+                  alt="Codereality Academy"
+                  width={40}
+                  height={40}
+                  className="w-full h-full object-cover"
+                  priority
+                />
               </div>
               <div>
                 <p className="text-white font-black text-sm tracking-tight leading-tight">Codereality</p>

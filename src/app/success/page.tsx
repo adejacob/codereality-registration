@@ -4,6 +4,7 @@ import { useEffect, useRef, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { CheckCircle, ArrowRight, Mail, Copy, Check } from 'lucide-react';
+import Image from 'next/image';
 import confetti from 'canvas-confetti';
 import { useState } from 'react';
 
@@ -111,13 +112,26 @@ function SuccessContent() {
       ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 flex items-start justify-center p-4 pt-10 pb-16">
+    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 flex items-start justify-center p-4 pt-8 pb-16">
       <motion.div
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.5 }}
         className="max-w-2xl w-full space-y-5"
       >
+        {/* Logo */}
+        <div className="flex justify-center">
+          <a href="/" className="w-16 h-16 rounded-2xl overflow-hidden bg-white shadow-lg shadow-indigo-500/10">
+            <Image
+              src="/title-logo.jpeg"
+              alt="Codereality Academy"
+              width={64}
+              height={64}
+              className="w-full h-full object-cover"
+              priority
+            />
+          </a>
+        </div>
         {/* Hero Card */}
         <div className="bg-white rounded-3xl shadow-2xl p-8 md:p-10 text-center border border-gray-100">
           <motion.div

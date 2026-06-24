@@ -39,6 +39,8 @@ export default function ReviewStep() {
   };
 
   const planAmounts: Record<string, string> = {
+    starter: '₦50,000',
+    'stem-explorer': '₦80,000',
     growth: '₦150,000',
     short: '₦100,000',
     mastery: '₦250,000',
@@ -48,6 +50,8 @@ export default function ReviewStep() {
   };
 
   const planNames: Record<string, string> = {
+    starter: 'Starter Plan',
+    'stem-explorer': 'STEM Explorer Program',
     growth: 'Growth Plan',
     short: 'Short Program',
     mastery: 'Mastery Plan',
