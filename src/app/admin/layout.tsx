@@ -47,12 +47,17 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       )}
 
       {/* ── Sidebar ─────────────────────────────────────────── */}
+      {/* Desktop: always-visible sticky sidebar that takes up space in the flex row */}
+      {/* Mobile: slide-in overlay */}
       <aside
-        className={`fixed top-0 left-0 h-[100dvh] min-h-[100dvh] w-64 z-30 flex flex-col
+        className={`
+          fixed top-0 left-0 z-30 h-screen w-64 flex flex-col flex-shrink-0
           bg-gradient-to-b from-slate-900 via-indigo-950 to-slate-900
           border-r border-white/5 shadow-2xl
-          transform transition-transform duration-300 ease-in-out will-change-transform
-          ${open ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 lg:static lg:z-auto`}
+          transition-transform duration-300 ease-in-out
+          ${open ? 'translate-x-0' : '-translate-x-full'}
+          lg:translate-x-0 lg:sticky lg:top-0 lg:z-auto lg:h-screen
+        `}
       >
         {/* Brand */}
         <div className="px-5 py-6 border-b border-white/8">
@@ -133,6 +138,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           </button>
         </div>
       </aside>
+
+      {/* Desktop sidebar spacer — keeps main content from going under the fixed sidebar */}
+      <div className="hidden lg:block w-64 flex-shrink-0" />
 
       {/* ── Main ────────────────────────────────────────────── */}
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
