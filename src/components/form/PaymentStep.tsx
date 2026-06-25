@@ -1,8 +1,9 @@
 'use client';
 
+import { useState, useRef } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { motion } from 'framer-motion';
-import { CreditCard, Calendar, Tag, CheckCircle } from 'lucide-react';
+import { CreditCard, Calendar, Tag, CheckCircle, XCircle, Loader2 } from 'lucide-react';
 import Card from '../ui/Card';
 
 const paymentOptions = [
@@ -10,11 +11,69 @@ const paymentOptions = [
   { id: 'installment', name: 'Installment Plan', description: 'Pay in convenient monthly installments', icon: Calendar, color: 'from-blue-500 to-indigo-500', comingSoon: true },
 ];
 
-export default function PaymentStep() {
-  const { register, watch, setValue, formState: { errors } } = useFormContext();
+export type CouponStatus = 'idle' | 'validating' | 'valid' | 'invalid';
+
+interface PaymentStepProps {
+  couponStatus: CouponStatus;
+  onCouponStatusChange: (status: CouponStatus) => void;
+}
+
+export default function PaymentStep({ couponStatus, onCouponStatusChange }: PaymentStepProps) {
+  const { register, watch, setValue, setError, clearErrors, formState: { errors } } = useFormContext();
   const selectedPayment = watch('payment.paymentType');
   const couponCode = watch('payment.coupon') || '';
-  const hasCoupon = couponCode.trim() !== '';
+
+  const [couponMessage, setCouponMessage] = useState('');
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const hasCoupon = couponCode.trim() !== '' && couponStatus === 'valid';
+
+  async function validateCoupon(code: string) {
+    const trimmed = code.trim();
+    if (!trimmed) {
+      onCouponStatusChange('idle');
+      setCouponMessage('');
+      clearErrors('payment.coupon' as any);
+      return;
+    }
+    onCouponStatusChange('validating');
+    setCouponMessage('');
+    try {
+      const res = await fetch('/api/coupons/validate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code: trimmed }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        onCouponStatusChange('valid');
+        setCouponMessage(data.data?.description || 'Coupon applied — no payment required.');
+        clearErrors('payment.coupon' as any);
+        setValue('payment.paymentType', undefined);
+      } else {
+        onCouponStatusChange('invalid');
+        setCouponMessage(data.message || 'Invalid coupon code.');
+        setError('payment.coupon' as any, { message: data.message || 'Invalid coupon code.' });
+      }
+    } catch {
+      onCouponStatusChange('invalid');
+      setCouponMessage('Could not validate coupon. Please try again.');
+      setError('payment.coupon' as any, { message: 'Could not validate coupon. Please try again.' });
+    }
+  }
+
+  function handleCouponChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const value = e.target.value;
+    onCouponStatusChange('idle');
+    setCouponMessage('');
+    clearErrors('payment.coupon' as any);
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    if (!value.trim()) {
+      setValue('payment.paymentType', undefined);
+      return;
+    }
+    debounceRef.current = setTimeout(() => validateCoupon(value), 800);
+  }
 
   const getError = () => {
     const error = errors.payment as any;
@@ -32,37 +91,57 @@ export default function PaymentStep() {
       )}
 
       {/* Coupon Code Input - Always show at top */}
-      <Card className="p-6 mb-6 border-amber-200">
+      <Card className={`p-6 mb-6 ${
+        couponStatus === 'valid' ? 'border-green-300' :
+        couponStatus === 'invalid' ? 'border-red-300' : 'border-amber-200'
+      }`}>
         <div className="flex items-start gap-4">
-          <div className="flex-shrink-0 p-3 rounded-xl bg-gradient-to-br from-amber-500 to-orange-500 text-white">
+          <div className={`flex-shrink-0 p-3 rounded-xl bg-gradient-to-br text-white ${
+            couponStatus === 'valid' ? 'from-green-500 to-emerald-500' :
+            couponStatus === 'invalid' ? 'from-red-500 to-rose-500' :
+            'from-amber-500 to-orange-500'
+          }`}>
             <Tag size={24} />
           </div>
           <div className="flex-1">
             <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
               Have a Coupon Code?
             </h3>
-            <input
-              type="text"
-              placeholder="Enter coupon code (optional)"
-              {...register('payment.coupon', {
-                onChange: (e) => {
-                  const value = e.target.value;
-                  if (value.trim()) {
-                    // Clear payment selection when coupon is entered
-                    setValue('payment.paymentType', undefined);
-                  }
-                }
-              })}
-              className="w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 font-mono uppercase"
-            />
-            {hasCoupon && (
+            <div className="relative">
+              <input
+                type="text"
+                placeholder="Enter coupon code (optional)"
+                {...register('payment.coupon', { onChange: handleCouponChange })}
+                className={`w-full px-4 py-3 pr-10 rounded-xl border bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-200 font-mono uppercase ${
+                  couponStatus === 'valid' ? 'border-green-400 focus:ring-green-400' :
+                  couponStatus === 'invalid' ? 'border-red-400 focus:ring-red-400' :
+                  'border-gray-300 dark:border-gray-600 focus:ring-indigo-500'
+                }`}
+              />
+              <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                {couponStatus === 'validating' && <Loader2 size={18} className="animate-spin text-gray-400" />}
+                {couponStatus === 'valid'      && <CheckCircle size={18} className="text-green-500" />}
+                {couponStatus === 'invalid'    && <XCircle size={18} className="text-red-500" />}
+              </div>
+            </div>
+            {couponStatus === 'valid' && (
               <motion.div
-                initial={{ opacity: 0, y: -10 }}
+                initial={{ opacity: 0, y: -6 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="flex items-center gap-2 mt-3 text-green-600 text-sm"
+                className="flex items-center gap-2 mt-2 text-green-600 text-sm font-medium"
               >
-                <CheckCircle size={16} />
-                <span>Coupon applied - Payment not required</span>
+                <CheckCircle size={15} />
+                <span>{couponMessage}</span>
+              </motion.div>
+            )}
+            {couponStatus === 'invalid' && (
+              <motion.div
+                initial={{ opacity: 0, y: -6 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="flex items-center gap-2 mt-2 text-red-600 text-sm font-medium"
+              >
+                <XCircle size={15} />
+                <span>{couponMessage}</span>
               </motion.div>
             )}
           </div>
@@ -143,8 +222,8 @@ export default function PaymentStep() {
       </div>
       )}
 
-      {/* Free Registration Notice - Show when coupon is used */}
-      {hasCoupon && (
+      {/* Free Registration Notice - Only show when coupon is confirmed valid */}
+      {couponStatus === 'valid' && (
         <Card className="p-6 bg-green-50 dark:bg-green-900/20 border-green-200">
           <div className="flex items-start gap-4">
             <div className="flex-shrink-0 p-3 rounded-xl bg-green-500 text-white">
@@ -155,7 +234,7 @@ export default function PaymentStep() {
                 Free Registration
               </h3>
               <p className="text-green-700 dark:text-green-300 text-sm">
-                Your coupon code <span className="font-mono font-bold uppercase">{couponCode}</span> has been applied. 
+                Your coupon code <span className="font-mono font-bold uppercase">{couponCode}</span> has been applied.
                 No payment is required to complete your registration.
               </p>
             </div>

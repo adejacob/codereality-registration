@@ -10,7 +10,7 @@ import StudentInfoStep from './StudentInfoStep';
 import ParentInfoStep from './ParentInfoStep';
 import ProgramSelectionStep from './ProgramSelectionStep';
 import ScheduleStep from './ScheduleStep';
-import PaymentStep from './PaymentStep';
+import PaymentStep, { CouponStatus } from './PaymentStep';
 import PricingStep from './PricingStep';
 import HolidayPricingStep from './HolidayPricingStep';
 import ReviewStep from './ReviewStep';
@@ -29,6 +29,7 @@ export default function RegistrationForm({ standalone = false }: { standalone?: 
   const [currentStep, setCurrentStep] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState('');
+  const [couponStatus, setCouponStatus] = useState<CouponStatus>('idle');
 
   const methods = useForm<RegistrationFormData>({
     resolver: zodResolver(registrationSchema),
@@ -97,6 +98,13 @@ export default function RegistrationForm({ standalone = false }: { standalone?: 
     ];
 
     const isStepValid = await trigger(fieldsToValidate[currentStep] as any);
+
+    // On the Payment step, block navigation if coupon is typed but not yet confirmed valid
+    if (currentStep === 4) {
+      const couponVal = (methods.getValues('payment.coupon') ?? '').trim();
+      if (couponVal && couponStatus !== 'valid') return;
+    }
+
     if (isStepValid) {
       let nextStep = currentStep + 1;
       
@@ -196,7 +204,7 @@ export default function RegistrationForm({ standalone = false }: { standalone?: 
       case 3:
         return <ScheduleStep />;
       case 4:
-        return <PaymentStep />;
+        return <PaymentStep couponStatus={couponStatus} onCouponStatusChange={setCouponStatus} />;
       case 5:
         return isHolidayBootcamp ? <HolidayPricingStep /> : <PricingStep />;
       case 6:
