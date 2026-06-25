@@ -1,9 +1,5 @@
 import { z } from 'zod';
 
-const ALLOWED_PROGRAMS = [
-  'coding', 'robotics', 'ai', 'web', 'mobile', 'game', '3d', 'graphic', 'digital', 'scratch', 'workshop',
-] as const;
-
 export const studentSchema = z.object({
   firstName:   z.string().min(2, 'First name must be at least 2 characters').max(60),
   lastName:    z.string().min(2, 'Last name must be at least 2 characters').max(60),
@@ -25,9 +21,9 @@ export const parentSchema = z.object({
 
 export const programSchema = z.object({
   programs: z
-    .array(z.enum(ALLOWED_PROGRAMS, { message: 'Invalid program selected' }))
+    .array(z.string().min(1))
     .min(1, 'Please select at least one program')
-    .max(10),
+    .max(20),
 });
 
 export const scheduleSchema = z.object({
@@ -50,24 +46,13 @@ export const registrationSchema = z.object({
   payment: paymentSchema,
 }).refine(
   (data) => {
-    // On final submission, require selectedPlan if no coupon and not a workshop
+    // selectedPlan not required when a coupon is provided (free / workshop registrations)
     const hasCoupon = data.payment.coupon && data.payment.coupon.trim() !== '';
-    const isWorkshop = data.programs.programs.length === 1 && data.programs.programs[0] === 'workshop';
-    return hasCoupon || isWorkshop || data.payment.selectedPlan !== undefined;
+    return hasCoupon || data.payment.selectedPlan !== undefined;
   },
   {
     message: 'Please select a pricing plan before submitting',
     path: ['payment', 'selectedPlan'],
-  }
-).refine(
-  (data) => {
-    // Schedule required unless workshop program
-    const isWorkshop = data.programs.programs.length === 1 && data.programs.programs[0] === 'workshop';
-    return isWorkshop || data.schedule.schedule !== undefined;
-  },
-  {
-    message: 'Please select a schedule preference',
-    path: ['schedule', 'schedule'],
   }
 );
 

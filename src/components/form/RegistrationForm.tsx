@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm, FormProvider } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -73,9 +73,17 @@ export default function RegistrationForm({ standalone = false }: { standalone?: 
   const selectedSchedule = watch('schedule.schedule');
   const isHolidayBootcamp = selectedSchedule === 'holiday';
 
-  // Workshop program skips schedule step
+  // Free program IDs fetched once — free programs skip schedule & pricing steps
+  const [freeProgramIds, setFreeProgramIds] = useState<string[]>(['workshop']);
+  useEffect(() => {
+    fetch('/api/programs')
+      .then(r => r.json())
+      .then(d => { if (d.success) setFreeProgramIds(d.data.filter((p: { isFree: boolean }) => p.isFree).map((p: { id: string }) => p.id)); })
+      .catch(() => {});
+  }, []);
+
   const selectedPrograms: string[] = watch('programs.programs') || [];
-  const isWorkshopOnly = selectedPrograms.length === 1 && selectedPrograms[0] === 'workshop';
+  const isWorkshopOnly = selectedPrograms.length === 1 && freeProgramIds.includes(selectedPrograms[0]);
 
   const handleNext = async () => {
     const fieldsToValidate = [
