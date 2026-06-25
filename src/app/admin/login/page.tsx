@@ -59,18 +59,20 @@ function LoginForm() {
         <div className="bg-white rounded-[20px] p-8" style={{ border: '1px solid #E7DCCB', boxShadow: '0 8px 40px rgba(215,119,6,0.12), 0 2px 8px rgba(0,0,0,0.04)' }}>
           {/* Logo */}
           <div className="text-center mb-8">
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl overflow-hidden bg-white mb-4" style={{ boxShadow: '0 4px 16px rgba(215,119,6,0.25)', border: '2px solid #E7DCCB' }}>
-              <Image
-                src="/title-logo.jpeg"
-                alt="Codereality Academy"
-                width={64}
-                height={64}
-                className="w-full h-full object-cover"
-                priority
-              />
-            </div>
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest mb-3" style={{ backgroundColor: '#D97706', color: '#fff' }}>
-              Admin Portal
+            <div className="flex flex-col items-center gap-3 mb-4">
+              <div className="w-16 h-16 rounded-2xl overflow-hidden bg-white" style={{ boxShadow: '0 4px 16px rgba(215,119,6,0.25)', border: '2px solid #E7DCCB' }}>
+                <Image
+                  src="/title-logo.jpeg"
+                  alt="Codereality Academy"
+                  width={64}
+                  height={64}
+                  className="w-full h-full object-cover"
+                  priority
+                />
+              </div>
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest" style={{ backgroundColor: '#D97706', color: '#fff' }}>
+                Admin Portal
+              </span>
             </div>
             <h1 className="text-2xl font-black tracking-tight" style={{ color: '#1F2937' }}>Welcome Back</h1>
             <p className="text-sm mt-1" style={{ color: '#6B7280' }}>Sign in to the Codereality Academy admin panel</p>

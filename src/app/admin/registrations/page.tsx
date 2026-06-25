@@ -20,7 +20,7 @@ interface Registration {
   student: { firstName: string; lastName: string; gender: string; dateOfBirth: string; schoolName: string; classGrade: string; photo?: string };
   parent:  { fullName: string; email: string; phone: string; whatsapp: string; address: string; occupation: string };
   programs: { programs: string[] };
-  schedule: { schedule: string };
+  schedule: { schedule?: string };
   payment:  { paymentType: string; coupon?: string; selectedPlan?: 'starter' | 'stem-explorer' | 'growth' | 'short' | 'mastery' | 'platinum' | 'holiday-explorer' | 'holiday-innovator' };
   createdAt: string;
 }
@@ -30,7 +30,7 @@ interface Pagination { total: number; page: number; pages: number; limit: number
 /* ─── Constants ─────────────────────────────────────────────── */
 const STATUSES = ['', 'pending', 'contacted', 'approved', 'enrolled', 'rejected', 'coupon'] as const;
 
-const PROGRAMS = ['', 'coding', 'robotics', 'ai', 'web', 'mobile', 'game', '3d', 'graphic', 'digital', 'scratch'];
+const PROGRAMS = ['', 'coding', 'robotics', 'ai', 'web', 'mobile', 'game', '3d', 'graphic', 'digital', 'scratch', 'workshop'];
 
 const PAYMENT_STATUS_META: Record<string, { label: string; color: string }> = {
   pending_payment:    { label: 'Pending Payment',    color: 'bg-orange-100 text-orange-700 border-orange-200' },
@@ -339,7 +339,7 @@ function DetailModal({ reg, onClose, onUpdate }: { reg: Registration; onClose: (
                   ))}
                 </div>
               </div>
-              <Field label="Schedule"     value={reg.schedule.schedule}  />
+              <Field label="Schedule"     value={reg.schedule?.schedule || 'Online (Free Program)'}  />
               <Field label="Payment Type" value={reg.payment.paymentType} />
               {reg.payment.selectedPlan && (
                 <>
@@ -734,7 +734,7 @@ export default function RegistrationsPage() {
                             )}
                           </div>
                         </td>
-                        <td className="px-5 py-4 hidden xl:table-cell text-xs capitalize" style={{ color: '#6B7280' }}>{r.schedule.schedule}</td>
+                        <td className="px-5 py-4 hidden xl:table-cell text-xs capitalize" style={{ color: '#6B7280' }}>{r.schedule?.schedule || '—'}</td>
                         <td className="px-5 py-4">
                           <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border capitalize ${meta?.color ?? 'bg-gray-100 text-gray-700 border-gray-200'}`}>
                             {Icon && <Icon size={11} />} {r.status}
