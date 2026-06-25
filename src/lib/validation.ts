@@ -46,9 +46,12 @@ export const registrationSchema = z.object({
   payment: paymentSchema,
 }).refine(
   (data) => {
-    // selectedPlan not required when a coupon is provided (free / workshop registrations)
+    // selectedPlan not required when:
+    // 1. A coupon is provided (free / workshop registrations), OR
+    // 2. No schedule was selected (free program that skips schedule+pricing steps)
     const hasCoupon = data.payment.coupon && data.payment.coupon.trim() !== '';
-    return hasCoupon || data.payment.selectedPlan !== undefined;
+    const hasNoSchedule = !data.schedule.schedule;
+    return hasCoupon || hasNoSchedule || data.payment.selectedPlan !== undefined;
   },
   {
     message: 'Please select a pricing plan before submitting',

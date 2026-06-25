@@ -88,8 +88,8 @@ export async function POST(request: NextRequest) {
       await Coupon.findByIdAndUpdate(coupon._id, { $inc: { usedCount: 1 } });
     }
 
-    // Set default payment type if coupon is used but no payment type selected
-    if (couponData && !validatedData.payment.paymentType) {
+    // Set default payment type if coupon is used or free program (no schedule) with no payment type selected
+    if (!validatedData.payment.paymentType) {
       validatedData.payment.paymentType = 'full';
     }
 
