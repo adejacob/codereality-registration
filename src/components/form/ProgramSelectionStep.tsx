@@ -39,7 +39,17 @@ export default function ProgramSelectionStep() {
   useEffect(() => {
     fetch('/api/programs')
       .then(r => r.json())
-      .then(d => { if (d.success) setPrograms(d.data); })
+      .then(d => {
+        if (d.success) {
+          // Sort: free programs first, then the rest
+          const sorted = [...d.data].sort((a: ApiProgram, b: ApiProgram) => {
+            if (a.isFree && !b.isFree) return -1;
+            if (!a.isFree && b.isFree) return 1;
+            return 0;
+          });
+          setPrograms(sorted);
+        }
+      })
       .catch(() => {})
       .finally(() => setLoading(false));
   }, []);
@@ -131,26 +141,26 @@ export default function ProgramSelectionStep() {
                   }`}
                   onClick={() => handleProgramClick(program)}
                 >
-                  {program.isFree && (
-                    <div className="absolute top-3 right-3 flex flex-col items-end gap-1">
-                      <span className="px-2.5 py-1 bg-emerald-500 text-white text-xs font-bold rounded-full">
-                        FREE
-                      </span>
-                      {program.isLimited && (
-                        <span className="flex items-center gap-1 px-2 py-0.5 bg-red-500 text-white text-[10px] font-bold rounded-full animate-pulse">
-                          <AlertTriangle size={9} /> LIMITED SPOTS
-                        </span>
-                      )}
-                    </div>
-                  )}
                   <div className="flex items-start gap-4">
                     <div className={`flex-shrink-0 p-3 rounded-xl bg-gradient-to-br ${program.color} text-white`}>
                       <ProgramIcon name={program.icon} size={24} />
                     </div>
-                    <div className="flex-1">
-                      <h3 className={`font-semibold dark:text-white mb-1 ${program.isFree ? 'text-emerald-800' : 'text-gray-900'}`}>
-                        {program.name}
-                      </h3>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex flex-wrap items-start gap-2 mb-1">
+                        <h3 className={`font-semibold dark:text-white ${program.isFree ? 'text-emerald-800' : 'text-gray-900'}`}>
+                          {program.name}
+                        </h3>
+                        {program.isFree && (
+                          <span className="flex-shrink-0 px-2.5 py-0.5 bg-emerald-500 text-white text-[10px] font-bold rounded-full">
+                            FREE
+                          </span>
+                        )}
+                        {program.isFree && program.isLimited && (
+                          <span className="flex-shrink-0 flex items-center gap-1 px-2 py-0.5 bg-red-500 text-white text-[10px] font-bold rounded-full animate-pulse">
+                            <AlertTriangle size={9} /> LIMITED SPOTS
+                          </span>
+                        )}
+                      </div>
                       <p className="text-xs text-gray-500 mb-2">{program.description}</p>
                       {program.isFree && program.isLimited && (
                         <p className="flex items-center gap-1 text-xs font-semibold text-red-600 mb-2">

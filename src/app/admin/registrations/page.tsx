@@ -617,19 +617,22 @@ export default function RegistrationsPage() {
                 style={{ borderColor: '#E7DCCB', color: '#1F2937' }}
               />
             </div>
-            {[{
-              value: status, onChange: setStatus,
-              options: [['', 'All Statuses'], ...STATUSES.filter(Boolean).map(s => [s, s === 'coupon' ? 'Coupon Registrations' : STATUS_META[s]?.label ?? s])]
-            }, {
-              value: program, onChange: setProgram,
-              options: [['', 'All Programs'], ...PROGRAMS.filter(Boolean).map(p => [p, p])]
-            }].map(({ value: v, onChange, options }, idx) => (
-              <select key={idx} value={v} onChange={(e) => onChange(e.target.value)}
-                className="px-3 py-2.5 text-sm rounded-xl border bg-white focus:outline-none focus:ring-2 focus:ring-[#D97706] focus:border-[#D97706] transition-all capitalize"
-                style={{ borderColor: '#E7DCCB', color: '#1F2937' }}>
-                {options.map(([val, label]) => <option key={val} value={val}>{label}</option>)}
-              </select>
-            ))}
+            <select value={status} onChange={(e) => setStatus(e.target.value)}
+              className="px-3 py-2.5 text-sm rounded-xl border bg-white focus:outline-none focus:ring-2 focus:ring-[#D97706] focus:border-[#D97706] transition-all"
+              style={{ borderColor: '#E7DCCB', color: '#1F2937' }}>
+              <option value="">All Statuses</option>
+              {STATUSES.filter(Boolean).map((s) => (
+                <option key={s} value={s}>{s === 'coupon' ? 'Coupon Registrations' : STATUS_META[s]?.label ?? s}</option>
+              ))}
+            </select>
+            <select value={program} onChange={(e) => setProgram(e.target.value)}
+              className="px-3 py-2.5 text-sm rounded-xl border bg-white focus:outline-none focus:ring-2 focus:ring-[#D97706] focus:border-[#D97706] transition-all capitalize"
+              style={{ borderColor: '#E7DCCB', color: '#1F2937' }}>
+              <option value="">All Programs</option>
+              {PROGRAMS.filter(Boolean).map((p) => (
+                <option key={p} value={p}>{p}</option>
+              ))}
+            </select>
             <input type="date" value={dateFrom} onChange={(e) => setDateFrom(e.target.value)}
               className="px-3 py-2.5 text-sm rounded-xl border bg-white focus:outline-none focus:ring-2 focus:ring-[#D97706] focus:border-[#D97706] transition-all"
               style={{ borderColor: '#E7DCCB', color: '#1F2937' }} />
