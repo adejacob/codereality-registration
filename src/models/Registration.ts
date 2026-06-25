@@ -65,11 +65,11 @@ const RegistrationSchema = new Schema<IRegistration>(
       schedule: {
         type: String,
         enum: ['weekend', 'after-school', 'holiday', 'private'],
-        required: true,
+        required: false,
       },
     },
     payment: {
-      paymentType: { type: String, enum: ['full', 'installment'], required: true },
+      paymentType: { type: String, enum: ['full', 'installment'], required: false },
       coupon:      { type: String },
       selectedPlan: {
         type: String,

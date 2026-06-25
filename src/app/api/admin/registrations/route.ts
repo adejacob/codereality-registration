@@ -16,11 +16,12 @@ export async function GET(request: NextRequest) {
 
   const { searchParams } = new URL(request.url);
   const VALID_STATUSES  = new Set(['pending', 'contacted', 'approved', 'enrolled', 'rejected']);
-  const VALID_PROGRAMS  = new Set(['coding', 'robotics', 'ai', 'web', 'mobile', 'game', '3d', 'graphic', 'digital', 'scratch']);
+  const VALID_PROGRAMS  = new Set(['coding', 'robotics', 'ai', 'web', 'mobile', 'game', '3d', 'graphic', 'digital', 'scratch', 'workshop']);
 
   const search   = searchParams.get('search') ?? '';
   const statusRaw  = searchParams.get('status') ?? '';
   const programRaw = searchParams.get('program') ?? '';
+  const couponFilter = searchParams.get('coupon') ?? '';
   const status   = VALID_STATUSES.has(statusRaw)  ? statusRaw  : '';
   const program  = VALID_PROGRAMS.has(programRaw) ? programRaw : '';
   const dateFrom = searchParams.get('dateFrom') ?? '';
@@ -36,6 +37,17 @@ export async function GET(request: NextRequest) {
     const query: Record<string, any> = {};
 
     if (status) query.status = status;
+
+    // Special "coupon" filter: registrations that used a coupon code
+    if (statusRaw === 'coupon') {
+      query['payment.coupon'] = { $exists: true, $ne: '' };
+    }
+
+    // Filter by specific coupon code
+    if (couponFilter) {
+      const safeCoupon = couponFilter.slice(0, 50).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      query['payment.coupon'] = { $regex: safeCoupon, $options: 'i' };
+    }
 
     if (program) query['programs.programs'] = program;
 
@@ -81,13 +93,14 @@ export async function GET(request: NextRequest) {
           pendingPayment:   { $sum: { $cond: [{ $eq: ['$paymentStatus', 'pending_payment']   }, 1, 0] } },
           paymentSubmitted: { $sum: { $cond: [{ $eq: ['$paymentStatus', 'payment_submitted'] }, 1, 0] } },
           paymentConfirmed: { $sum: { $cond: [{ $eq: ['$paymentStatus', 'payment_confirmed'] }, 1, 0] } },
+          couponRegistrations: { $sum: { $cond: [{ $and: [{ $ne: ['$payment.coupon', null] }, { $ne: ['$payment.coupon', ''] }] }, 1, 0] } },
         },
       },
     ]);
 
     const defaultStats = {
       total: 0, pending: 0, contacted: 0, approved: 0, enrolled: 0, rejected: 0,
-      pendingPayment: 0, paymentSubmitted: 0, paymentConfirmed: 0,
+      pendingPayment: 0, paymentSubmitted: 0, paymentConfirmed: 0, couponRegistrations: 0,
     };
 
     return NextResponse.json({

@@ -73,6 +73,10 @@ export default function RegistrationForm({ standalone = false }: { standalone?: 
   const selectedSchedule = watch('schedule.schedule');
   const isHolidayBootcamp = selectedSchedule === 'holiday';
 
+  // Workshop program skips schedule step
+  const selectedPrograms: string[] = watch('programs.programs') || [];
+  const isWorkshopOnly = selectedPrograms.length === 1 && selectedPrograms[0] === 'workshop';
+
   const handleNext = async () => {
     const fieldsToValidate = [
       ['student'],
@@ -88,8 +92,13 @@ export default function RegistrationForm({ standalone = false }: { standalone?: 
     if (isStepValid) {
       let nextStep = currentStep + 1;
       
-      // Skip pricing step if coupon is applied
-      if (nextStep === 5 && hasCoupon) {
+      // Workshop: skip Schedule step (3) — go straight to Payment (4)
+      if (nextStep === 3 && isWorkshopOnly) {
+        nextStep = 4;
+      }
+
+      // Skip pricing step if coupon is applied or workshop
+      if (nextStep === 5 && (hasCoupon || isWorkshopOnly)) {
         nextStep = 6; // Skip to Review
       }
       
@@ -100,9 +109,14 @@ export default function RegistrationForm({ standalone = false }: { standalone?: 
   const handlePrevious = () => {
     let prevStep = currentStep - 1;
     
-    // Skip pricing step when going back if coupon is applied
-    if (prevStep === 5 && hasCoupon) {
-      prevStep = 4; // Go back to Payment
+    // Skip pricing step when going back if coupon is applied or workshop
+    if (prevStep === 5 && (hasCoupon || isWorkshopOnly)) {
+      prevStep = 4;
+    }
+
+    // Workshop: skip Schedule step when going back from Payment
+    if (prevStep === 3 && isWorkshopOnly) {
+      prevStep = 2;
     }
     
     setCurrentStep(Math.max(prevStep, 0));

@@ -1,10 +1,11 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   Plus, Trash2, ToggleLeft, ToggleRight, Tag, Percent, DollarSign,
-  Calendar, Users, Loader2, AlertCircle, CheckCircle, X,
+  Calendar, Users, Loader2, AlertCircle, X, ChevronDown, ChevronUp,
+  UserX,
 } from 'lucide-react';
 
 interface Coupon {
@@ -20,10 +21,23 @@ interface Coupon {
   createdAt: string;
 }
 
+interface CouponStudent {
+  _id: string;
+  registrationId: string;
+  student: { firstName: string; lastName: string };
+  parent: { email: string };
+  createdAt: string;
+  status: string;
+}
+
 export default function CouponsPage() {
   const [coupons, setCoupons] = useState<Coupon[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [expandedCoupon, setExpandedCoupon] = useState<string | null>(null);
+  const [couponStudents, setCouponStudents] = useState<Record<string, CouponStudent[]>>({});
+  const [loadingStudents, setLoadingStudents] = useState<string | null>(null);
+  const [removingStudent, setRemovingStudent] = useState<string | null>(null);
   
   // Create modal state
   const [showCreateModal, setShowCreateModal] = useState(false);
@@ -151,6 +165,52 @@ export default function CouponsPage() {
     }
   }
 
+  async function fetchCouponStudents(code: string) {
+    if (couponStudents[code]) {
+      setExpandedCoupon(expandedCoupon === code ? null : code);
+      return;
+    }
+    setLoadingStudents(code);
+    setExpandedCoupon(code);
+    try {
+      const res = await fetch(`/api/admin/registrations?coupon=${encodeURIComponent(code)}&limit=100`);
+      const data = await res.json();
+      if (data.success) {
+        setCouponStudents(prev => ({ ...prev, [code]: data.data }));
+      }
+    } catch {
+      /* silent */
+    } finally {
+      setLoadingStudents(null);
+    }
+  }
+
+  async function removeStudentFromCoupon(regId: string, couponCode: string) {
+    if (!confirm('Remove this student from the coupon? This clears their coupon code from the registration.')) return;
+    setRemovingStudent(regId);
+    try {
+      const res = await fetch(`/api/admin/registrations/${regId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 'payment.coupon': '' }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setCouponStudents(prev => ({
+          ...prev,
+          [couponCode]: (prev[couponCode] ?? []).filter(s => s._id !== regId),
+        }));
+        setCoupons(prev => prev.map(c =>
+          c.code === couponCode ? { ...c, usedCount: Math.max(0, c.usedCount - 1) } : c
+        ));
+      }
+    } catch {
+      alert('Failed to remove student from coupon');
+    } finally {
+      setRemovingStudent(null);
+    }
+  }
+
   function formatDiscount(type: string, value: number) {
     if (type === 'percentage') {
       return `${value}% OFF`;
@@ -236,6 +296,12 @@ export default function CouponsPage() {
                     onDelete={() => deleteCoupon(coupon._id)}
                     isToggling={togglingId === coupon._id}
                     isDeleting={deletingId === coupon._id}
+                    onViewStudents={() => fetchCouponStudents(coupon.code)}
+                    isExpanded={expandedCoupon === coupon.code}
+                    students={couponStudents[coupon.code]}
+                    loadingStudents={loadingStudents === coupon.code}
+                    onRemoveStudent={(regId) => removeStudentFromCoupon(regId, coupon.code)}
+                    removingStudent={removingStudent}
                   />
                 ))}
               </div>
@@ -258,6 +324,12 @@ export default function CouponsPage() {
                     isToggling={togglingId === coupon._id}
                     isDeleting={deletingId === coupon._id}
                     isInactive
+                    onViewStudents={() => fetchCouponStudents(coupon.code)}
+                    isExpanded={expandedCoupon === coupon.code}
+                    students={couponStudents[coupon.code]}
+                    loadingStudents={loadingStudents === coupon.code}
+                    onRemoveStudent={(regId) => removeStudentFromCoupon(regId, coupon.code)}
+                    removingStudent={removingStudent}
                   />
                 ))}
               </div>
@@ -432,6 +504,12 @@ function CouponCard({
   isToggling,
   isDeleting,
   isInactive,
+  onViewStudents,
+  isExpanded,
+  students,
+  loadingStudents,
+  onRemoveStudent,
+  removingStudent,
 }: {
   coupon: Coupon;
   onToggle: () => void;
@@ -439,111 +517,175 @@ function CouponCard({
   isToggling: boolean;
   isDeleting: boolean;
   isInactive?: boolean;
+  onViewStudents: () => void;
+  isExpanded: boolean;
+  students?: CouponStudent[];
+  loadingStudents: boolean;
+  onRemoveStudent: (regId: string) => void;
+  removingStudent: string | null;
 }) {
   const isExpired = coupon.expiresAt && new Date() > new Date(coupon.expiresAt);
   const isLimitReached = coupon.usageLimit !== null && coupon.usedCount >= coupon.usageLimit;
 
   return (
     <div
-      className={`bg-white rounded-xl p-5 border transition-all ${
+      className={`bg-white rounded-xl border transition-all ${
         isInactive ? 'border-gray-200 opacity-75' : 'border-indigo-100 shadow-sm'
       }`}
     >
-      <div className="flex flex-col sm:flex-row sm:items-center gap-4">
-        {/* Code & Badge */}
-        <div className="flex items-center gap-3">
-          <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${
-            isInactive ? 'bg-gray-100' : 'bg-indigo-50'
-          }`}>
-            {coupon.discountType === 'percentage' ? (
-              <Percent className={isInactive ? 'text-gray-500' : 'text-indigo-600'} size={22} />
-            ) : (
-              <DollarSign className={isInactive ? 'text-gray-500' : 'text-indigo-600'} size={22} />
-            )}
-          </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <span className={`font-mono font-bold text-lg ${isInactive ? 'text-gray-500' : 'text-gray-900'}`}>
-                {coupon.code}
-              </span>
-              {!isInactive && (
-                <span className="px-2 py-0.5 bg-green-100 text-green-700 text-xs font-medium rounded-full">
-                  Active
-                </span>
-              )}
-              {isInactive && (
-                <span className="px-2 py-0.5 bg-gray-100 text-gray-600 text-xs font-medium rounded-full">
-                  Inactive
-                </span>
+      <div className="p-5">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+          {/* Code & Badge */}
+          <div className="flex items-center gap-3">
+            <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${
+              isInactive ? 'bg-gray-100' : 'bg-indigo-50'
+            }`}>
+              {coupon.discountType === 'percentage' ? (
+                <Percent className={isInactive ? 'text-gray-500' : 'text-indigo-600'} size={22} />
+              ) : (
+                <DollarSign className={isInactive ? 'text-gray-500' : 'text-indigo-600'} size={22} />
               )}
             </div>
-            {coupon.description && (
-              <p className="text-sm text-gray-500">{coupon.description}</p>
+            <div>
+              <div className="flex items-center gap-2">
+                <span className={`font-mono font-bold text-lg ${isInactive ? 'text-gray-500' : 'text-gray-900'}`}>
+                  {coupon.code}
+                </span>
+                {!isInactive && (
+                  <span className="px-2 py-0.5 bg-green-100 text-green-700 text-xs font-medium rounded-full">
+                    Active
+                  </span>
+                )}
+                {isInactive && (
+                  <span className="px-2 py-0.5 bg-gray-100 text-gray-600 text-xs font-medium rounded-full">
+                    Inactive
+                  </span>
+                )}
+              </div>
+              {coupon.description && (
+                <p className="text-sm text-gray-500">{coupon.description}</p>
+              )}
+            </div>
+          </div>
+
+          {/* Stats */}
+          <div className="flex flex-wrap items-center gap-4 sm:ml-auto">
+            <div className="flex items-center gap-1.5 text-sm text-gray-600">
+              {coupon.discountType === 'percentage' ? <Percent size={14} /> : <DollarSign size={14} />}
+              <span className="font-semibold">
+                {coupon.discountType === 'percentage' ? `${coupon.discountValue}%` : `₦${coupon.discountValue}`}
+              </span>
+              <span className="text-gray-400">off</span>
+            </div>
+
+            <button
+              onClick={onViewStudents}
+              className="flex items-center gap-1.5 text-sm text-indigo-600 hover:text-indigo-800 font-medium"
+            >
+              <Users size={14} />
+              <span>
+                {coupon.usedCount}
+                {coupon.usageLimit !== null && ` / ${coupon.usageLimit}`} used
+              </span>
+              {isExpanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+            </button>
+
+            <div className="flex items-center gap-1.5 text-sm text-gray-600">
+              <Calendar size={14} />
+              <span>{coupon.expiresAt ? new Date(coupon.expiresAt).toLocaleDateString() : 'No expiry'}</span>
+            </div>
+
+            {(isExpired || isLimitReached) && !isInactive && (
+              <span className="px-2 py-1 bg-amber-50 text-amber-700 text-xs font-medium rounded-lg">
+                {isExpired ? 'Expired' : 'Limit reached'}
+              </span>
             )}
           </div>
-        </div>
 
-        {/* Stats */}
-        <div className="flex flex-wrap items-center gap-4 sm:ml-auto">
-          <div className="flex items-center gap-1.5 text-sm text-gray-600">
-            {coupon.discountType === 'percentage' ? <Percent size={14} /> : <DollarSign size={14} />}
-            <span className="font-semibold">
-              {coupon.discountType === 'percentage' ? `${coupon.discountValue}%` : `₦${coupon.discountValue}`}
-            </span>
-            <span className="text-gray-400">off</span>
+          {/* Actions */}
+          <div className="flex items-center gap-2 sm:pl-4 sm:border-l border-gray-200">
+            <button
+              onClick={onToggle}
+              disabled={isToggling}
+              className={`p-2 rounded-lg transition-colors ${
+                coupon.isActive
+                  ? 'bg-green-50 text-green-600 hover:bg-green-100'
+                  : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
+              }`}
+              title={coupon.isActive ? 'Deactivate' : 'Activate'}
+            >
+              {isToggling ? (
+                <Loader2 size={18} className="animate-spin" />
+              ) : coupon.isActive ? (
+                <ToggleRight size={18} />
+              ) : (
+                <ToggleLeft size={18} />
+              )}
+            </button>
+
+            <button
+              onClick={onDelete}
+              disabled={isDeleting}
+              className="p-2 bg-red-50 text-red-600 hover:bg-red-100 rounded-lg transition-colors"
+              title="Delete coupon"
+            >
+              {isDeleting ? <Loader2 size={18} className="animate-spin" /> : <Trash2 size={18} />}
+            </button>
           </div>
-
-          <div className="flex items-center gap-1.5 text-sm text-gray-600">
-            <Users size={14} />
-            <span>
-              {coupon.usedCount}
-              {coupon.usageLimit !== null && ` / ${coupon.usageLimit}`} used
-            </span>
-          </div>
-
-          <div className="flex items-center gap-1.5 text-sm text-gray-600">
-            <Calendar size={14} />
-            <span>{coupon.expiresAt ? new Date(coupon.expiresAt).toLocaleDateString() : 'No expiry'}</span>
-          </div>
-
-          {(isExpired || isLimitReached) && !isInactive && (
-            <span className="px-2 py-1 bg-amber-50 text-amber-700 text-xs font-medium rounded-lg">
-              {isExpired ? 'Expired' : 'Limit reached'}
-            </span>
-          )}
-        </div>
-
-        {/* Actions */}
-        <div className="flex items-center gap-2 sm:pl-4 sm:border-l border-gray-200">
-          <button
-            onClick={onToggle}
-            disabled={isToggling}
-            className={`p-2 rounded-lg transition-colors ${
-              coupon.isActive
-                ? 'bg-green-50 text-green-600 hover:bg-green-100'
-                : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
-            }`}
-            title={coupon.isActive ? 'Deactivate' : 'Activate'}
-          >
-            {isToggling ? (
-              <Loader2 size={18} className="animate-spin" />
-            ) : coupon.isActive ? (
-              <ToggleRight size={18} />
-            ) : (
-              <ToggleLeft size={18} />
-            )}
-          </button>
-
-          <button
-            onClick={onDelete}
-            disabled={isDeleting}
-            className="p-2 bg-red-50 text-red-600 hover:bg-red-100 rounded-lg transition-colors"
-            title="Delete coupon"
-          >
-            {isDeleting ? <Loader2 size={18} className="animate-spin" /> : <Trash2 size={18} />}
-          </button>
         </div>
       </div>
+
+      {/* Expandable students list */}
+      <AnimatePresence>
+        {isExpanded && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="overflow-hidden border-t border-gray-100"
+          >
+            <div className="p-4 bg-gray-50">
+              <p className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3 flex items-center gap-1.5">
+                <Tag size={12} /> Students using this coupon
+              </p>
+              {loadingStudents ? (
+                <div className="flex items-center gap-2 py-4 text-gray-400 text-sm">
+                  <Loader2 size={16} className="animate-spin" /> Loading students…
+                </div>
+              ) : !students || students.length === 0 ? (
+                <p className="text-sm text-gray-400 py-2">No students have used this coupon yet.</p>
+              ) : (
+                <div className="space-y-2">
+                  {students.map((s) => (
+                    <div key={s._id} className="flex items-center justify-between bg-white rounded-lg px-3 py-2.5 border border-gray-100">
+                      <div>
+                        <p className="text-sm font-semibold text-gray-900">{s.student.firstName} {s.student.lastName}</p>
+                        <p className="text-xs text-gray-400">{s.parent.email} · {s.registrationId}</p>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <span className={`text-xs px-2 py-0.5 rounded-full font-medium capitalize ${
+                          s.status === 'enrolled' ? 'bg-violet-100 text-violet-700' :
+                          s.status === 'approved' ? 'bg-emerald-100 text-emerald-700' :
+                          'bg-amber-100 text-amber-700'
+                        }`}>{s.status}</span>
+                        <button
+                          onClick={() => onRemoveStudent(s._id)}
+                          disabled={removingStudent === s._id}
+                          className="p-1.5 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                          title="Remove from coupon"
+                        >
+                          {removingStudent === s._id ? <Loader2 size={14} className="animate-spin" /> : <UserX size={14} />}
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

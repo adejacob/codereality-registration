@@ -53,6 +53,7 @@ export async function PATCH(
     if (typeof body.notes === 'string') allowed.notes = body.notes;
     if (body.enrollmentNumber === null) allowed.enrollmentNumber = undefined;
     if (body.enrollmentDate  === null) allowed.enrollmentDate  = undefined;
+    if (typeof body['payment.coupon'] === 'string') allowed['payment.coupon'] = body['payment.coupon'];
 
     // Student info updates
     if (body.student && typeof body.student === 'object') {

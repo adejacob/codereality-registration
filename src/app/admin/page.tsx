@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 import {
   Users, Clock, CheckCircle, UserCheck, XCircle, PhoneCall,
   TrendingUp, ArrowRight, CreditCard, BadgeCheck, AlertCircle,
-  Lock, X, Eye, EyeOff, Loader2,
+  Lock, X, Eye, EyeOff, Loader2, Tag,
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -19,6 +19,7 @@ interface Stats {
   pendingPayment: number;
   paymentSubmitted: number;
   paymentConfirmed: number;
+  couponRegistrations: number;
 }
 
 interface Registration {
@@ -295,13 +296,14 @@ export default function AdminDashboard() {
       {/* Registration Stats */}
       <div>
         <p className="text-[11px] font-bold text-gray-400 uppercase tracking-[2px] mb-3">Registration Pipeline</p>
-        <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-6 gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-7 gap-3">
           <StatCard label="Total"     value={stats?.total}     icon={Users}       gradient="from-indigo-500 to-purple-600" delay={0.05} accent="text-indigo-700" />
           <StatCard label="Pending"   value={stats?.pending}   icon={Clock}       gradient="from-amber-400 to-orange-500"  delay={0.10} accent="text-amber-700" />
           <StatCard label="Contacted" value={stats?.contacted} icon={PhoneCall}   gradient="from-blue-400 to-cyan-500"     delay={0.15} accent="text-blue-700" />
           <StatCard label="Approved"  value={stats?.approved}  icon={CheckCircle} gradient="from-emerald-400 to-green-500" delay={0.20} accent="text-emerald-700" />
           <StatCard label="Enrolled"  value={stats?.enrolled}  icon={UserCheck}   gradient="from-violet-400 to-purple-500" delay={0.25} accent="text-violet-700" />
           <StatCard label="Rejected"  value={stats?.rejected}  icon={XCircle}     gradient="from-red-400 to-rose-500"      delay={0.30} accent="text-red-700" />
+          <StatCard label="Coupon"    value={stats?.couponRegistrations} icon={Tag} gradient="from-purple-500 to-violet-600" delay={0.35} accent="text-purple-700" />
         </div>
       </div>
 
@@ -335,6 +337,7 @@ export default function AdminDashboard() {
               <MiniBar pct={(stats.approved  / stats.total) * 100} color="bg-emerald-400" label="Approved"  />
               <MiniBar pct={(stats.enrolled  / stats.total) * 100} color="bg-violet-500"  label="Enrolled"  />
               <MiniBar pct={(stats.rejected  / stats.total) * 100} color="bg-red-400"     label="Rejected"  />
+              <MiniBar pct={(stats.couponRegistrations / stats.total) * 100} color="bg-purple-400" label="Coupon Registrations" />
             </div>
           </motion.div>
 
@@ -353,6 +356,7 @@ export default function AdminDashboard() {
               <MiniBar pct={(stats.pendingPayment   / stats.total) * 100} color="bg-orange-400" label="Pending Payment"   />
               <MiniBar pct={(stats.paymentSubmitted / stats.total) * 100} color="bg-blue-400"   label="Payment Submitted" />
               <MiniBar pct={(stats.paymentConfirmed / stats.total) * 100} color="bg-green-500"  label="Payment Confirmed" />
+              <MiniBar pct={(stats.couponRegistrations / stats.total) * 100} color="bg-purple-400" label="Coupon Used" />
             </div>
             <div className="border-t border-gray-100 pt-4 flex items-center justify-between">
               <span className="text-sm text-gray-500">Enrollment Conversion Rate</span>

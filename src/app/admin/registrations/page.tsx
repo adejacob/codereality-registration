@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   Search, Filter, Download, Trash2, Eye, ChevronLeft, ChevronRight,
   X, CheckCircle, Clock, PhoneCall, UserCheck, XCircle, Loader2,
-  FileSpreadsheet, FileText, GraduationCap, FileDown, RotateCcw, Pencil,
+  FileSpreadsheet, FileText, GraduationCap, FileDown, RotateCcw, Pencil, Tag,
 } from 'lucide-react';
 
 /* ─── Types ─────────────────────────────────────────────────── */
@@ -28,7 +28,7 @@ interface Registration {
 interface Pagination { total: number; page: number; pages: number; limit: number }
 
 /* ─── Constants ─────────────────────────────────────────────── */
-const STATUSES = ['', 'pending', 'contacted', 'approved', 'enrolled', 'rejected'] as const;
+const STATUSES = ['', 'pending', 'contacted', 'approved', 'enrolled', 'rejected', 'coupon'] as const;
 
 const PROGRAMS = ['', 'coding', 'robotics', 'ai', 'web', 'mobile', 'game', '3d', 'graphic', 'digital', 'scratch'];
 
@@ -36,6 +36,7 @@ const PAYMENT_STATUS_META: Record<string, { label: string; color: string }> = {
   pending_payment:    { label: 'Pending Payment',    color: 'bg-orange-100 text-orange-700 border-orange-200' },
   payment_submitted:  { label: 'Payment Submitted',  color: 'bg-blue-100 text-blue-700 border-blue-200'       },
   payment_confirmed:  { label: 'Payment Confirmed',  color: 'bg-green-100 text-green-700 border-green-200'    },
+  coupon:             { label: 'Coupon Used',         color: 'bg-purple-100 text-purple-700 border-purple-200' },
 };
 
 const STATUS_META: Record<string, { label: string; color: string; icon: React.ComponentType<{ size?: number }> }> = {
@@ -44,6 +45,7 @@ const STATUS_META: Record<string, { label: string; color: string; icon: React.Co
   approved:  { label: 'Approved',  color: 'bg-emerald-100 text-emerald-700 border-emerald-200', icon: CheckCircle },
   enrolled:  { label: 'Enrolled',  color: 'bg-violet-100 text-violet-700 border-violet-200', icon: UserCheck  },
   rejected:  { label: 'Rejected',  color: 'bg-red-100 text-red-700 border-red-200',          icon: XCircle    },
+  coupon:    { label: 'Coupon',    color: 'bg-purple-100 text-purple-700 border-purple-200', icon: Tag        },
 };
 
 /* ─── Detail Modal ───────────────────────────────────────────── */
@@ -611,7 +613,9 @@ export default function RegistrationsPage() {
             >
               <option value="">All Statuses</option>
               {STATUSES.filter(Boolean).map((s) => (
-                <option key={s} value={s} className="capitalize">{STATUS_META[s].label}</option>
+                <option key={s} value={s}>
+                  {s === 'coupon' ? '🏷️ Coupon Registrations' : STATUS_META[s]?.label ?? s}
+                </option>
               ))}
             </select>
             <select
@@ -745,9 +749,17 @@ export default function RegistrationsPage() {
                           </span>
                         </td>
                         <td className="px-5 py-4 hidden lg:table-cell">
-                          <span className={`inline-flex px-2 py-0.5 rounded-full text-xs font-medium border capitalize ${PAYMENT_STATUS_META[r.paymentStatus ?? 'pending_payment']?.color ?? 'bg-gray-100 text-gray-700 border-gray-200'}`}>
-                            {PAYMENT_STATUS_META[r.paymentStatus ?? 'pending_payment']?.label ?? 'Pending Payment'}
-                          </span>
+                          <div className="flex flex-col gap-1">
+                            {r.payment?.coupon ? (
+                              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium border bg-purple-100 text-purple-700 border-purple-200">
+                                <Tag size={10} /> Coupon: {r.payment.coupon}
+                              </span>
+                            ) : (
+                              <span className={`inline-flex px-2 py-0.5 rounded-full text-xs font-medium border capitalize ${PAYMENT_STATUS_META[r.paymentStatus ?? 'pending_payment']?.color ?? 'bg-gray-100 text-gray-700 border-gray-200'}`}>
+                                {PAYMENT_STATUS_META[r.paymentStatus ?? 'pending_payment']?.label ?? 'Pending Payment'}
+                              </span>
+                            )}
+                          </div>
                         </td>
                         <td className="px-5 py-4 hidden xl:table-cell text-gray-400 text-xs">
                           {new Date(r.createdAt).toLocaleDateString()}

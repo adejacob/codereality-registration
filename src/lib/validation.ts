@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 const ALLOWED_PROGRAMS = [
-  'coding', 'robotics', 'ai', 'web', 'mobile', 'game', '3d', 'graphic', 'digital', 'scratch',
+  'coding', 'robotics', 'ai', 'web', 'mobile', 'game', '3d', 'graphic', 'digital', 'scratch', 'workshop',
 ] as const;
 
 export const studentSchema = z.object({
@@ -33,13 +33,13 @@ export const programSchema = z.object({
 export const scheduleSchema = z.object({
   schedule: z.enum(['weekend', 'after-school', 'holiday', 'private'], {
     message: 'Please select a schedule preference',
-  }),
+  }).optional(),
 });
 
 export const paymentSchema = z.object({
   paymentType: z.enum(['full', 'installment']).optional(),
   coupon: z.string().max(50).optional(),
-  selectedPlan: z.enum(['starter', 'stem-explorer', 'growth', 'mastery', 'platinum', 'holiday-explorer', 'holiday-innovator']).optional(),
+  selectedPlan: z.enum(['starter', 'stem-explorer', 'growth', 'short', 'mastery', 'platinum', 'holiday-explorer', 'holiday-innovator']).optional(),
 });
 
 export const registrationSchema = z.object({
@@ -50,13 +50,24 @@ export const registrationSchema = z.object({
   payment: paymentSchema,
 }).refine(
   (data) => {
-    // On final submission, require selectedPlan if no coupon
+    // On final submission, require selectedPlan if no coupon and not a workshop
     const hasCoupon = data.payment.coupon && data.payment.coupon.trim() !== '';
-    return hasCoupon || data.payment.selectedPlan !== undefined;
+    const isWorkshop = data.programs.programs.length === 1 && data.programs.programs[0] === 'workshop';
+    return hasCoupon || isWorkshop || data.payment.selectedPlan !== undefined;
   },
   {
     message: 'Please select a pricing plan before submitting',
     path: ['payment', 'selectedPlan'],
+  }
+).refine(
+  (data) => {
+    // Schedule required unless workshop program
+    const isWorkshop = data.programs.programs.length === 1 && data.programs.programs[0] === 'workshop';
+    return isWorkshop || data.schedule.schedule !== undefined;
+  },
+  {
+    message: 'Please select a schedule preference',
+    path: ['schedule', 'schedule'],
   }
 );
 
