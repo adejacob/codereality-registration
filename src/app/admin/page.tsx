@@ -55,7 +55,7 @@ const paymentLabels: Record<string, string> = {
 };
 
 function StatCard({
-  label, value, icon: Icon, gradient, delay, note, accent,
+  label, value, icon: Icon, gradient, delay, note,
 }: {
   label: string; value: number | undefined; icon: React.ComponentType<{ size?: number; className?: string }>;
   gradient: string; delay: number; note?: string; accent?: string;
@@ -65,18 +65,19 @@ function StatCard({
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay }}
-      className="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 group"
+      className="bg-white rounded-2xl p-5 hover:-translate-y-0.5 transition-all duration-200"
+      style={{ border: '1px solid #E7DCCB', boxShadow: '0 2px 12px rgba(215,119,6,0.07)' }}
     >
-      <div className="flex items-start justify-between mb-4">
-        <div className={`w-11 h-11 bg-gradient-to-br ${gradient} rounded-2xl flex items-center justify-center shadow-md`}>
-          <Icon size={20} className="text-white" />
+      <div className="flex items-start justify-between mb-3">
+        <div className={`w-10 h-10 bg-gradient-to-br ${gradient} rounded-xl flex items-center justify-center shadow-sm`}>
+          <Icon size={18} className="text-white" />
         </div>
         {note && (
-          <span className="text-[10px] font-semibold text-gray-400 bg-gray-50 border border-gray-100 px-2 py-1 rounded-full">{note}</span>
+          <span className="text-[10px] font-bold uppercase tracking-wide px-2 py-0.5 rounded-full" style={{ backgroundColor: '#FEF3C7', color: '#D97706', border: '1px solid #FDE68A' }}>{note}</span>
         )}
       </div>
-      <p className={`text-3xl font-black ${accent ?? 'text-gray-900'} tabular-nums`}>{value ?? 0}</p>
-      <p className="text-xs font-semibold text-gray-500 mt-1 uppercase tracking-wide">{label}</p>
+      <p className="text-3xl font-black tabular-nums" style={{ color: '#1F2937' }}>{value ?? 0}</p>
+      <p className="text-[11px] font-bold uppercase tracking-wider mt-1" style={{ color: '#9CA3AF' }}>{label}</p>
     </motion.div>
   );
 }
@@ -84,11 +85,11 @@ function StatCard({
 function MiniBar({ pct, color, label }: { pct: number; color: string; label: string }) {
   return (
     <div className="space-y-1">
-      <div className="flex justify-between text-xs text-gray-500">
-        <span>{label}</span>
-        <span className="font-semibold">{pct.toFixed(0)}%</span>
+      <div className="flex justify-between text-xs">
+        <span style={{ color: '#6B7280' }}>{label}</span>
+        <span className="font-bold" style={{ color: '#1F2937' }}>{pct.toFixed(0)}%</span>
       </div>
-      <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+      <div className="h-1.5 rounded-full overflow-hidden" style={{ backgroundColor: '#E7DCCB' }}>
         <motion.div
           initial={{ width: 0 }}
           animate={{ width: `${pct}%` }}
@@ -151,97 +152,53 @@ function ChangePasswordModal({ isOpen, onClose }: { isOpen: boolean; onClose: ()
     }
   }
 
+  const pwInputClass = "w-full px-4 py-2.5 rounded-xl border bg-white text-sm focus:outline-none focus:ring-2 focus:ring-[#D97706] focus:border-[#D97706] transition-all";
+  const pwInputStyle = { borderColor: '#E7DCCB', color: '#1F2937' };
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="relative bg-white rounded-2xl shadow-2xl w-full max-w-md p-6"
+        className="relative bg-white rounded-2xl w-full max-w-md p-6"
+        style={{ boxShadow: '0 20px 60px rgba(0,0,0,0.2)', border: '1px solid #E7DCCB' }}
       >
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
-            <Lock className="w-5 h-5 text-indigo-600" />
-            Change Admin Password
+        <div className="flex items-center justify-between mb-5">
+          <h2 className="font-black text-lg flex items-center gap-2" style={{ color: '#1F2937' }}>
+            <Lock size={18} style={{ color: '#D97706' }} />
+            Change Password
           </h2>
-          <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
-            <X size={20} />
+          <button onClick={onClose} className="p-1.5 rounded-lg transition-colors" style={{ color: '#9CA3AF' }}>
+            <X size={18} />
           </button>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Current Password</label>
-            <div className="relative">
-              <input
-                type={showCurrent ? 'text' : 'password'}
-                value={currentPassword}
-                onChange={(e) => setCurrentPassword(e.target.value)}
-                required
-                className="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none"
-              />
-              <button
-                type="button"
-                onClick={() => setShowCurrent(!showCurrent)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
-              >
-                {showCurrent ? <EyeOff size={18} /> : <Eye size={18} />}
-              </button>
+          {[{ label: 'Current Password', value: currentPassword, set: setCurrentPassword, show: showCurrent, toggle: () => setShowCurrent(!showCurrent) },
+            { label: 'New Password', value: newPassword, set: setNewPassword, show: showNew, toggle: () => setShowNew(!showNew), hint: 'Must be at least 8 characters' },
+            { label: 'Confirm New Password', value: confirmPassword, set: setConfirmPassword, show: showConfirm, toggle: () => setShowConfirm(!showConfirm) },
+          ].map(({ label, value, set, show, toggle, hint }) => (
+            <div key={label}>
+              <label className="block text-sm font-semibold mb-1.5" style={{ color: '#1F2937' }}>{label}</label>
+              <div className="relative">
+                <input type={show ? 'text' : 'password'} value={value} onChange={e => set(e.target.value)} required minLength={label === 'New Password' ? 8 : undefined} className={pwInputClass} style={pwInputStyle} />
+                <button type="button" onClick={toggle} className="absolute right-3 top-1/2 -translate-y-1/2" style={{ color: '#9CA3AF' }}>{show ? <EyeOff size={16} /> : <Eye size={16} />}</button>
+              </div>
+              {hint && <p className="text-xs mt-1" style={{ color: '#9CA3AF' }}>{hint}</p>}
             </div>
-          </div>
+          ))}
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">New Password</label>
-            <div className="relative">
-              <input
-                type={showNew ? 'text' : 'password'}
-                value={newPassword}
-                onChange={(e) => setNewPassword(e.target.value)}
-                required
-                minLength={8}
-                className="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none"
-              />
-              <button
-                type="button"
-                onClick={() => setShowNew(!showNew)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
-              >
-                {showNew ? <EyeOff size={18} /> : <Eye size={18} />}
-              </button>
-            </div>
-            <p className="text-xs text-gray-500 mt-1">Must be at least 8 characters</p>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Confirm New Password</label>
-            <div className="relative">
-              <input
-                type={showConfirm ? 'text' : 'password'}
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                required
-                className="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none"
-              />
-              <button
-                type="button"
-                onClick={() => setShowConfirm(!showConfirm)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
-              >
-                {showConfirm ? <EyeOff size={18} /> : <Eye size={18} />}
-              </button>
-            </div>
-          </div>
-
-          {error && <p className="text-sm text-red-600 bg-red-50 px-3 py-2 rounded-lg">{error}</p>}
-          {success && <p className="text-sm text-green-600 bg-green-50 px-3 py-2 rounded-lg">{success}</p>}
+          {error && <p className="text-sm rounded-xl px-3 py-2" style={{ backgroundColor: '#FEF2F2', color: '#DC2626', border: '1px solid #FECACA' }}>{error}</p>}
+          {success && <p className="text-sm rounded-xl px-3 py-2" style={{ backgroundColor: '#F0FDF4', color: '#15803D', border: '1px solid #86EFAC' }}>{success}</p>}
 
           <button
-            type="submit"
-            disabled={loading}
-            className="w-full py-3 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 disabled:opacity-50 text-white font-semibold rounded-xl transition-all flex items-center justify-center gap-2"
+            type="submit" disabled={loading}
+            className="w-full py-3 rounded-xl font-bold text-sm text-white transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+            style={{ backgroundColor: '#D97706', boxShadow: '0 4px 12px rgba(217,119,6,0.3)' }}
           >
-            {loading ? <Loader2 size={18} className="animate-spin" /> : <Lock size={18} />}
-            {loading ? 'Changing...' : 'Change Password'}
+            {loading ? <Loader2 size={16} className="animate-spin" /> : <Lock size={16} />}
+            {loading ? 'Changing…' : 'Change Password'}
           </button>
         </form>
       </motion.div>
@@ -273,19 +230,21 @@ export default function AdminDashboard() {
       {/* Page header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-black text-gray-900">Dashboard</h1>
-          <p className="text-gray-500 text-sm mt-0.5">Welcome back — here&apos;s your academy overview.</p>
+          <h1 className="text-2xl font-black tracking-tight" style={{ color: '#1F2937' }}>Dashboard</h1>
+          <p className="text-sm mt-0.5" style={{ color: '#6B7280' }}>Welcome back — here&apos;s your academy overview.</p>
         </div>
         <div className="flex items-center gap-2">
           <button
             onClick={() => setShowChangePassword(true)}
-            className="flex items-center gap-2 text-xs font-semibold text-gray-600 bg-white border border-gray-100 hover:border-indigo-200 hover:text-indigo-600 rounded-xl px-3 py-2 shadow-sm transition-all"
+            className="flex items-center gap-2 text-xs font-semibold bg-white rounded-xl px-3 py-2 transition-all"
+            style={{ border: '1px solid #E7DCCB', color: '#6B7280', boxShadow: '0 1px 4px rgba(0,0,0,0.04)' }}
+            onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.borderColor = '#D97706'; (e.currentTarget as HTMLButtonElement).style.color = '#D97706'; }}
+            onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.borderColor = '#E7DCCB'; (e.currentTarget as HTMLButtonElement).style.color = '#6B7280'; }}
           >
-            <Lock size={14} />
-            Change Password
+            <Lock size={14} /> Change Password
           </button>
-          <div className="flex items-center gap-2 text-xs text-gray-400 bg-white border border-gray-100 rounded-xl px-3 py-2 shadow-sm w-fit">
-            <div className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse" />
+          <div className="flex items-center gap-2 text-xs bg-white rounded-xl px-3 py-2 w-fit" style={{ border: '1px solid #E7DCCB', color: '#9CA3AF' }}>
+            <div className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ backgroundColor: '#15803D' }} />
             Live data
           </div>
         </div>
@@ -295,7 +254,7 @@ export default function AdminDashboard() {
 
       {/* Registration Stats */}
       <div>
-        <p className="text-[11px] font-bold text-gray-400 uppercase tracking-[2px] mb-3">Registration Pipeline</p>
+        <p className="text-[11px] font-bold uppercase tracking-[2px] mb-3" style={{ color: '#D97706' }}>Registration Pipeline</p>
         <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-7 gap-3">
           <StatCard label="Total"     value={stats?.total}     icon={Users}       gradient="from-indigo-500 to-purple-600" delay={0.05} accent="text-indigo-700" />
           <StatCard label="Pending"   value={stats?.pending}   icon={Clock}       gradient="from-amber-400 to-orange-500"  delay={0.10} accent="text-amber-700" />
@@ -309,7 +268,7 @@ export default function AdminDashboard() {
 
       {/* Payment Stats */}
       <div>
-        <p className="text-[11px] font-bold text-gray-400 uppercase tracking-[2px] mb-3">Payment Overview</p>
+        <p className="text-[11px] font-bold uppercase tracking-[2px] mb-3" style={{ color: '#D97706' }}>Payment Overview</p>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <StatCard label="Pending Payment"   value={stats?.pendingPayment}   icon={AlertCircle}  gradient="from-orange-400 to-amber-500"  delay={0.35} note="Awaiting" accent="text-orange-700" />
           <StatCard label="Payment Submitted"  value={stats?.paymentSubmitted} icon={CreditCard}   gradient="from-blue-400 to-indigo-500"   delay={0.40} note="Verify"   accent="text-blue-700" />
@@ -325,11 +284,12 @@ export default function AdminDashboard() {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5 }}
-            className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100"
+            className="bg-white rounded-2xl p-6"
+            style={{ border: '1px solid #E7DCCB', boxShadow: '0 2px 12px rgba(215,119,6,0.06)' }}
           >
             <div className="flex items-center gap-2 mb-5">
-              <TrendingUp size={16} className="text-indigo-600" />
-              <h2 className="font-semibold text-gray-900 text-sm">Registration Pipeline</h2>
+              <TrendingUp size={15} style={{ color: '#D97706' }} />
+              <h2 className="font-bold text-sm" style={{ color: '#1F2937' }}>Registration Pipeline</h2>
             </div>
             <div className="space-y-3">
               <MiniBar pct={(stats.pending   / stats.total) * 100} color="bg-amber-400"   label="Pending"   />
@@ -346,11 +306,12 @@ export default function AdminDashboard() {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.55 }}
-            className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100"
+            className="bg-white rounded-2xl p-6"
+            style={{ border: '1px solid #E7DCCB', boxShadow: '0 2px 12px rgba(215,119,6,0.06)' }}
           >
             <div className="flex items-center gap-2 mb-5">
-              <CreditCard size={16} className="text-green-600" />
-              <h2 className="font-semibold text-gray-900 text-sm">Payment Overview</h2>
+              <CreditCard size={15} style={{ color: '#15803D' }} />
+              <h2 className="font-bold text-sm" style={{ color: '#1F2937' }}>Payment Overview</h2>
             </div>
             <div className="space-y-3 mb-5">
               <MiniBar pct={(stats.pendingPayment   / stats.total) * 100} color="bg-orange-400" label="Pending Payment"   />
@@ -358,9 +319,9 @@ export default function AdminDashboard() {
               <MiniBar pct={(stats.paymentConfirmed / stats.total) * 100} color="bg-green-500"  label="Payment Confirmed" />
               <MiniBar pct={(stats.couponRegistrations / stats.total) * 100} color="bg-purple-400" label="Coupon Used" />
             </div>
-            <div className="border-t border-gray-100 pt-4 flex items-center justify-between">
-              <span className="text-sm text-gray-500">Enrollment Conversion Rate</span>
-              <span className="text-2xl font-black text-violet-600">{conversionRate}%</span>
+            <div className="pt-4 flex items-center justify-between" style={{ borderTop: '1px solid #E7DCCB' }}>
+              <span className="text-sm" style={{ color: '#6B7280' }}>Enrollment Conversion Rate</span>
+              <span className="text-2xl font-black" style={{ color: '#D97706' }}>{conversionRate}%</span>
             </div>
           </motion.div>
         </div>
@@ -371,21 +332,22 @@ export default function AdminDashboard() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.6 }}
-        className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden"
+        className="bg-white rounded-2xl overflow-hidden"
+        style={{ border: '1px solid #E7DCCB', boxShadow: '0 2px 12px rgba(215,119,6,0.07)' }}
       >
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-          <h2 className="font-semibold text-gray-900">Recent Registrations</h2>
-          <Link href="/admin/registrations" className="text-sm text-indigo-600 hover:text-indigo-800 flex items-center gap-1 font-medium">
-            View all <ArrowRight size={14} />
+        <div className="flex items-center justify-between px-6 py-4" style={{ borderBottom: '1px solid #E7DCCB' }}>
+          <h2 className="font-black text-sm" style={{ color: '#1F2937' }}>Recent Registrations</h2>
+          <Link href="/admin/registrations" className="text-xs font-bold flex items-center gap-1 transition-colors" style={{ color: '#D97706' }}>
+            View all <ArrowRight size={13} />
           </Link>
         </div>
 
         {loading ? (
           <div className="p-6 space-y-3">
-            {[...Array(4)].map((_, i) => <div key={i} className="h-12 bg-gray-100 rounded-xl animate-pulse" />)}
+            {[...Array(4)].map((_, i) => <div key={i} className="h-12 rounded-xl animate-pulse" style={{ backgroundColor: '#F3E8D4' }} />)}
           </div>
         ) : recent.length === 0 ? (
-          <div className="p-12 text-center text-gray-400">
+          <div className="p-12 text-center" style={{ color: '#9CA3AF' }}>
             <Users size={40} className="mx-auto mb-3 opacity-30" />
             <p className="font-medium">No registrations yet</p>
           </div>
@@ -393,48 +355,51 @@ export default function AdminDashboard() {
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="bg-gray-50 text-left text-xs text-gray-500 uppercase tracking-wide">
-                  <th className="px-6 py-3 font-semibold">Student</th>
-                  <th className="px-6 py-3 font-semibold hidden md:table-cell">Programs</th>
-                  <th className="px-6 py-3 font-semibold">Status</th>
-                  <th className="px-6 py-3 font-semibold hidden lg:table-cell">Payment</th>
-                  <th className="px-6 py-3 font-semibold hidden xl:table-cell">Enrolled</th>
-                  <th className="px-6 py-3 font-semibold hidden lg:table-cell">Date</th>
+                <tr className="text-left text-[11px] font-bold uppercase tracking-wider" style={{ backgroundColor: '#FFFAF3', borderBottom: '1px solid #E7DCCB' }}>
+                  <th className="px-6 py-3" style={{ color: '#9CA3AF' }}>Student</th>
+                  <th className="px-6 py-3 hidden md:table-cell" style={{ color: '#9CA3AF' }}>Programs</th>
+                  <th className="px-6 py-3" style={{ color: '#9CA3AF' }}>Status</th>
+                  <th className="px-6 py-3 hidden lg:table-cell" style={{ color: '#9CA3AF' }}>Payment</th>
+                  <th className="px-6 py-3 hidden xl:table-cell" style={{ color: '#9CA3AF' }}>Enrolled</th>
+                  <th className="px-6 py-3 hidden lg:table-cell" style={{ color: '#9CA3AF' }}>Date</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-50">
+              <tbody>
                 {recent.map((r) => (
-                  <tr key={r._id} className="hover:bg-gray-50 transition-colors">
+                  <tr key={r._id} className="transition-colors" style={{ borderBottom: '1px solid #F9F0E3' }}
+                    onMouseEnter={e => { (e.currentTarget as HTMLTableRowElement).style.backgroundColor = '#FFFAF3'; }}
+                    onMouseLeave={e => { (e.currentTarget as HTMLTableRowElement).style.backgroundColor = 'transparent'; }}
+                  >
                     <td className="px-6 py-4">
-                      <p className="font-medium text-gray-900">{r.student.firstName} {r.student.lastName}</p>
-                      <p className="text-xs text-gray-400 font-mono">{r.registrationId}</p>
+                      <p className="font-semibold" style={{ color: '#1F2937' }}>{r.student.firstName} {r.student.lastName}</p>
+                      <p className="text-xs font-mono" style={{ color: '#9CA3AF' }}>{r.registrationId}</p>
                     </td>
                     <td className="px-6 py-4 hidden md:table-cell">
                       <div className="flex flex-wrap gap-1">
                         {r.programs.programs.slice(0, 2).map((p) => (
-                          <span key={p} className="px-2 py-0.5 bg-indigo-50 text-indigo-700 rounded-full text-xs capitalize">{p}</span>
+                          <span key={p} className="px-2 py-0.5 rounded-full text-xs font-semibold capitalize" style={{ backgroundColor: '#FEF3C7', color: '#D97706' }}>{p}</span>
                         ))}
                         {r.programs.programs.length > 2 && (
-                          <span className="px-2 py-0.5 bg-gray-100 text-gray-500 rounded-full text-xs">+{r.programs.programs.length - 2}</span>
+                          <span className="px-2 py-0.5 rounded-full text-xs" style={{ backgroundColor: '#F3F4F6', color: '#6B7280' }}>+{r.programs.programs.length - 2}</span>
                         )}
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      <span className={`px-2.5 py-1 rounded-full text-xs font-medium capitalize ${statusColors[r.status] ?? 'bg-gray-100 text-gray-700'}`}>
+                      <span className={`px-2.5 py-1 rounded-full text-xs font-semibold capitalize ${statusColors[r.status] ?? 'bg-gray-100 text-gray-700'}`}>
                         {r.status}
                       </span>
                     </td>
                     <td className="px-6 py-4 hidden lg:table-cell">
-                      <span className={`px-2.5 py-1 rounded-full text-xs font-medium ${paymentColors[r.paymentStatus] ?? 'bg-gray-100 text-gray-700'}`}>
+                      <span className={`px-2.5 py-1 rounded-full text-xs font-semibold ${paymentColors[r.paymentStatus] ?? 'bg-gray-100 text-gray-700'}`}>
                         {paymentLabels[r.paymentStatus] ?? r.paymentStatus}
                       </span>
                     </td>
                     <td className="px-6 py-4 hidden xl:table-cell">
                       {r.enrollmentNumber
-                        ? <span className="font-mono text-xs text-violet-700 font-semibold">{r.enrollmentNumber}</span>
-                        : <span className="text-xs text-gray-300">—</span>}
+                        ? <span className="font-mono text-xs font-bold" style={{ color: '#D97706' }}>{r.enrollmentNumber}</span>
+                        : <span className="text-xs" style={{ color: '#D1D5DB' }}>—</span>}
                     </td>
-                    <td className="px-6 py-4 text-gray-400 text-xs hidden lg:table-cell">
+                    <td className="px-6 py-4 text-xs hidden lg:table-cell" style={{ color: '#9CA3AF' }}>
                       {new Date(r.createdAt).toLocaleDateString()}
                     </td>
                   </tr>

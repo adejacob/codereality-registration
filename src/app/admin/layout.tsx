@@ -38,7 +38,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const pageTitle = BREADCRUMBS[pathname] ?? 'Admin';
 
   return (
-    <div className="min-h-screen bg-slate-50 flex">
+    <div className="min-h-screen flex" style={{ backgroundColor: '#FCF3E8' }}>
 
       {/* Mobile overlay */}
       {open && (
@@ -54,18 +54,17 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       <aside
         className={`
           fixed top-0 left-0 z-30 h-screen w-64 flex flex-col flex-shrink-0
-          bg-gradient-to-b from-slate-900 via-indigo-950 to-slate-900
-          border-r border-white/5 shadow-2xl
           transition-transform duration-300 ease-in-out
           ${open ? 'translate-x-0' : '-translate-x-full'}
           lg:translate-x-0 lg:sticky lg:top-0 lg:z-auto lg:h-screen
         `}
+        style={{ backgroundColor: '#1F2937', borderRight: '1px solid rgba(215,119,6,0.15)', boxShadow: '4px 0 24px rgba(0,0,0,0.15)' }}
       >
         {/* Brand */}
-        <div className="px-5 py-6 border-b border-white/8">
+        <div className="px-5 py-5" style={{ borderBottom: '1px solid rgba(215,119,6,0.15)' }}>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-2xl overflow-hidden bg-white flex items-center justify-center shadow-lg shadow-indigo-500/30 flex-shrink-0">
+              <div className="w-10 h-10 rounded-2xl overflow-hidden bg-white flex items-center justify-center flex-shrink-0" style={{ boxShadow: '0 2px 12px rgba(215,119,6,0.3)' }}>
                 <Image
                   src="/title-logo.jpeg"
                   alt="Codereality Academy"
@@ -76,13 +75,14 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 />
               </div>
               <div>
-                <p className="text-white font-black text-sm tracking-tight leading-tight">Codereality</p>
-                <p className="text-indigo-300/60 text-[10px] font-semibold uppercase tracking-[2px]">Admin Portal</p>
+                <p className="font-black text-sm tracking-tight leading-tight" style={{ color: '#FFFFFF' }}>Codereality</p>
+                <p className="text-[10px] font-bold uppercase tracking-[2px]" style={{ color: '#D97706' }}>Admin Portal</p>
               </div>
             </div>
             <button
               onClick={() => setOpen(false)}
-              className="lg:hidden p-2 rounded-xl text-white/50 hover:text-white hover:bg-white/10 transition-colors"
+              className="lg:hidden p-2 rounded-xl transition-colors"
+              style={{ color: 'rgba(255,255,255,0.5)' }}
               aria-label="Close sidebar"
             >
               <X size={20} />
@@ -92,7 +92,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
         {/* Nav */}
         <nav className="flex-1 px-3 py-4 space-y-0.5 overflow-y-auto">
-          <p className="px-3 mb-2 text-[10px] font-bold text-white/25 uppercase tracking-[2px]">Navigation</p>
+          <p className="px-3 mb-2 text-[10px] font-bold uppercase tracking-[2px]" style={{ color: 'rgba(215,119,6,0.5)' }}>Navigation</p>
           {navItems.map(({ href, label, icon: Icon }) => {
             const active = pathname === href || (href !== '/admin' && pathname.startsWith(href));
             return (
@@ -100,40 +100,45 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 key={href}
                 href={href}
                 onClick={() => setOpen(false)}
-                className={`group flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-150
-                  ${active
-                    ? 'bg-indigo-500/20 text-white border border-indigo-400/20 shadow-sm'
-                    : 'text-white/50 hover:text-white hover:bg-white/8'
-                  }`}
+                className="group flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-150"
+                style={active
+                  ? { backgroundColor: 'rgba(215,119,6,0.15)', color: '#FFFFFF', border: '1px solid rgba(215,119,6,0.25)' }
+                  : { color: 'rgba(255,255,255,0.45)', border: '1px solid transparent' }
+                }
               >
-                <span className={`flex-shrink-0 p-1.5 rounded-lg transition-colors
-                  ${active ? 'bg-indigo-500/30 text-indigo-300' : 'text-white/40 group-hover:text-white/80'}`}>
+                <span
+                  className="flex-shrink-0 p-1.5 rounded-lg transition-colors"
+                  style={active ? { backgroundColor: 'rgba(215,119,6,0.25)', color: '#D97706' } : { color: 'rgba(255,255,255,0.35)' }}
+                >
                   <Icon size={16} />
                 </span>
                 {label}
-                {active && <ChevronRight size={14} className="ml-auto text-indigo-400/60" />}
+                {active && <ChevronRight size={14} className="ml-auto" style={{ color: '#D97706' }} />}
               </Link>
             );
           })}
         </nav>
 
         {/* Bottom user area */}
-        <div className="px-3 py-4 border-t border-white/8">
+        <div className="px-3 py-4" style={{ borderTop: '1px solid rgba(215,119,6,0.15)' }}>
           <div className="flex items-center gap-3 px-3 py-2 mb-2">
-            <div className="w-8 h-8 bg-gradient-to-br from-indigo-400 to-purple-500 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
+            <div className="w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0" style={{ backgroundColor: '#D97706' }}>
               A
             </div>
             <div className="min-w-0">
-              <p className="text-white text-xs font-semibold truncate">Administrator</p>
-              <p className="text-white/40 text-[10px] truncate">Codereality Academy</p>
+              <p className="text-xs font-semibold truncate" style={{ color: '#FFFFFF' }}>Administrator</p>
+              <p className="text-[10px] truncate" style={{ color: 'rgba(215,119,6,0.6)' }}>Codereality Academy</p>
             </div>
-            <div className="ml-auto w-2 h-2 bg-emerald-400 rounded-full flex-shrink-0" />
+            <div className="ml-auto w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: '#15803D' }} />
           </div>
           <button
             onClick={handleLogout}
-            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-white/40 hover:bg-red-500/15 hover:text-red-300 transition-all duration-150 group"
+            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-150 group"
+            style={{ color: 'rgba(255,255,255,0.4)' }}
+            onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = 'rgba(220,38,38,0.12)'; (e.currentTarget as HTMLButtonElement).style.color = '#FCA5A5'; }}
+            onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = 'transparent'; (e.currentTarget as HTMLButtonElement).style.color = 'rgba(255,255,255,0.4)'; }}
           >
-            <span className="flex-shrink-0 p-1.5 rounded-lg text-white/30 group-hover:text-red-400 transition-colors">
+            <span className="flex-shrink-0 p-1.5 rounded-lg" style={{ color: 'rgba(255,255,255,0.3)' }}>
               <LogOut size={16} />
             </span>
             Sign Out
@@ -148,10 +153,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
 
         {/* Top bar */}
-        <header className="bg-white/80 backdrop-blur-md border-b border-gray-200/80 px-4 sm:px-6 py-3.5 flex items-center gap-4 sticky top-0 z-10 shadow-sm">
+        <header className="bg-white px-4 sm:px-6 py-3.5 flex items-center gap-4 sticky top-0 z-10" style={{ borderBottom: '1px solid #E7DCCB', boxShadow: '0 1px 8px rgba(215,119,6,0.07)' }}>
           {/* Mobile hamburger */}
           <button
-            className="lg:hidden p-2 rounded-xl text-gray-500 hover:text-gray-900 hover:bg-gray-100 transition-colors flex-shrink-0"
+            className="lg:hidden p-2 rounded-xl transition-colors flex-shrink-0"
+            style={{ color: '#6B7280' }}
             onClick={() => setOpen(true)}
           >
             <Menu size={20} />
@@ -159,30 +165,30 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
           {/* Breadcrumb */}
           <div className="flex items-center gap-2 text-sm min-w-0">
-            <span className="text-gray-400 hidden sm:block">Admin</span>
-            <ChevronRight size={14} className="text-gray-300 hidden sm:block flex-shrink-0" />
-            <span className="font-semibold text-gray-900 truncate">{pageTitle}</span>
+            <span className="hidden sm:block" style={{ color: '#9CA3AF' }}>Admin</span>
+            <ChevronRight size={14} className="hidden sm:block flex-shrink-0" style={{ color: '#D97706' }} />
+            <span className="font-bold truncate" style={{ color: '#1F2937' }}>{pageTitle}</span>
           </div>
 
           {/* Right actions */}
           <div className="ml-auto flex items-center gap-2">
-            <button className="relative p-2 rounded-xl text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-colors">
+            <button className="relative p-2 rounded-xl transition-colors" style={{ color: '#9CA3AF' }}>
               <Bell size={18} />
             </button>
-            <div className="hidden sm:flex items-center gap-2 pl-3 border-l border-gray-200">
-              <div className="w-8 h-8 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center text-white text-xs font-bold">
+            <div className="hidden sm:flex items-center gap-2 pl-3" style={{ borderLeft: '1px solid #E7DCCB' }}>
+              <div className="w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold" style={{ backgroundColor: '#D97706' }}>
                 A
               </div>
               <div className="hidden md:block">
-                <p className="text-sm font-semibold text-gray-800 leading-tight">Admin</p>
-                <p className="text-xs text-gray-400 leading-tight">Administrator</p>
+                <p className="text-sm font-bold leading-tight" style={{ color: '#1F2937' }}>Admin</p>
+                <p className="text-xs leading-tight" style={{ color: '#9CA3AF' }}>Administrator</p>
               </div>
             </div>
           </div>
         </header>
 
         {/* Page content */}
-        <main className="flex-1 overflow-auto p-4 sm:p-6 lg:p-8">
+        <main className="flex-1 overflow-auto p-4 sm:p-6 lg:p-8" style={{ backgroundColor: '#FCF3E8' }}>
           {children}
         </main>
       </div>

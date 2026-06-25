@@ -43,11 +43,11 @@ function LoginForm() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-indigo-800 flex items-center justify-center p-4">
-      {/* Background blobs */}
+    <div className="min-h-screen flex items-center justify-center p-4" style={{ backgroundColor: '#FCF3E8' }}>
+      {/* Subtle warm blobs */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse" />
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-indigo-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse" />
+        <div className="absolute -top-32 -right-32 w-96 h-96 rounded-full opacity-20" style={{ backgroundColor: '#D97706', filter: 'blur(80px)' }} />
+        <div className="absolute -bottom-32 -left-32 w-96 h-96 rounded-full opacity-10" style={{ backgroundColor: '#C2410C', filter: 'blur(80px)' }} />
       </div>
 
       <motion.div
@@ -56,11 +56,10 @@ function LoginForm() {
         transition={{ duration: 0.5 }}
         className="relative w-full max-w-md"
       >
-
-        <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-8 shadow-2xl">
+        <div className="bg-white rounded-[20px] p-8" style={{ border: '1px solid #E7DCCB', boxShadow: '0 8px 40px rgba(215,119,6,0.12), 0 2px 8px rgba(0,0,0,0.04)' }}>
           {/* Logo */}
           <div className="text-center mb-8">
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl overflow-hidden bg-white shadow-lg mb-4">
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl overflow-hidden bg-white mb-4" style={{ boxShadow: '0 4px 16px rgba(215,119,6,0.25)', border: '2px solid #E7DCCB' }}>
               <Image
                 src="/title-logo.jpeg"
                 alt="Codereality Academy"
@@ -70,29 +69,32 @@ function LoginForm() {
                 priority
               />
             </div>
-            <h1 className="text-2xl font-bold text-white">Admin Portal</h1>
-            <p className="text-white/60 text-sm mt-1">Codereality Academy</p>
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest mb-3" style={{ backgroundColor: '#D97706', color: '#fff' }}>
+              Admin Portal
+            </div>
+            <h1 className="text-2xl font-black tracking-tight" style={{ color: '#1F2937' }}>Welcome Back</h1>
+            <p className="text-sm mt-1" style={{ color: '#6B7280' }}>Sign in to the Codereality Academy admin panel</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
-              <label className="block text-sm font-medium text-white/80 mb-2">
-                Admin Password
-              </label>
+              <label className="block text-sm font-semibold mb-2" style={{ color: '#1F2937' }}>Admin Password</label>
               <div className="relative">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-white/40" size={18} />
+                <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2" size={16} style={{ color: '#D97706' }} />
                 <input
                   type={showPassword ? 'text' : 'password'}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Enter admin password"
                   required
-                  className="w-full pl-10 pr-12 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent transition-all"
+                  className="w-full pl-10 pr-12 py-3.5 rounded-2xl border bg-white text-base focus:outline-none focus:ring-2 focus:ring-[#D97706] focus:border-[#D97706] transition-all"
+                  style={{ borderColor: '#E7DCCB', color: '#1F2937' }}
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-white/40 hover:text-white/80 transition-colors"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 transition-colors"
+                  style={{ color: '#9CA3AF' }}
                 >
                   {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
@@ -101,9 +103,10 @@ function LoginForm() {
 
             {error && (
               <motion.div
-                initial={{ opacity: 0, y: -10 }}
+                initial={{ opacity: 0, y: -8 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="bg-red-500/20 border border-red-400/30 rounded-xl px-4 py-3 text-red-300 text-sm"
+                className="rounded-xl px-4 py-3 text-sm font-medium"
+                style={{ backgroundColor: '#FEF2F2', border: '1px solid #FECACA', color: '#DC2626' }}
               >
                 {error}
               </motion.div>
@@ -112,16 +115,12 @@ function LoginForm() {
             <button
               type="submit"
               disabled={loading || !password}
-              className="w-full py-3 bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold rounded-xl transition-all duration-200 flex items-center justify-center gap-2 shadow-lg"
+              className="w-full py-3.5 rounded-2xl font-bold text-sm text-white transition-all duration-200 shadow-md disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 active:scale-95"
+              style={{ backgroundColor: '#D97706', boxShadow: '0 4px 14px rgba(217,119,6,0.35)' }}
+              onMouseEnter={e => { if (!loading && password) (e.currentTarget as HTMLButtonElement).style.backgroundColor = '#B45309'; }}
+              onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = '#D97706'; }}
             >
-              {loading ? (
-                <>
-                  <Loader2 size={18} className="animate-spin" />
-                  Signing in…
-                </>
-              ) : (
-                'Sign In'
-              )}
+              {loading ? <><Loader2 size={18} className="animate-spin" /> Signing in…</> : 'Sign In →'}
             </button>
           </form>
         </div>

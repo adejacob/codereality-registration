@@ -232,60 +232,52 @@ export default function CouponsPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Coupon Codes</h1>
-          <p className="text-gray-500 mt-1">Create and manage discount coupons for registrations</p>
+          <h1 className="text-2xl font-black tracking-tight" style={{ color: '#1F2937' }}>Coupon Codes</h1>
+          <p className="text-sm mt-1" style={{ color: '#6B7280' }}>Create and manage discount coupons for registrations</p>
         </div>
         <button
           onClick={() => setShowCreateModal(true)}
-          className="flex items-center justify-center gap-2 px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-medium transition-colors shadow-sm"
+          className="flex items-center justify-center gap-2 px-5 py-2.5 text-white rounded-xl font-bold text-sm transition-all shadow-md active:scale-95"
+          style={{ backgroundColor: '#D97706', boxShadow: '0 4px 12px rgba(217,119,6,0.3)' }}
         >
-          <Plus size={18} />
-          Create Coupon
+          <Plus size={16} /> Create Coupon
         </button>
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="bg-white rounded-xl p-4 border border-gray-200">
-          <p className="text-xs text-gray-500 uppercase tracking-wider">Total Coupons</p>
-          <p className="text-2xl font-bold text-gray-900 mt-1">{coupons.length}</p>
-        </div>
-        <div className="bg-white rounded-xl p-4 border border-gray-200">
-          <p className="text-xs text-gray-500 uppercase tracking-wider">Active</p>
-          <p className="text-2xl font-bold text-green-600 mt-1">{activeCoupons.length}</p>
-        </div>
-        <div className="bg-white rounded-xl p-4 border border-gray-200">
-          <p className="text-xs text-gray-500 uppercase tracking-wider">Inactive</p>
-          <p className="text-2xl font-bold text-gray-500 mt-1">{inactiveCoupons.length}</p>
-        </div>
-        <div className="bg-white rounded-xl p-4 border border-gray-200">
-          <p className="text-xs text-gray-500 uppercase tracking-wider">Total Uses</p>
-          <p className="text-2xl font-bold text-indigo-600 mt-1">
-            {coupons.reduce((sum, c) => sum + c.usedCount, 0)}
-          </p>
-        </div>
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        {[
+          { label: 'Total Coupons', value: coupons.length, color: '#1F2937' },
+          { label: 'Active', value: activeCoupons.length, color: '#15803D' },
+          { label: 'Inactive', value: inactiveCoupons.length, color: '#6B7280' },
+          { label: 'Total Uses', value: coupons.reduce((sum, c) => sum + c.usedCount, 0), color: '#D97706' },
+        ].map(({ label, value, color }) => (
+          <div key={label} className="bg-white rounded-2xl p-4" style={{ border: '1px solid #E7DCCB', boxShadow: '0 2px 8px rgba(215,119,6,0.06)' }}>
+            <p className="text-[11px] font-bold uppercase tracking-wider" style={{ color: '#9CA3AF' }}>{label}</p>
+            <p className="text-2xl font-black mt-1" style={{ color }}>{value}</p>
+          </div>
+        ))}
       </div>
 
       {/* Error */}
       {error && (
-        <div className="flex items-center gap-3 px-4 py-3 bg-red-50 border border-red-200 rounded-xl text-red-700">
-          <AlertCircle size={18} />
-          {error}
+        <div className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium" style={{ backgroundColor: '#FEF2F2', border: '1px solid #FECACA', color: '#DC2626' }}>
+          <AlertCircle size={16} /> {error}
         </div>
       )}
 
       {/* Loading */}
       {loading ? (
         <div className="flex items-center justify-center py-20">
-          <Loader2 className="animate-spin text-indigo-600" size={32} />
+          <Loader2 className="animate-spin" size={28} style={{ color: '#D97706' }} />
         </div>
       ) : (
         <>
           {/* Active Coupons */}
           {activeCoupons.length > 0 && (
             <div className="space-y-3">
-              <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wider">
-                Active Coupons ({activeCoupons.length})
+              <h2 className="text-[11px] font-bold uppercase tracking-[2px]" style={{ color: '#D97706' }}>
+                Active ({activeCoupons.length})
               </h2>
               <div className="grid gap-3">
                 {activeCoupons.map((coupon) => (
@@ -311,8 +303,8 @@ export default function CouponsPage() {
           {/* Inactive Coupons */}
           {inactiveCoupons.length > 0 && (
             <div className="space-y-3">
-              <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wider">
-                Inactive Coupons ({inactiveCoupons.length})
+              <h2 className="text-[11px] font-bold uppercase tracking-[2px]" style={{ color: '#9CA3AF' }}>
+                Inactive ({inactiveCoupons.length})
               </h2>
               <div className="grid gap-3">
                 {inactiveCoupons.map((coupon) => (
@@ -338,18 +330,18 @@ export default function CouponsPage() {
 
           {/* Empty State */}
           {coupons.length === 0 && !loading && (
-            <div className="text-center py-16 bg-white rounded-2xl border border-dashed border-gray-300">
-              <div className="w-16 h-16 bg-indigo-50 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Tag className="text-indigo-600" size={28} />
+            <div className="text-center py-16 bg-white rounded-2xl" style={{ border: '2px dashed #E7DCCB' }}>
+              <div className="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-4" style={{ backgroundColor: '#FEF3C7' }}>
+                <Tag size={24} style={{ color: '#D97706' }} />
               </div>
-              <h3 className="text-lg font-semibold text-gray-900">No coupons yet</h3>
-              <p className="text-gray-500 mt-1 mb-4">Create your first coupon to offer discounts</p>
+              <h3 className="font-black text-base" style={{ color: '#1F2937' }}>No coupons yet</h3>
+              <p className="text-sm mt-1 mb-4" style={{ color: '#6B7280' }}>Create your first coupon to offer discounts</p>
               <button
                 onClick={() => setShowCreateModal(true)}
-                className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-medium transition-colors"
+                className="inline-flex items-center gap-2 px-4 py-2.5 text-white rounded-xl font-bold text-sm transition-all"
+                style={{ backgroundColor: '#D97706' }}
               >
-                <Plus size={18} />
-                Create Coupon
+                <Plus size={15} /> Create Coupon
               </button>
             </div>
           )}
@@ -362,130 +354,95 @@ export default function CouponsPage() {
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden"
+            className="bg-white rounded-2xl w-full max-w-md overflow-hidden"
+            style={{ border: '1px solid #E7DCCB', boxShadow: '0 20px 60px rgba(0,0,0,0.15)' }}
           >
-            <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
-              <h2 className="text-lg font-bold text-gray-900">Create New Coupon</h2>
-              <button
-                onClick={() => setShowCreateModal(false)}
-                className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors"
-              >
-                <X size={20} className="text-gray-500" />
+            <div className="px-5 py-4 flex items-center justify-between" style={{ borderBottom: '1px solid #E7DCCB', backgroundColor: '#FFFAF3' }}>
+              <h2 className="font-black text-base" style={{ color: '#1F2937' }}>Create New Coupon</h2>
+              <button onClick={() => setShowCreateModal(false)} className="p-1.5 rounded-lg transition-colors" style={{ color: '#9CA3AF' }}>
+                <X size={18} />
               </button>
             </div>
 
-            <form onSubmit={createCoupon} className="p-6 space-y-4">
+            <form onSubmit={createCoupon} className="p-5 space-y-4">
               {createError && (
-                <div className="flex items-center gap-2 px-3 py-2 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
-                  <AlertCircle size={16} />
-                  {createError}
+                <div className="flex items-center gap-2 px-3 py-2 rounded-xl text-sm font-medium" style={{ backgroundColor: '#FEF2F2', border: '1px solid #FECACA', color: '#DC2626' }}>
+                  <AlertCircle size={14} /> {createError}
                 </div>
               )}
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">
-                  Coupon Code *
-                </label>
-                <input
-                  type="text"
-                  required
-                  maxLength={20}
-                  value={newCoupon.code}
-                  onChange={(e) => setNewCoupon({ ...newCoupon, code: e.target.value.toUpperCase() })}
-                  placeholder="e.g., FREE2024"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 font-mono uppercase"
-                />
-                <p className="text-xs text-gray-500 mt-1">Letters, numbers, hyphens, underscores only</p>
-              </div>
+              {/* shared input styles */}
+              {[null].map(() => {
+                const iClass = "w-full px-3 py-2.5 rounded-xl border bg-white text-sm focus:outline-none focus:ring-2 focus:ring-[#D97706] focus:border-[#D97706] transition-all";
+                const iStyle = { borderColor: '#E7DCCB', color: '#1F2937' };
+                const lClass = "block text-xs font-bold mb-1.5";
+                const lStyle = { color: '#1F2937' };
+                const hStyle = { color: '#9CA3AF', fontSize: '11px', marginTop: '4px' };
+                return (
+                  <>
+                    <div>
+                      <label className={lClass} style={lStyle}>Coupon Code *</label>
+                      <input type="text" required maxLength={20} value={newCoupon.code}
+                        onChange={(e) => setNewCoupon({ ...newCoupon, code: e.target.value.toUpperCase() })}
+                        placeholder="e.g., FREE2024" className={iClass + ' font-mono uppercase'} style={iStyle} />
+                      <p style={hStyle}>Letters, numbers, hyphens, underscores only</p>
+                    </div>
+                    <div>
+                      <label className={lClass} style={lStyle}>Description</label>
+                      <input type="text" value={newCoupon.description}
+                        onChange={(e) => setNewCoupon({ ...newCoupon, description: e.target.value })}
+                        placeholder="e.g., Free registration for promo" className={iClass} style={iStyle} />
+                    </div>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <label className={lClass} style={lStyle}>Discount Type *</label>
+                        <select value={newCoupon.discountType}
+                          onChange={(e) => setNewCoupon({ ...newCoupon, discountType: e.target.value as 'percentage' | 'fixed' })}
+                          className={iClass} style={iStyle}>
+                          <option value="percentage">Percentage (%)</option>
+                          <option value="fixed">Fixed Amount (₦)</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label className={lClass} style={lStyle}>Discount Value *</label>
+                        <input type="number" required min={0} max={newCoupon.discountType === 'percentage' ? 100 : 999999}
+                          value={newCoupon.discountValue}
+                          onChange={(e) => setNewCoupon({ ...newCoupon, discountValue: e.target.value })}
+                          placeholder={newCoupon.discountType === 'percentage' ? '100' : '5000'}
+                          className={iClass} style={iStyle} />
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <label className={lClass} style={lStyle}>Usage Limit</label>
+                        <input type="number" min={1} value={newCoupon.usageLimit}
+                          onChange={(e) => setNewCoupon({ ...newCoupon, usageLimit: e.target.value })}
+                          placeholder="Unlimited" className={iClass} style={iStyle} />
+                        <p style={hStyle}>Leave empty for unlimited</p>
+                      </div>
+                      <div>
+                        <label className={lClass} style={lStyle}>Expiry Date</label>
+                        <input type="date" value={newCoupon.expiresAt}
+                          onChange={(e) => setNewCoupon({ ...newCoupon, expiresAt: e.target.value })}
+                          className={iClass} style={iStyle} />
+                        <p style={hStyle}>Leave empty for no expiry</p>
+                      </div>
+                    </div>
+                  </>
+                );
+              })}
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">
-                  Description
-                </label>
-                <input
-                  type="text"
-                  value={newCoupon.description}
-                  onChange={(e) => setNewCoupon({ ...newCoupon, description: e.target.value })}
-                  placeholder="e.g., Free registration for promo"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1.5">
-                    Discount Type *
-                  </label>
-                  <select
-                    value={newCoupon.discountType}
-                    onChange={(e) => setNewCoupon({ ...newCoupon, discountType: e.target.value as 'percentage' | 'fixed' })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                  >
-                    <option value="percentage">Percentage (%)</option>
-                    <option value="fixed">Fixed Amount (₦)</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1.5">
-                    Discount Value *
-                  </label>
-                  <input
-                    type="number"
-                    required
-                    min={0}
-                    max={newCoupon.discountType === 'percentage' ? 100 : 999999}
-                    value={newCoupon.discountValue}
-                    onChange={(e) => setNewCoupon({ ...newCoupon, discountValue: e.target.value })}
-                    placeholder={newCoupon.discountType === 'percentage' ? '100' : '5000'}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1.5">
-                    Usage Limit
-                  </label>
-                  <input
-                    type="number"
-                    min={1}
-                    value={newCoupon.usageLimit}
-                    onChange={(e) => setNewCoupon({ ...newCoupon, usageLimit: e.target.value })}
-                    placeholder="Unlimited"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                  />
-                  <p className="text-xs text-gray-500 mt-1">Leave empty for unlimited</p>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1.5">
-                    Expiry Date
-                  </label>
-                  <input
-                    type="date"
-                    value={newCoupon.expiresAt}
-                    onChange={(e) => setNewCoupon({ ...newCoupon, expiresAt: e.target.value })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                  />
-                  <p className="text-xs text-gray-500 mt-1">Leave empty for no expiry</p>
-                </div>
-              </div>
-
-              <div className="flex gap-3 pt-2">
-                <button
-                  type="button"
-                  onClick={() => setShowCreateModal(false)}
-                  className="flex-1 px-4 py-2.5 border border-gray-300 text-gray-700 rounded-xl font-medium hover:bg-gray-50 transition-colors"
-                >
+              <div className="flex gap-3 pt-1">
+                <button type="button" onClick={() => setShowCreateModal(false)}
+                  className="flex-1 px-4 py-2.5 rounded-xl font-bold text-sm transition-colors"
+                  style={{ border: '1px solid #E7DCCB', color: '#6B7280' }}>
                   Cancel
                 </button>
-                <button
-                  type="submit"
-                  disabled={creating || !newCoupon.code || !newCoupon.discountValue}
-                  className="flex-1 px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white rounded-xl font-medium transition-colors flex items-center justify-center gap-2"
-                >
-                  {creating && <Loader2 size={16} className="animate-spin" />}
-                  {creating ? 'Creating...' : 'Create Coupon'}
+                <button type="submit" disabled={creating || !newCoupon.code || !newCoupon.discountValue}
+                  className="flex-1 px-4 py-2.5 text-white rounded-xl font-bold text-sm transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+                  style={{ backgroundColor: '#D97706' }}>
+                  {creating && <Loader2 size={14} className="animate-spin" />}
+                  {creating ? 'Creating…' : 'Create Coupon'}
                 </button>
               </div>
             </form>
@@ -529,107 +486,70 @@ function CouponCard({
 
   return (
     <div
-      className={`bg-white rounded-xl border transition-all ${
-        isInactive ? 'border-gray-200 opacity-75' : 'border-indigo-100 shadow-sm'
-      }`}
+      className="bg-white rounded-2xl transition-all"
+      style={{ border: `1px solid ${isInactive ? '#E5E7EB' : '#E7DCCB'}`, opacity: isInactive ? 0.75 : 1, boxShadow: isInactive ? 'none' : '0 2px 10px rgba(215,119,6,0.07)' }}
     >
       <div className="p-5">
         <div className="flex flex-col sm:flex-row sm:items-center gap-4">
           {/* Code & Badge */}
           <div className="flex items-center gap-3">
-            <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${
-              isInactive ? 'bg-gray-100' : 'bg-indigo-50'
-            }`}>
-              {coupon.discountType === 'percentage' ? (
-                <Percent className={isInactive ? 'text-gray-500' : 'text-indigo-600'} size={22} />
-              ) : (
-                <DollarSign className={isInactive ? 'text-gray-500' : 'text-indigo-600'} size={22} />
-              )}
+            <div className="w-11 h-11 rounded-xl flex items-center justify-center" style={{ backgroundColor: isInactive ? '#F3F4F6' : '#FEF3C7' }}>
+              {coupon.discountType === 'percentage'
+                ? <Percent size={20} style={{ color: isInactive ? '#9CA3AF' : '#D97706' }} />
+                : <DollarSign size={20} style={{ color: isInactive ? '#9CA3AF' : '#D97706' }} />}
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className={`font-mono font-bold text-lg ${isInactive ? 'text-gray-500' : 'text-gray-900'}`}>
-                  {coupon.code}
+                <span className="font-mono font-bold text-base" style={{ color: isInactive ? '#6B7280' : '#1F2937' }}>{coupon.code}</span>
+                <span className="px-2 py-0.5 rounded-full text-[11px] font-bold" style={isInactive
+                  ? { backgroundColor: '#F3F4F6', color: '#6B7280' }
+                  : { backgroundColor: '#DCFCE7', color: '#15803D' }}>
+                  {isInactive ? 'Inactive' : 'Active'}
                 </span>
-                {!isInactive && (
-                  <span className="px-2 py-0.5 bg-green-100 text-green-700 text-xs font-medium rounded-full">
-                    Active
-                  </span>
-                )}
-                {isInactive && (
-                  <span className="px-2 py-0.5 bg-gray-100 text-gray-600 text-xs font-medium rounded-full">
-                    Inactive
-                  </span>
-                )}
               </div>
-              {coupon.description && (
-                <p className="text-sm text-gray-500">{coupon.description}</p>
-              )}
+              {coupon.description && <p className="text-xs mt-0.5" style={{ color: '#6B7280' }}>{coupon.description}</p>}
             </div>
           </div>
 
           {/* Stats */}
           <div className="flex flex-wrap items-center gap-4 sm:ml-auto">
-            <div className="flex items-center gap-1.5 text-sm text-gray-600">
-              {coupon.discountType === 'percentage' ? <Percent size={14} /> : <DollarSign size={14} />}
-              <span className="font-semibold">
-                {coupon.discountType === 'percentage' ? `${coupon.discountValue}%` : `₦${coupon.discountValue}`}
-              </span>
-              <span className="text-gray-400">off</span>
+            <div className="flex items-center gap-1 text-sm font-bold" style={{ color: '#D97706' }}>
+              {coupon.discountType === 'percentage' ? <Percent size={13} /> : <DollarSign size={13} />}
+              {coupon.discountType === 'percentage' ? `${coupon.discountValue}%` : `₦${coupon.discountValue}`}
+              <span className="font-normal text-xs" style={{ color: '#9CA3AF' }}>off</span>
             </div>
 
-            <button
-              onClick={onViewStudents}
-              className="flex items-center gap-1.5 text-sm text-indigo-600 hover:text-indigo-800 font-medium"
-            >
-              <Users size={14} />
-              <span>
-                {coupon.usedCount}
-                {coupon.usageLimit !== null && ` / ${coupon.usageLimit}`} used
-              </span>
-              {isExpanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+            <button onClick={onViewStudents} className="flex items-center gap-1 text-xs font-bold transition-colors" style={{ color: '#D97706' }}>
+              <Users size={13} />
+              {coupon.usedCount}{coupon.usageLimit !== null && ` / ${coupon.usageLimit}`} used
+              {isExpanded ? <ChevronUp size={13} /> : <ChevronDown size={13} />}
             </button>
 
-            <div className="flex items-center gap-1.5 text-sm text-gray-600">
-              <Calendar size={14} />
-              <span>{coupon.expiresAt ? new Date(coupon.expiresAt).toLocaleDateString() : 'No expiry'}</span>
+            <div className="flex items-center gap-1 text-xs" style={{ color: '#6B7280' }}>
+              <Calendar size={13} />
+              {coupon.expiresAt ? new Date(coupon.expiresAt).toLocaleDateString() : 'No expiry'}
             </div>
 
             {(isExpired || isLimitReached) && !isInactive && (
-              <span className="px-2 py-1 bg-amber-50 text-amber-700 text-xs font-medium rounded-lg">
+              <span className="px-2 py-0.5 rounded-lg text-xs font-bold" style={{ backgroundColor: '#FEF3C7', color: '#D97706' }}>
                 {isExpired ? 'Expired' : 'Limit reached'}
               </span>
             )}
           </div>
 
           {/* Actions */}
-          <div className="flex items-center gap-2 sm:pl-4 sm:border-l border-gray-200">
-            <button
-              onClick={onToggle}
-              disabled={isToggling}
-              className={`p-2 rounded-lg transition-colors ${
-                coupon.isActive
-                  ? 'bg-green-50 text-green-600 hover:bg-green-100'
-                  : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
-              }`}
-              title={coupon.isActive ? 'Deactivate' : 'Activate'}
-            >
-              {isToggling ? (
-                <Loader2 size={18} className="animate-spin" />
-              ) : coupon.isActive ? (
-                <ToggleRight size={18} />
-              ) : (
-                <ToggleLeft size={18} />
-              )}
+          <div className="flex items-center gap-2 sm:pl-4" style={{ borderLeft: '1px solid #E7DCCB' }}>
+            <button onClick={onToggle} disabled={isToggling}
+              className="p-2 rounded-xl transition-colors"
+              style={coupon.isActive ? { backgroundColor: '#DCFCE7', color: '#15803D' } : { backgroundColor: '#F3F4F6', color: '#9CA3AF' }}
+              title={coupon.isActive ? 'Deactivate' : 'Activate'}>
+              {isToggling ? <Loader2 size={17} className="animate-spin" /> : coupon.isActive ? <ToggleRight size={17} /> : <ToggleLeft size={17} />}
             </button>
-
-            <button
-              onClick={onDelete}
-              disabled={isDeleting}
-              className="p-2 bg-red-50 text-red-600 hover:bg-red-100 rounded-lg transition-colors"
-              title="Delete coupon"
-            >
-              {isDeleting ? <Loader2 size={18} className="animate-spin" /> : <Trash2 size={18} />}
+            <button onClick={onDelete} disabled={isDeleting}
+              className="p-2 rounded-xl transition-colors"
+              style={{ backgroundColor: '#FEF2F2', color: '#DC2626' }}
+              title="Delete coupon">
+              {isDeleting ? <Loader2 size={17} className="animate-spin" /> : <Trash2 size={17} />}
             </button>
           </div>
         </div>
@@ -638,44 +558,36 @@ function CouponCard({
       {/* Expandable students list */}
       <AnimatePresence>
         {isExpanded && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: 'auto', opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            className="overflow-hidden border-t border-gray-100"
-          >
-            <div className="p-4 bg-gray-50">
-              <p className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3 flex items-center gap-1.5">
-                <Tag size={12} /> Students using this coupon
+          <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.2 }}
+            className="overflow-hidden" style={{ borderTop: '1px solid #E7DCCB' }}>
+            <div className="p-4" style={{ backgroundColor: '#FFFAF3' }}>
+              <p className="text-[11px] font-bold uppercase tracking-wider mb-3 flex items-center gap-1.5" style={{ color: '#D97706' }}>
+                <Tag size={11} /> Students using this coupon
               </p>
               {loadingStudents ? (
-                <div className="flex items-center gap-2 py-4 text-gray-400 text-sm">
-                  <Loader2 size={16} className="animate-spin" /> Loading students…
+                <div className="flex items-center gap-2 py-4 text-sm" style={{ color: '#9CA3AF' }}>
+                  <Loader2 size={15} className="animate-spin" /> Loading students…
                 </div>
               ) : !students || students.length === 0 ? (
-                <p className="text-sm text-gray-400 py-2">No students have used this coupon yet.</p>
+                <p className="text-sm py-2" style={{ color: '#9CA3AF' }}>No students have used this coupon yet.</p>
               ) : (
                 <div className="space-y-2">
                   {students.map((s) => (
-                    <div key={s._id} className="flex items-center justify-between bg-white rounded-lg px-3 py-2.5 border border-gray-100">
+                    <div key={s._id} className="flex items-center justify-between bg-white rounded-xl px-3 py-2.5" style={{ border: '1px solid #E7DCCB' }}>
                       <div>
-                        <p className="text-sm font-semibold text-gray-900">{s.student.firstName} {s.student.lastName}</p>
-                        <p className="text-xs text-gray-400">{s.parent.email} · {s.registrationId}</p>
+                        <p className="text-sm font-semibold" style={{ color: '#1F2937' }}>{s.student.firstName} {s.student.lastName}</p>
+                        <p className="text-xs" style={{ color: '#9CA3AF' }}>{s.parent.email} · {s.registrationId}</p>
                       </div>
                       <div className="flex items-center gap-3">
-                        <span className={`text-xs px-2 py-0.5 rounded-full font-medium capitalize ${
+                        <span className={`text-xs px-2 py-0.5 rounded-full font-bold capitalize ${
                           s.status === 'enrolled' ? 'bg-violet-100 text-violet-700' :
                           s.status === 'approved' ? 'bg-emerald-100 text-emerald-700' :
                           'bg-amber-100 text-amber-700'
                         }`}>{s.status}</span>
-                        <button
-                          onClick={() => onRemoveStudent(s._id)}
-                          disabled={removingStudent === s._id}
-                          className="p-1.5 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                          title="Remove from coupon"
-                        >
-                          {removingStudent === s._id ? <Loader2 size={14} className="animate-spin" /> : <UserX size={14} />}
+                        <button onClick={() => onRemoveStudent(s._id)} disabled={removingStudent === s._id}
+                          className="p-1.5 rounded-lg transition-colors" style={{ color: '#DC2626' }}
+                          title="Remove from coupon">
+                          {removingStudent === s._id ? <Loader2 size={13} className="animate-spin" /> : <UserX size={13} />}
                         </button>
                       </div>
                     </div>

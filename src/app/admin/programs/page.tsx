@@ -175,14 +175,15 @@ export default function ProgramsPage() {
       {/* Header */}
       <div className="flex items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Programs</h1>
-          <p className="text-gray-500 mt-0.5 text-sm">{programs.length} program{programs.length !== 1 ? 's' : ''} · shown to students during registration</p>
+          <h1 className="text-2xl font-black tracking-tight" style={{ color: '#1F2937' }}>Programs</h1>
+          <p className="text-sm mt-0.5" style={{ color: '#6B7280' }}>{programs.length} program{programs.length !== 1 ? 's' : ''} · shown to students during registration</p>
         </div>
         <button
           onClick={() => { setShowAdd(true); setAddError(''); setAddForm(BLANK_FORM); }}
-          className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white text-sm font-semibold rounded-xl shadow transition-all"
+          className="flex items-center gap-2 px-4 py-2.5 text-white text-sm font-bold rounded-xl transition-all active:scale-95"
+          style={{ backgroundColor: '#D97706', boxShadow: '0 4px 12px rgba(217,119,6,0.3)' }}
         >
-          <Plus size={16} /> Add Program
+          <Plus size={15} /> Add Program
         </button>
       </div>
 
@@ -200,112 +201,89 @@ export default function ProgramsPage() {
               initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.95, opacity: 0 }}
-              className="bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto"
+              className="bg-white rounded-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto"
+              style={{ border: '1px solid #E7DCCB', boxShadow: '0 20px 60px rgba(0,0,0,0.15)' }}
             >
-              <div className="flex items-center justify-between p-5 border-b border-gray-100">
-                <h2 className="font-bold text-gray-900 text-lg">Add New Program</h2>
-                <button onClick={() => setShowAdd(false)} className="p-2 hover:bg-gray-100 rounded-xl transition-colors">
+              <div className="flex items-center justify-between p-5" style={{ borderBottom: '1px solid #E7DCCB', backgroundColor: '#FFFAF3' }}>
+                <h2 className="font-black text-base" style={{ color: '#1F2937' }}>Add New Program</h2>
+                <button onClick={() => setShowAdd(false)} className="p-1.5 rounded-xl transition-colors" style={{ color: '#9CA3AF' }}>
                   <X size={18} />
                 </button>
               </div>
 
               <div className="p-5 space-y-4">
                 {/* Preview */}
-                <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
-                  <div className={`w-11 h-11 rounded-xl bg-gradient-to-br ${addForm.color} flex items-center justify-center shadow`}>
+                <div className="flex items-center gap-3 p-3 rounded-xl" style={{ backgroundColor: '#FFFAF3', border: '1px solid #E7DCCB' }}>
+                  <div className={`w-11 h-11 rounded-xl bg-gradient-to-br ${addForm.color} flex items-center justify-center shadow-sm`}>
                     <ProgramIcon name={addForm.icon} size={20} className="text-white" />
                   </div>
                   <div>
-                    <p className="text-sm font-bold text-gray-900">{addForm.name || 'Program Name'}</p>
-                    <p className="text-xs text-gray-400">Preview</p>
+                    <p className="text-sm font-bold" style={{ color: '#1F2937' }}>{addForm.name || 'Program Name'}</p>
+                    <p className="text-xs" style={{ color: '#9CA3AF' }}>Preview</p>
                   </div>
                 </div>
 
-                <div>
-                  <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Program Name *</label>
-                  <input
-                    type="text"
-                    value={addForm.name}
-                    onChange={(e) => setAddForm(f => ({ ...f, name: e.target.value }))}
-                    placeholder="e.g. Data Science for Kids"
-                    className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-400"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Description *</label>
-                  <textarea
-                    rows={3}
-                    value={addForm.description}
-                    onChange={(e) => setAddForm(f => ({ ...f, description: e.target.value }))}
-                    placeholder="Brief description of the program..."
-                    className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-400 resize-none"
-                  />
-                </div>
-
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Icon</label>
-                    <select
-                      value={addForm.icon}
-                      onChange={(e) => setAddForm(f => ({ ...f, icon: e.target.value }))}
-                      className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-400 bg-white"
-                    >
-                      {ICON_OPTIONS.map(ic => <option key={ic} value={ic}>{ic}</option>)}
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Color</label>
-                    <select
-                      value={addForm.color}
-                      onChange={(e) => setAddForm(f => ({ ...f, color: e.target.value }))}
-                      className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-400 bg-white"
-                    >
-                      {COLOR_OPTIONS.map(c => <option key={c.value} value={c.value}>{c.label}</option>)}
-                    </select>
-                  </div>
-                </div>
+                {[null].map(() => {
+                  const iClass = "w-full px-3 py-2.5 rounded-xl border bg-white text-sm focus:outline-none focus:ring-2 focus:ring-[#D97706] focus:border-[#D97706] transition-all";
+                  const iStyle = { borderColor: '#E7DCCB', color: '#1F2937' };
+                  const lClass = "block text-xs font-bold uppercase tracking-wide mb-1";
+                  const lStyle = { color: '#6B7280' };
+                  return (
+                    <>
+                      <div>
+                        <label className={lClass} style={lStyle}>Program Name *</label>
+                        <input type="text" value={addForm.name} onChange={(e) => setAddForm(f => ({ ...f, name: e.target.value }))}
+                          placeholder="e.g. Data Science for Kids" className={iClass} style={iStyle} />
+                      </div>
+                      <div>
+                        <label className={lClass} style={lStyle}>Description *</label>
+                        <textarea rows={3} value={addForm.description} onChange={(e) => setAddForm(f => ({ ...f, description: e.target.value }))}
+                          placeholder="Brief description of the program..." className={iClass + ' resize-none'} style={iStyle} />
+                      </div>
+                      <div className="grid grid-cols-2 gap-3">
+                        <div>
+                          <label className={lClass} style={lStyle}>Icon</label>
+                          <select value={addForm.icon} onChange={(e) => setAddForm(f => ({ ...f, icon: e.target.value }))} className={iClass} style={iStyle}>
+                            {ICON_OPTIONS.map(ic => <option key={ic} value={ic}>{ic}</option>)}
+                          </select>
+                        </div>
+                        <div>
+                          <label className={lClass} style={lStyle}>Color</label>
+                          <select value={addForm.color} onChange={(e) => setAddForm(f => ({ ...f, color: e.target.value }))} className={iClass} style={iStyle}>
+                            {COLOR_OPTIONS.map(c => <option key={c.value} value={c.value}>{c.label}</option>)}
+                          </select>
+                        </div>
+                      </div>
+                    </>
+                  );
+                })}
 
                 <div className="flex items-center gap-6 pt-1">
                   <label className="flex items-center gap-2 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={addForm.isFree}
-                      onChange={(e) => setAddForm(f => ({ ...f, isFree: e.target.checked }))}
-                      className="w-4 h-4 rounded accent-emerald-600"
-                    />
-                    <span className="text-sm text-gray-700 font-medium">Free program</span>
+                    <input type="checkbox" checked={addForm.isFree} onChange={(e) => setAddForm(f => ({ ...f, isFree: e.target.checked }))} className="w-4 h-4 rounded accent-emerald-600" />
+                    <span className="text-sm font-medium" style={{ color: '#1F2937' }}>Free program</span>
                   </label>
                   <label className="flex items-center gap-2 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={addForm.isLimited}
-                      onChange={(e) => setAddForm(f => ({ ...f, isLimited: e.target.checked }))}
-                      className="w-4 h-4 rounded accent-red-600"
-                    />
-                    <span className="text-sm text-gray-700 font-medium">Limited entry</span>
+                    <input type="checkbox" checked={addForm.isLimited} onChange={(e) => setAddForm(f => ({ ...f, isLimited: e.target.checked }))} className="w-4 h-4 rounded accent-red-600" />
+                    <span className="text-sm font-medium" style={{ color: '#1F2937' }}>Limited entry</span>
                   </label>
                 </div>
 
                 {addError && (
-                  <p className="text-sm text-red-600 flex items-center gap-1.5">
+                  <p className="text-sm flex items-center gap-1.5" style={{ color: '#DC2626' }}>
                     <AlertTriangle size={14} /> {addError}
                   </p>
                 )}
 
-                <div className="flex items-center gap-3 pt-2 border-t border-gray-100">
-                  <button
-                    onClick={addProgram}
-                    disabled={adding}
-                    className="flex items-center gap-2 px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold rounded-xl transition-colors disabled:opacity-60"
-                  >
-                    {adding ? <Loader2 size={15} className="animate-spin" /> : <Plus size={15} />}
-                    Add Program
+                <div className="flex items-center gap-3 pt-2" style={{ borderTop: '1px solid #E7DCCB' }}>
+                  <button onClick={addProgram} disabled={adding}
+                    className="flex items-center gap-2 px-5 py-2.5 text-white text-sm font-bold rounded-xl transition-colors disabled:opacity-60"
+                    style={{ backgroundColor: '#D97706' }}>
+                    {adding ? <Loader2 size={14} className="animate-spin" /> : <Plus size={14} />} Add Program
                   </button>
-                  <button
-                    onClick={() => setShowAdd(false)}
-                    className="px-4 py-2.5 border border-gray-200 text-gray-600 hover:bg-gray-50 text-sm font-medium rounded-xl transition-colors"
-                  >
+                  <button onClick={() => setShowAdd(false)}
+                    className="px-4 py-2.5 text-sm font-medium rounded-xl transition-colors"
+                    style={{ border: '1px solid #E7DCCB', color: '#6B7280' }}>
                     Cancel
                   </button>
                 </div>
@@ -318,13 +296,13 @@ export default function ProgramsPage() {
       {/* Programs List */}
       {loading ? (
         <div className="space-y-3">
-          {[...Array(5)].map((_, i) => <div key={i} className="h-20 bg-gray-100 rounded-2xl animate-pulse" />)}
+          {[...Array(5)].map((_, i) => <div key={i} className="h-20 rounded-2xl animate-pulse" style={{ backgroundColor: '#F3E8D4' }} />)}
         </div>
       ) : error ? (
-        <div className="text-center py-12 bg-white rounded-2xl border border-red-100">
-          <AlertTriangle size={32} className="mx-auto text-red-400 mb-2" />
-          <p className="text-red-600 font-medium">{error}</p>
-          <button onClick={load} className="mt-3 text-sm text-indigo-600 hover:underline">Try again</button>
+        <div className="text-center py-12 bg-white rounded-2xl" style={{ border: '1px solid #FECACA' }}>
+          <AlertTriangle size={28} className="mx-auto mb-2" style={{ color: '#DC2626' }} />
+          <p className="font-medium" style={{ color: '#DC2626' }}>{error}</p>
+          <button onClick={load} className="mt-3 text-sm font-bold" style={{ color: '#D97706' }}>Try again</button>
         </div>
       ) : (
         <div className="grid gap-4">
@@ -338,9 +316,8 @@ export default function ProgramsPage() {
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.03 }}
-                className={`bg-white rounded-2xl border p-5 shadow-sm transition-opacity ${
-                  !program.isActive ? 'opacity-50' : ''
-                } ${program.isFree ? 'border-emerald-200' : 'border-gray-100'}`}
+                className="bg-white rounded-2xl p-5 transition-opacity"
+                style={{ opacity: !program.isActive ? 0.55 : 1, border: `1px solid ${program.isFree ? '#A7F3D0' : '#E7DCCB'}`, boxShadow: '0 2px 10px rgba(215,119,6,0.06)' }}
               >
                 <div className="flex items-start gap-4">
                   {/* Icon */}
@@ -352,79 +329,58 @@ export default function ProgramsPage() {
                   <div className="flex-1 min-w-0">
                     {isEditing ? (
                       <div className="space-y-3">
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                          <div>
-                            <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Name</label>
-                            <input
-                              type="text"
-                              value={editForm.name}
-                              onChange={(e) => setEditForm(f => ({ ...f, name: e.target.value }))}
-                              className="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm font-semibold text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-400"
-                            />
-                          </div>
-                          <div>
-                            <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Icon</label>
-                            <select
-                              value={editForm.icon}
-                              onChange={(e) => setEditForm(f => ({ ...f, icon: e.target.value }))}
-                              className="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-400 bg-white"
-                            >
-                              {ICON_OPTIONS.map(ic => <option key={ic} value={ic}>{ic}</option>)}
-                            </select>
-                          </div>
-                        </div>
-                        <div>
-                          <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Description</label>
-                          <textarea
-                            rows={2}
-                            value={editForm.description}
-                            onChange={(e) => setEditForm(f => ({ ...f, description: e.target.value }))}
-                            className="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-400 resize-none"
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Color</label>
-                          <select
-                            value={editForm.color}
-                            onChange={(e) => setEditForm(f => ({ ...f, color: e.target.value }))}
-                            className="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-400 bg-white"
-                          >
-                            {COLOR_OPTIONS.map(c => <option key={c.value} value={c.value}>{c.label}</option>)}
-                          </select>
-                        </div>
-                        <div className="flex items-center gap-6">
+                        {[null].map(() => {
+                          const iClass = "w-full px-3 py-2 rounded-xl border bg-white text-sm focus:outline-none focus:ring-2 focus:ring-[#D97706] focus:border-[#D97706] transition-all";
+                          const iStyle = { borderColor: '#E7DCCB', color: '#1F2937' };
+                          const lClass = "block text-[11px] font-bold uppercase tracking-wide mb-1";
+                          const lStyle = { color: '#6B7280' };
+                          return (
+                            <>
+                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                <div>
+                                  <label className={lClass} style={lStyle}>Name</label>
+                                  <input type="text" value={editForm.name} onChange={(e) => setEditForm(f => ({ ...f, name: e.target.value }))} className={iClass + ' font-semibold'} style={iStyle} />
+                                </div>
+                                <div>
+                                  <label className={lClass} style={lStyle}>Icon</label>
+                                  <select value={editForm.icon} onChange={(e) => setEditForm(f => ({ ...f, icon: e.target.value }))} className={iClass} style={iStyle}>
+                                    {ICON_OPTIONS.map(ic => <option key={ic} value={ic}>{ic}</option>)}
+                                  </select>
+                                </div>
+                              </div>
+                              <div>
+                                <label className={lClass} style={lStyle}>Description</label>
+                                <textarea rows={2} value={editForm.description} onChange={(e) => setEditForm(f => ({ ...f, description: e.target.value }))} className={iClass + ' resize-none'} style={iStyle} />
+                              </div>
+                              <div>
+                                <label className={lClass} style={lStyle}>Color</label>
+                                <select value={editForm.color} onChange={(e) => setEditForm(f => ({ ...f, color: e.target.value }))} className={iClass} style={iStyle}>
+                                  {COLOR_OPTIONS.map(c => <option key={c.value} value={c.value}>{c.label}</option>)}
+                                </select>
+                              </div>
+                            </>
+                          );
+                        })}
+                        <div className="flex items-center gap-5">
                           <label className="flex items-center gap-2 cursor-pointer">
-                            <input
-                              type="checkbox"
-                              checked={editForm.isFree}
-                              onChange={(e) => setEditForm(f => ({ ...f, isFree: e.target.checked }))}
-                              className="w-4 h-4 rounded accent-emerald-600"
-                            />
-                            <span className="text-sm text-gray-700">Free program</span>
+                            <input type="checkbox" checked={editForm.isFree} onChange={(e) => setEditForm(f => ({ ...f, isFree: e.target.checked }))} className="w-4 h-4 rounded accent-emerald-600" />
+                            <span className="text-sm" style={{ color: '#1F2937' }}>Free program</span>
                           </label>
                           <label className="flex items-center gap-2 cursor-pointer">
-                            <input
-                              type="checkbox"
-                              checked={editForm.isLimited}
-                              onChange={(e) => setEditForm(f => ({ ...f, isLimited: e.target.checked }))}
-                              className="w-4 h-4 rounded accent-red-600"
-                            />
-                            <span className="text-sm text-gray-700">Limited entry</span>
+                            <input type="checkbox" checked={editForm.isLimited} onChange={(e) => setEditForm(f => ({ ...f, isLimited: e.target.checked }))} className="w-4 h-4 rounded accent-red-600" />
+                            <span className="text-sm" style={{ color: '#1F2937' }}>Limited entry</span>
                           </label>
                         </div>
                         <div className="flex items-center gap-2">
-                          <button
-                            onClick={() => saveEdit(program.id)}
-                            disabled={saving}
-                            className="flex items-center gap-1.5 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold rounded-xl transition-colors disabled:opacity-60"
-                          >
-                            {saving ? <Loader2 size={14} className="animate-spin" /> : <Save size={14} />} Save
+                          <button onClick={() => saveEdit(program.id)} disabled={saving}
+                            className="flex items-center gap-1.5 px-4 py-2 text-white text-sm font-bold rounded-xl transition-colors disabled:opacity-60"
+                            style={{ backgroundColor: '#D97706' }}>
+                            {saving ? <Loader2 size={13} className="animate-spin" /> : <Save size={13} />} Save
                           </button>
-                          <button
-                            onClick={cancelEdit}
-                            className="flex items-center gap-1.5 px-4 py-2 border border-gray-200 text-gray-600 hover:bg-gray-50 text-sm font-medium rounded-xl transition-colors"
-                          >
-                            <X size={14} /> Cancel
+                          <button onClick={cancelEdit}
+                            className="flex items-center gap-1.5 px-4 py-2 text-sm font-medium rounded-xl transition-colors"
+                            style={{ border: '1px solid #E7DCCB', color: '#6B7280' }}>
+                            <X size={13} /> Cancel
                           </button>
                         </div>
                       </div>
@@ -432,61 +388,35 @@ export default function ProgramsPage() {
                       <div className="flex items-start justify-between gap-4">
                         <div className="min-w-0">
                           <div className="flex flex-wrap items-center gap-2 mb-1">
-                            <h3 className={`font-bold text-sm ${program.isFree ? 'text-emerald-800' : 'text-gray-900'}`}>
-                              {program.name}
-                            </h3>
-                            {!program.isActive && (
-                              <span className="px-2 py-0.5 bg-gray-100 text-gray-500 text-xs font-bold rounded-full">INACTIVE</span>
-                            )}
-                            {program.isFree && (
-                              <span className="px-2 py-0.5 bg-emerald-100 text-emerald-700 text-xs font-bold rounded-full">FREE</span>
-                            )}
-                            {program.isLimited && (
-                              <span className="flex items-center gap-1 px-2 py-0.5 bg-red-100 text-red-700 text-xs font-bold rounded-full">
-                                <AlertTriangle size={10} /> LIMITED
-                              </span>
-                            )}
-                            {isSaved && (
-                              <span className="flex items-center gap-1 px-2 py-0.5 bg-green-100 text-green-700 text-xs font-semibold rounded-full">
-                                <Check size={11} /> Saved
-                              </span>
-                            )}
+                            <h3 className="font-bold text-sm" style={{ color: program.isFree ? '#065F46' : '#1F2937' }}>{program.name}</h3>
+                            {!program.isActive && <span className="px-2 py-0.5 text-xs font-bold rounded-full" style={{ backgroundColor: '#F3F4F6', color: '#6B7280' }}>INACTIVE</span>}
+                            {program.isFree && <span className="px-2 py-0.5 text-xs font-bold rounded-full" style={{ backgroundColor: '#D1FAE5', color: '#065F46' }}>FREE</span>}
+                            {program.isLimited && <span className="flex items-center gap-1 px-2 py-0.5 text-xs font-bold rounded-full" style={{ backgroundColor: '#FEE2E2', color: '#DC2626' }}><AlertTriangle size={9} /> LIMITED</span>}
+                            {isSaved && <span className="flex items-center gap-1 px-2 py-0.5 text-xs font-bold rounded-full" style={{ backgroundColor: '#D1FAE5', color: '#065F46' }}><Check size={10} /> Saved</span>}
                           </div>
-                          <p className="text-sm text-gray-500 line-clamp-2">{program.description}</p>
-                          <p className="text-[11px] text-gray-400 font-mono mt-1">ID: {program.id}</p>
+                          <p className="text-sm line-clamp-2" style={{ color: '#6B7280' }}>{program.description}</p>
+                          <p className="text-[11px] font-mono mt-1" style={{ color: '#9CA3AF' }}>ID: {program.id}</p>
                         </div>
 
                         {/* Actions */}
                         <div className="flex items-center gap-1.5 flex-shrink-0">
-                          <button
-                            onClick={() => startEdit(program)}
-                            className="p-2 text-indigo-600 bg-indigo-50 hover:bg-indigo-100 rounded-xl transition-colors border border-indigo-100"
-                            title="Edit"
-                          >
-                            <Pencil size={14} />
+                          <button onClick={() => startEdit(program)}
+                            className="p-2 rounded-xl transition-colors"
+                            style={{ backgroundColor: '#FEF3C7', color: '#D97706', border: '1px solid #FDE68A' }}
+                            title="Edit">
+                            <Pencil size={13} />
                           </button>
-                          <button
-                            onClick={() => toggleActive(program)}
-                            disabled={togglingId === program.id}
-                            className={`p-2 rounded-xl transition-colors border ${
-                              program.isActive
-                                ? 'text-green-600 bg-green-50 hover:bg-green-100 border-green-100'
-                                : 'text-gray-500 bg-gray-50 hover:bg-gray-100 border-gray-200'
-                            }`}
-                            title={program.isActive ? 'Deactivate' : 'Activate'}
-                          >
-                            {togglingId === program.id
-                              ? <Loader2 size={14} className="animate-spin" />
-                              : program.isActive ? <ToggleRight size={14} /> : <ToggleLeft size={14} />
-                            }
+                          <button onClick={() => toggleActive(program)} disabled={togglingId === program.id}
+                            className="p-2 rounded-xl transition-colors"
+                            style={program.isActive ? { backgroundColor: '#DCFCE7', color: '#15803D', border: '1px solid #A7F3D0' } : { backgroundColor: '#F3F4F6', color: '#9CA3AF', border: '1px solid #E5E7EB' }}
+                            title={program.isActive ? 'Deactivate' : 'Activate'}>
+                            {togglingId === program.id ? <Loader2 size={13} className="animate-spin" /> : program.isActive ? <ToggleRight size={13} /> : <ToggleLeft size={13} />}
                           </button>
-                          <button
-                            onClick={() => deleteProgram(program.id)}
-                            disabled={deletingId === program.id}
-                            className="p-2 text-red-500 bg-red-50 hover:bg-red-100 rounded-xl transition-colors border border-red-100"
-                            title="Delete"
-                          >
-                            {deletingId === program.id ? <Loader2 size={14} className="animate-spin" /> : <Trash2 size={14} />}
+                          <button onClick={() => deleteProgram(program.id)} disabled={deletingId === program.id}
+                            className="p-2 rounded-xl transition-colors"
+                            style={{ backgroundColor: '#FEF2F2', color: '#DC2626', border: '1px solid #FECACA' }}
+                            title="Delete">
+                            {deletingId === program.id ? <Loader2 size={13} className="animate-spin" /> : <Trash2 size={13} />}
                           </button>
                         </div>
                       </div>
