@@ -13,9 +13,10 @@ export default function ParentInfoStep() {
 
   return (
     <div className="space-y-6">
-      <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
-        Parent Information
-      </h2>
+      <div className="mb-6">
+        <h2 className="text-2xl font-black tracking-tight" style={{ color: '#1F2937' }}>Parent / Guardian Information</h2>
+        <p className="text-sm mt-1" style={{ color: '#6B7280' }}>We&apos;ll use these details to keep you informed.</p>
+      </div>
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <Input
@@ -58,14 +59,13 @@ export default function ParentInfoStep() {
         />
         
         <div className="md:col-span-2">
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-            Home Address
-          </label>
+          <label className="block text-sm font-semibold mb-2" style={{ color: '#1F2937' }}>Home Address</label>
           <textarea
             {...register('parent.address')}
             placeholder="Enter your full home address"
             rows={3}
-            className={`w-full px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 ${getError('address') ? 'border-red-500 focus:ring-red-500' : ''}`}
+            className={`w-full px-4 py-3.5 rounded-2xl border bg-white text-base placeholder-[#9CA3AF] focus:outline-none focus:ring-2 focus:ring-[#D97706] focus:border-[#D97706] transition-all duration-200 resize-none ${getError('address') ? 'border-red-400 focus:ring-red-400' : 'border-[#E7DCCB] hover:border-[#D97706]/50'}`}
+            style={{ color: '#1F2937' }}
           />
           {getError('address') && (
             <p className="mt-1 text-sm text-red-500">{getError('address')}</p>

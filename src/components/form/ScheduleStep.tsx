@@ -23,9 +23,10 @@ export default function ScheduleStep() {
 
   return (
     <div className="space-y-6">
-      <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
-        Choose Your Schedule
-      </h2>
+      <div className="mb-6">
+        <h2 className="text-2xl font-black tracking-tight" style={{ color: '#1F2937' }}>Choose Your Schedule</h2>
+        <p className="text-sm mt-1" style={{ color: '#6B7280' }}>Pick the session type that works best for your family.</p>
+      </div>
       
       {getError() && (
         <p className="text-sm text-red-500">{getError()}</p>
@@ -44,11 +45,8 @@ export default function ScheduleStep() {
               transition={{ delay: index * 0.1 }}
             >
               <Card
-                className={`p-6 cursor-pointer transition-all duration-300 ${
-                  isSelected
-                    ? 'ring-2 ring-indigo-500 bg-indigo-50 dark:bg-indigo-900/20'
-                    : 'hover:shadow-lg'
-                }`}
+                className={`p-6 cursor-pointer transition-all duration-300 ${isSelected ? '' : ''}`}
+                style={isSelected ? { outline: '2px solid #D97706', outlineOffset: '2px', backgroundColor: '#FFFAF3' } : {}}
                 onClick={() => {
                   const radio = document.getElementById(`schedule-${schedule.id}`) as HTMLInputElement;
                   radio.click();
@@ -56,15 +54,11 @@ export default function ScheduleStep() {
               >
                 <div className="flex items-start gap-4">
                   <div className={`flex-shrink-0 p-3 rounded-xl bg-gradient-to-br ${schedule.color} text-white`}>
-                    <Icon size={24} />
+                    <Icon size={22} />
                   </div>
                   <div className="flex-1">
-                    <h3 className="font-semibold text-gray-900 dark:text-white mb-1">
-                      {schedule.name}
-                    </h3>
-                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
-                      {schedule.description}
-                    </p>
+                    <h3 className="font-semibold mb-0.5" style={{ color: '#1F2937' }}>{schedule.name}</h3>
+                    <p className="text-sm mb-2" style={{ color: '#6B7280' }}>{schedule.description}</p>
                     <input
                       id={`schedule-${schedule.id}`}
                       type="radio"
@@ -76,9 +70,10 @@ export default function ScheduleStep() {
                       <motion.div
                         initial={{ scale: 0 }}
                         animate={{ scale: 1 }}
-                        className="inline-flex items-center gap-1 text-sm text-indigo-600 dark:text-indigo-400 font-medium"
+                        className="inline-flex items-center gap-1 text-xs font-bold"
+                        style={{ color: '#D97706' }}
                       >
-                        <span className="w-2 h-2 bg-indigo-600 rounded-full" />
+                        <span className="w-2 h-2 rounded-full" style={{ backgroundColor: '#D97706' }} />
                         Selected
                       </motion.div>
                     )}

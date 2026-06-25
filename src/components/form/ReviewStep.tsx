@@ -74,109 +74,72 @@ export default function ReviewStep() {
     return null;
   }, [formData.student?.photo]);
 
-  const InfoRow = ({ label, value, icon: Icon, highlight = false }: any) => (
-    <div className="flex items-start gap-3 py-2.5 border-b border-gray-100 dark:border-gray-700 last:border-0">
-      {Icon && <Icon size={18} className="text-gray-400 mt-0.5 flex-shrink-0" />}
+  const InfoRow = ({ label, value, icon: Icon }: any) => (
+    <div className="flex items-start gap-3 py-2.5 last:pb-0" style={{ borderBottom: '1px solid #F3E8D4' }}>
+      {Icon && <Icon size={16} className="mt-0.5 flex-shrink-0" style={{ color: '#D97706' }} />}
       <div className="flex-1 min-w-0">
-        <p className="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide">{label}</p>
-        <p className={`text-sm font-medium truncate ${highlight ? 'text-green-600 dark:text-green-400 text-lg' : 'text-gray-900 dark:text-white'}`}>
-          {value}
-        </p>
+        <p className="text-[11px] font-bold uppercase tracking-wider" style={{ color: '#9CA3AF' }}>{label}</p>
+        <p className="text-sm font-semibold mt-0.5 break-words" style={{ color: '#1F2937' }}>{value || '—'}</p>
       </div>
+    </div>
+  );
+
+  const SectionHeader = ({ icon: Icon, title, color }: any) => (
+    <div className="px-5 py-3.5 flex items-center gap-2" style={{ background: `linear-gradient(135deg, ${color}15 0%, ${color}08 100%)`, borderBottom: '1px solid #E7DCCB' }}>
+      <div className="p-1.5 rounded-lg" style={{ backgroundColor: color }}>
+        <Icon size={14} className="text-white" />
+      </div>
+      <h3 className="font-black text-sm tracking-tight" style={{ color: '#1F2937' }}>{title}</h3>
     </div>
   );
 
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="text-center mb-8">
-        <motion.div
-          initial={{ scale: 0 }}
-          animate={{ scale: 1 }}
-          className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-green-100 mb-4"
-        >
-          <FileText className="w-8 h-8 text-green-600" />
-        </motion.div>
-        <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-          Review Your Registration
-        </h2>
-        <p className="text-gray-500 mt-2">
-          Please verify all information before submitting
-        </p>
+      <div className="mb-6">
+        <h2 className="text-2xl font-black tracking-tight" style={{ color: '#1F2937' }}>Review Your Registration</h2>
+        <p className="text-sm mt-1" style={{ color: '#6B7280' }}>Please verify all information before submitting.</p>
       </div>
 
       {/* Student Info Card with Photo */}
       <Card className="overflow-hidden">
-        <div className="bg-gradient-to-r from-indigo-600 to-purple-600 px-6 py-4">
-          <h3 className="text-lg font-semibold text-white flex items-center gap-2">
-            <GraduationCap size={20} />
-            Student Information
-          </h3>
-        </div>
-        <div className="p-6">
-          <div className="flex flex-col md:flex-row gap-6">
+        <SectionHeader icon={GraduationCap} title="Student Information" color="#D97706" />
+        <div className="p-5">
+          <div className="flex flex-col sm:flex-row gap-5">
             {/* Photo */}
-            {photoPreview ? (
-              <div className="flex-shrink-0">
-                <div className="w-32 h-32 rounded-2xl overflow-hidden border-4 border-indigo-100 shadow-lg">
-                  <img
-                    src={photoPreview}
-                    alt="Student"
-                    className="w-full h-full object-cover"
-                  />
+            <div className="flex-shrink-0 flex flex-col items-center">
+              {photoPreview ? (
+                <div className="w-24 h-24 rounded-2xl overflow-hidden shadow-md" style={{ border: '2px solid #E7DCCB' }}>
+                  <img src={photoPreview} alt="Student" className="w-full h-full object-cover" />
                 </div>
-              </div>
-            ) : (
-              <div className="flex-shrink-0">
-                <div className="w-32 h-32 rounded-2xl bg-gray-100 border-4 border-gray-200 flex items-center justify-center">
-                  <Camera className="w-10 h-10 text-gray-400" />
+              ) : (
+                <div className="w-24 h-24 rounded-2xl flex items-center justify-center" style={{ backgroundColor: '#FCF3E8', border: '2px dashed #E7DCCB' }}>
+                  <Camera className="w-8 h-8" style={{ color: '#D97706' }} />
                 </div>
-                <p className="text-xs text-gray-500 text-center mt-2">No photo uploaded</p>
-              </div>
-            )}
-            
-            {/* Student Details */}
-            <div className="flex-1 grid grid-cols-2 gap-4">
-              <InfoRow 
-                label="Full Name" 
-                value={`${formData.student?.firstName} ${formData.student?.lastName}`} 
-              />
-              <InfoRow 
-                label="Gender" 
-                value={formData.student?.gender?.charAt(0).toUpperCase() + formData.student?.gender?.slice(1)} 
-              />
-              <InfoRow 
-                label="Date of Birth" 
-                value={formData.student?.dateOfBirth} 
-              />
-              <InfoRow 
-                label="Class/Grade" 
-                value={formData.student?.classGrade} 
-              />
-              <InfoRow 
-                label="School" 
-                value={formData.student?.schoolName}
-                className="col-span-2"
-              />
+              )}
+              <p className="text-[10px] mt-1.5 text-center" style={{ color: '#9CA3AF' }}>{photoPreview ? 'Photo uploaded' : 'No photo'}</p>
+            </div>
+            {/* Details */}
+            <div className="flex-1 grid grid-cols-2 gap-x-4">
+              <InfoRow label="Full Name" value={`${formData.student?.firstName} ${formData.student?.lastName}`} />
+              <InfoRow label="Gender" value={formData.student?.gender?.charAt(0).toUpperCase() + formData.student?.gender?.slice(1)} />
+              <InfoRow label="Date of Birth" value={formData.student?.dateOfBirth} />
+              <InfoRow label="Class/Grade" value={formData.student?.classGrade} />
+              <InfoRow label="School" value={formData.student?.schoolName} />
             </div>
           </div>
         </div>
       </Card>
 
       {/* Two Column Layout */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {/* Parent Info */}
         <Card className="overflow-hidden">
-          <div className="bg-gradient-to-r from-blue-600 to-cyan-600 px-6 py-4">
-            <h3 className="text-lg font-semibold text-white flex items-center gap-2">
-              <User size={20} />
-              Parent Information
-            </h3>
-          </div>
-          <div className="p-5">
+          <SectionHeader icon={User} title="Parent / Guardian" color="#C2410C" />
+          <div className="p-5 space-y-0">
             <InfoRow label="Full Name" value={formData.parent?.fullName} icon={User} />
-            <InfoRow label="Email Address" value={formData.parent?.email} icon={Mail} />
-            <InfoRow label="Phone Number" value={formData.parent?.phone} icon={Phone} />
+            <InfoRow label="Email" value={formData.parent?.email} icon={Mail} />
+            <InfoRow label="Phone" value={formData.parent?.phone} icon={Phone} />
             <InfoRow label="WhatsApp" value={formData.parent?.whatsapp} icon={Phone} />
             <InfoRow label="Address" value={formData.parent?.address} icon={MapPin} />
             <InfoRow label="Occupation" value={formData.parent?.occupation} icon={Briefcase} />
@@ -185,104 +148,69 @@ export default function ReviewStep() {
 
         {/* Programs & Schedule */}
         <Card className="overflow-hidden">
-          <div className="bg-gradient-to-r from-amber-500 to-orange-500 px-6 py-4">
-            <h3 className="text-lg font-semibold text-white flex items-center gap-2">
-              <Calendar size={20} />
-              Programs & Schedule
-            </h3>
-          </div>
+          <SectionHeader icon={Calendar} title="Programs & Schedule" color="#D97706" />
           <div className="p-5">
-            <div className="mb-4">
-              <p className="text-xs text-gray-500 uppercase tracking-wide mb-2">Selected Programs</p>
-              <div className="flex flex-wrap gap-2">
-                {selectedProgramNames.map((name: string, index: number) => (
-                  <span
-                    key={index}
-                    className="inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium bg-indigo-100 dark:bg-indigo-900/50 text-indigo-700 dark:text-indigo-300 border border-indigo-200"
-                  >
-                    <Award size={14} className="mr-1.5" />
-                    {name}
-                  </span>
-                ))}
-              </div>
+            <p className="text-[11px] font-bold uppercase tracking-wider mb-2" style={{ color: '#9CA3AF' }}>Selected Programs</p>
+            <div className="flex flex-wrap gap-2 mb-4">
+              {selectedProgramNames.map((name: string, index: number) => (
+                <span key={index} className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold" style={{ backgroundColor: '#FEF3C7', color: '#D97706', border: '1px solid #FDE68A' }}>
+                  <Award size={11} /> {name}
+                </span>
+              ))}
             </div>
-            <InfoRow label="Schedule Preference" value={schedules[formData.schedule?.schedule as keyof typeof schedules]} icon={Calendar} />
+            <InfoRow label="Schedule" value={schedules[formData.schedule?.schedule as keyof typeof schedules]} icon={Calendar} />
           </div>
         </Card>
       </div>
 
-      {/* Payment Summary - Full Width */}
+      {/* Payment Summary */}
       <Card className="overflow-hidden">
-        <div className="bg-gradient-to-r from-green-600 to-emerald-600 px-6 py-4">
-          <h3 className="text-lg font-semibold text-white flex items-center gap-2">
-            <CreditCard size={20} />
-            Payment Summary
-          </h3>
-        </div>
-        <div className="p-6">
+        <SectionHeader icon={CreditCard} title="Payment Summary" color="#15803D" />
+        <div className="p-5">
           {formData.payment?.coupon ? (
-            <div className="flex items-center gap-4">
-              <div className="p-3 bg-green-100 rounded-full">
-                <CheckCircle className="w-8 h-8 text-green-600" />
-              </div>
+            <div className="flex items-center gap-3 p-4 rounded-2xl" style={{ backgroundColor: '#F0FDF4', border: '1px solid #86EFAC' }}>
+              <div className="p-2 rounded-xl" style={{ backgroundColor: '#15803D' }}><CheckCircle size={18} className="text-white" /></div>
               <div>
-                <p className="font-semibold text-gray-900 dark:text-white">Free Registration Applied</p>
-                <div className="flex items-center gap-2 mt-1">
-                  <Tag size={16} className="text-amber-600" />
-                  <span className="font-mono font-bold text-amber-700 uppercase">{formData.payment.coupon}</span>
+                <p className="font-bold text-sm" style={{ color: '#14532D' }}>Free Registration</p>
+                <div className="flex items-center gap-1.5 mt-0.5">
+                  <Tag size={12} style={{ color: '#D97706' }} />
+                  <span className="font-mono font-bold text-xs uppercase" style={{ color: '#D97706' }}>{formData.payment.coupon}</span>
                 </div>
               </div>
             </div>
           ) : formData.payment?.selectedPlan ? (
-            <div className="space-y-4">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="p-2 bg-indigo-100 rounded-lg">
-                  <DollarSign className="w-5 h-5 text-indigo-600" />
-                </div>
+            <div className="space-y-3">
+              <div className="flex items-center gap-2 pb-3" style={{ borderBottom: '1px solid #E7DCCB' }}>
+                <div className="p-1.5 rounded-lg" style={{ backgroundColor: '#FEF3C7' }}><DollarSign size={14} style={{ color: '#D97706' }} /></div>
                 <div>
-                  <p className="text-sm text-gray-500">Payment Method</p>
-                  <p className="font-semibold text-gray-900">{payments[formData.payment?.paymentType as keyof typeof payments]}</p>
+                  <p className="text-xs" style={{ color: '#6B7280' }}>Payment Method</p>
+                  <p className="font-bold text-sm" style={{ color: '#1F2937' }}>{payments[formData.payment?.paymentType as keyof typeof payments] || 'Full Payment'}</p>
                 </div>
               </div>
-                            <div className="bg-gray-50 dark:bg-gray-800/50 rounded-xl p-5 space-y-3">
-                <div className="flex justify-between items-center">
-                  <span className="text-gray-600 dark:text-gray-400">Selected Plan</span>
-                  <span className="font-semibold text-gray-900 dark:text-white">{planNames[formData.payment.selectedPlan]}</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-gray-600 dark:text-gray-400">Plan Duration</span>
-                  <span className="font-medium text-gray-700 dark:text-gray-300">
-                    {formData.payment.selectedPlan === 'growth' && '3 Months'}
-                    {formData.payment.selectedPlan === 'short' && '2 Months'}
-                    {formData.payment.selectedPlan === 'mastery' && '6 Months'}
-                    {formData.payment.selectedPlan === 'platinum' && '6 Months'}
-                    {formData.payment.selectedPlan === 'holiday-explorer' && '1 Month (Online)'}
-                    {formData.payment.selectedPlan === 'holiday-innovator' && '2 Months (Online)'}
-                  </span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-gray-600 dark:text-gray-400">Plan Amount</span>
-                  <span className="font-semibold text-gray-900">{planAmounts[formData.payment.selectedPlan]}</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-gray-600 dark:text-gray-400">Registration Fee</span>
-                  <span className="font-semibold text-gray-900">₦5,000</span>
-                </div>
-                <div className="border-t-2 border-gray-200 dark:border-gray-700 pt-3 mt-3">
-                  <div className="flex justify-between items-center">
-                    <span className="text-lg font-bold text-gray-900 dark:text-white">Total Amount</span>
-                    <span className="text-2xl font-bold text-green-600">
-                      {(() => {
-                        const planAmount = parseInt(planAmounts[formData.payment!.selectedPlan!].replace(/[^0-9]/g, ''));
-                        return `₦${(planAmount + 5000).toLocaleString()}`;
-                      })()}
-                    </span>
+              <div className="rounded-2xl p-4 space-y-2.5" style={{ backgroundColor: '#FFFAF3', border: '1px solid #E7DCCB' }}>
+                {[
+                  { label: 'Selected Plan', value: planNames[formData.payment.selectedPlan] },
+                  { label: 'Plan Amount', value: planAmounts[formData.payment.selectedPlan] },
+                  { label: 'Registration Fee', value: '₦5,000' },
+                ].map(({ label, value }) => (
+                  <div key={label} className="flex justify-between items-center">
+                    <span className="text-sm" style={{ color: '#6B7280' }}>{label}</span>
+                    <span className="font-semibold text-sm" style={{ color: '#1F2937' }}>{value}</span>
                   </div>
+                ))}
+                <div className="flex justify-between items-center pt-2.5" style={{ borderTop: '2px solid #E7DCCB' }}>
+                  <span className="font-bold" style={{ color: '#1F2937' }}>Total Amount</span>
+                  <span className="text-xl font-black" style={{ color: '#15803D' }}>
+                    {(() => {
+                      const amt = parseInt(planAmounts[formData.payment!.selectedPlan!].replace(/[^0-9]/g, ''));
+                      return `₦${(amt + 5000).toLocaleString()}`;
+                    })()}
+                  </span>
                 </div>
               </div>
             </div>
           ) : (
-            <p className="text-gray-500">No payment information available</p>
+            <p className="text-sm" style={{ color: '#6B7280' }}>No payment information available.</p>
           )}
         </div>
       </Card>

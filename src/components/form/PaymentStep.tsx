@@ -82,160 +82,118 @@ export default function PaymentStep({ couponStatus, onCouponStatusChange }: Paym
 
   return (
     <div className="space-y-6">
-      <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
-        Payment Preference
-      </h2>
+      <div className="mb-6">
+        <h2 className="text-2xl font-black tracking-tight" style={{ color: '#1F2937' }}>Payment Preference</h2>
+        <p className="text-sm mt-1" style={{ color: '#6B7280' }}>Select how you&apos;d like to complete your enrolment.</p>
+      </div>
       
       {getError() && (
         <p className="text-sm text-red-500">{getError()}</p>
       )}
 
-      {/* Coupon Code Input - Always show at top */}
-      <Card className={`p-6 mb-6 ${
-        couponStatus === 'valid' ? 'border-green-300' :
-        couponStatus === 'invalid' ? 'border-red-300' : 'border-amber-200'
-      }`}>
+      {/* Coupon Code Input */}
+      <Card
+        className="p-5"
+        style={{
+          borderColor: couponStatus === 'valid' ? '#86EFAC' : couponStatus === 'invalid' ? '#FCA5A5' : '#E7DCCB',
+          backgroundColor: couponStatus === 'valid' ? '#F0FDF4' : couponStatus === 'invalid' ? '#FFF5F5' : '#FFFAF3',
+        }}
+      >
         <div className="flex items-start gap-4">
-          <div className={`flex-shrink-0 p-3 rounded-xl bg-gradient-to-br text-white ${
-            couponStatus === 'valid' ? 'from-green-500 to-emerald-500' :
-            couponStatus === 'invalid' ? 'from-red-500 to-rose-500' :
-            'from-amber-500 to-orange-500'
-          }`}>
-            <Tag size={24} />
+          <div
+            className="flex-shrink-0 p-2.5 rounded-xl text-white"
+            style={{ backgroundColor: couponStatus === 'valid' ? '#15803D' : couponStatus === 'invalid' ? '#DC2626' : '#D97706' }}
+          >
+            <Tag size={20} />
           </div>
           <div className="flex-1">
-            <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
-              Have a Coupon Code?
-            </h3>
+            <h3 className="font-bold text-sm mb-2" style={{ color: '#1F2937' }}>Have a Coupon Code?</h3>
             <div className="relative">
               <input
                 type="text"
                 placeholder="Enter coupon code (optional)"
                 {...register('payment.coupon', { onChange: handleCouponChange })}
-                className={`w-full px-4 py-3 pr-10 rounded-xl border bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-200 font-mono uppercase ${
-                  couponStatus === 'valid' ? 'border-green-400 focus:ring-green-400' :
-                  couponStatus === 'invalid' ? 'border-red-400 focus:ring-red-400' :
-                  'border-gray-300 dark:border-gray-600 focus:ring-indigo-500'
+                className={`w-full px-4 py-3 pr-10 rounded-2xl border bg-white text-base font-mono uppercase focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-200 ${
+                  couponStatus === 'valid'   ? 'border-green-300 focus:ring-green-400' :
+                  couponStatus === 'invalid' ? 'border-red-300 focus:ring-red-400' :
+                  'border-[#E7DCCB] focus:ring-[#D97706]'
                 }`}
+                style={{ color: '#1F2937' }}
               />
               <div className="absolute right-3 top-1/2 -translate-y-1/2">
-                {couponStatus === 'validating' && <Loader2 size={18} className="animate-spin text-gray-400" />}
-                {couponStatus === 'valid'      && <CheckCircle size={18} className="text-green-500" />}
-                {couponStatus === 'invalid'    && <XCircle size={18} className="text-red-500" />}
+                {couponStatus === 'validating' && <Loader2 size={17} className="animate-spin" style={{ color: '#D97706' }} />}
+                {couponStatus === 'valid'      && <CheckCircle size={17} style={{ color: '#15803D' }} />}
+                {couponStatus === 'invalid'    && <XCircle size={17} className="text-red-500" />}
               </div>
             </div>
             {couponStatus === 'valid' && (
-              <motion.div
-                initial={{ opacity: 0, y: -6 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="flex items-center gap-2 mt-2 text-green-600 text-sm font-medium"
+              <motion.div initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }}
+                className="flex items-center gap-1.5 mt-2 text-xs font-semibold" style={{ color: '#15803D' }}
               >
-                <CheckCircle size={15} />
-                <span>{couponMessage}</span>
+                <CheckCircle size={13} /> {couponMessage}
               </motion.div>
             )}
             {couponStatus === 'invalid' && (
-              <motion.div
-                initial={{ opacity: 0, y: -6 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="flex items-center gap-2 mt-2 text-red-600 text-sm font-medium"
+              <motion.div initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }}
+                className="flex items-center gap-1.5 mt-2 text-xs font-semibold text-red-600"
               >
-                <XCircle size={15} />
-                <span>{couponMessage}</span>
+                <XCircle size={13} /> {couponMessage}
               </motion.div>
             )}
           </div>
         </div>
       </Card>
 
-      {/* Payment Options - Only show when NO coupon */}
+      {/* Payment Options */}
       {!hasCoupon && (
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-        {paymentOptions.map((option, index) => {
-          const Icon = option.icon;
-          const isSelected = selectedPayment === option.id;
-
-          return (
-            <motion.div
-              key={option.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.1 }}
-            >
-              <Card
-                className={`p-6 transition-all duration-300 relative ${
-                  option.comingSoon
-                    ? 'opacity-60 cursor-not-allowed'
-                    : isSelected
-                    ? 'ring-2 ring-indigo-500 bg-indigo-50 dark:bg-indigo-900/20 cursor-pointer'
-                    : 'hover:shadow-lg cursor-pointer'
-                }`}
-                onClick={() => {
-                  if (option.comingSoon) return;
-                  setValue('payment.paymentType', option.id as 'full' | 'installment', {
-                    shouldValidate: true,
-                    shouldDirty: true,
-                    shouldTouch: true,
-                  });
-                }}
-              >
-                {option.comingSoon && (
-                  <span className="absolute top-3 right-3 px-2.5 py-1 bg-amber-100 text-amber-700 text-xs font-bold rounded-full border border-amber-200">
-                    Coming Soon
-                  </span>
-                )}
-                <div className="flex items-start gap-4">
-                  <div className={`flex-shrink-0 p-3 rounded-xl bg-gradient-to-br ${option.color} text-white`}>
-                    <Icon size={24} />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {paymentOptions.map((option, index) => {
+            const Icon = option.icon;
+            const isSelected = selectedPayment === option.id;
+            return (
+              <motion.div key={option.id} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: index * 0.08 }}>
+                <Card
+                  className={`p-5 transition-all duration-200 relative ${option.comingSoon ? 'opacity-60 cursor-not-allowed' : 'cursor-pointer'}`}
+                  style={isSelected ? { outline: '2px solid #D97706', outlineOffset: '2px', backgroundColor: '#FFFAF3' } : {}}
+                  onClick={() => {
+                    if (option.comingSoon) return;
+                    setValue('payment.paymentType', option.id as 'full' | 'installment', { shouldValidate: true, shouldDirty: true, shouldTouch: true });
+                  }}
+                >
+                  {option.comingSoon && (
+                    <span className="absolute top-3 right-3 px-2 py-0.5 text-xs font-bold rounded-full" style={{ backgroundColor: '#FEF3C7', color: '#D97706', border: '1px solid #FDE68A' }}>Coming Soon</span>
+                  )}
+                  <div className="flex items-start gap-4">
+                    <div className={`flex-shrink-0 p-2.5 rounded-xl bg-gradient-to-br ${option.color} text-white`}><Icon size={22} /></div>
+                    <div className="flex-1">
+                      <h3 className="font-bold text-sm mb-0.5" style={{ color: '#1F2937' }}>{option.name}</h3>
+                      <p className="text-xs mb-2" style={{ color: '#6B7280' }}>{option.description}</p>
+                      <input id={`payment-${option.id}`} type="radio" value={option.id} {...register('payment.paymentType')} className="sr-only" disabled={option.comingSoon} />
+                      {isSelected && !option.comingSoon && (
+                        <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} className="inline-flex items-center gap-1 text-xs font-bold" style={{ color: '#D97706' }}>
+                          <span className="w-2 h-2 rounded-full" style={{ backgroundColor: '#D97706' }} /> Selected
+                        </motion.div>
+                      )}
+                    </div>
                   </div>
-                  <div className="flex-1">
-                    <h3 className="font-semibold text-gray-900 dark:text-white mb-1">
-                      {option.name}
-                    </h3>
-                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
-                      {option.description}
-                    </p>
-                    <input
-                      id={`payment-${option.id}`}
-                      type="radio"
-                      value={option.id}
-                      {...register('payment.paymentType')}
-                      className="sr-only"
-                      disabled={option.comingSoon}
-                    />
-                    {isSelected && !option.comingSoon && (
-                      <motion.div
-                        initial={{ scale: 0 }}
-                        animate={{ scale: 1 }}
-                        className="inline-flex items-center gap-1 text-sm text-indigo-600 dark:text-indigo-400 font-medium"
-                      >
-                        <span className="w-2 h-2 bg-indigo-600 rounded-full" />
-                        Selected
-                      </motion.div>
-                    )}
-                  </div>
-                </div>
-              </Card>
-            </motion.div>
-          );
-        })}
-      </div>
+                </Card>
+              </motion.div>
+            );
+          })}
+        </div>
       )}
 
-      {/* Free Registration Notice - Only show when coupon is confirmed valid */}
+      {/* Free Registration Notice */}
       {couponStatus === 'valid' && (
-        <Card className="p-6 bg-green-50 dark:bg-green-900/20 border-green-200">
-          <div className="flex items-start gap-4">
-            <div className="flex-shrink-0 p-3 rounded-xl bg-green-500 text-white">
-              <CheckCircle size={24} />
+        <Card className="p-5" style={{ backgroundColor: '#F0FDF4', borderColor: '#86EFAC' }}>
+          <div className="flex items-start gap-3">
+            <div className="flex-shrink-0 p-2 rounded-xl text-white" style={{ backgroundColor: '#15803D' }}>
+              <CheckCircle size={20} />
             </div>
-            <div className="flex-1">
-              <h3 className="font-semibold text-green-800 dark:text-green-200 mb-1">
-                Free Registration
-              </h3>
-              <p className="text-green-700 dark:text-green-300 text-sm">
-                Your coupon code <span className="font-mono font-bold uppercase">{couponCode}</span> has been applied.
-                No payment is required to complete your registration.
+            <div>
+              <h3 className="font-bold text-sm mb-0.5" style={{ color: '#14532D' }}>Free Registration Confirmed</h3>
+              <p className="text-xs" style={{ color: '#166534' }}>
+                Coupon <span className="font-mono font-bold uppercase">{couponCode}</span> applied — no payment required.
               </p>
             </div>
           </div>

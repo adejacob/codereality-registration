@@ -66,9 +66,10 @@ export default function StudentInfoStep() {
 
   return (
     <div className="space-y-6">
-      <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
-        Student Information
-      </h2>
+      <div className="mb-6">
+        <h2 className="text-2xl font-black tracking-tight" style={{ color: '#1F2937' }}>Student Information</h2>
+        <p className="text-sm mt-1" style={{ color: '#6B7280' }}>Tell us about your child joining the academy.</p>
+      </div>
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <Input
@@ -116,17 +117,17 @@ export default function StudentInfoStep() {
 
       {/* Photo Upload Section */}
       <div className="mt-8">
-        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+        <label className="block text-sm font-semibold mb-3" style={{ color: '#1F2937' }}>
           <span className="flex items-center gap-2">
-            <Camera size={18} className="text-indigo-500" />
-            Student Photo <span className="text-gray-400 font-normal">(Optional)</span>
+            <Camera size={16} style={{ color: '#D97706' }} />
+            Student Photo <span className="text-xs font-normal" style={{ color: '#9CA3AF' }}>(Optional)</span>
           </span>
         </label>
         
         {previewUrl ? (
           /* Photo Preview */
           <div className="relative w-48 h-48 mx-auto">
-            <div className="w-full h-full rounded-2xl overflow-hidden border-4 border-indigo-100 shadow-lg">
+            <div className="w-full h-full rounded-2xl overflow-hidden shadow-lg" style={{ border: '3px solid #E7DCCB' }}>
               <img
                 src={previewUrl}
                 alt="Student preview"
@@ -136,7 +137,8 @@ export default function StudentInfoStep() {
             <button
               type="button"
               onClick={handleRemovePhoto}
-              className="absolute -top-2 -right-2 p-1.5 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors shadow-md"
+              className="absolute -top-2 -right-2 p-1.5 text-white rounded-full transition-colors shadow-md"
+              style={{ backgroundColor: '#C2410C' }}
             >
               <X size={16} />
             </button>
@@ -152,16 +154,17 @@ export default function StudentInfoStep() {
             className="relative group cursor-pointer"
             onClick={() => fileInputRef.current?.click()}
           >
-            <div className="flex flex-col items-center justify-center w-full h-48 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-2xl bg-gray-50 dark:bg-gray-800/50 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 hover:border-indigo-400 transition-all duration-300">
-              <div className="p-4 bg-indigo-100 dark:bg-indigo-900/30 rounded-full mb-3 group-hover:scale-110 transition-transform">
-                <Upload className="w-8 h-8 text-indigo-600 dark:text-indigo-400" />
+            <div
+              className="flex flex-col items-center justify-center w-full h-44 rounded-2xl transition-all duration-300"
+              style={{ border: '2px dashed #E7DCCB', backgroundColor: '#FFFAF3' }}
+              onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.borderColor = '#D97706'; (e.currentTarget as HTMLDivElement).style.backgroundColor = '#FDF0DC'; }}
+              onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.borderColor = '#E7DCCB'; (e.currentTarget as HTMLDivElement).style.backgroundColor = '#FFFAF3'; }}
+            >
+              <div className="p-3 rounded-full mb-3 group-hover:scale-110 transition-transform" style={{ backgroundColor: '#FDE68A' }}>
+                <Upload className="w-7 h-7" style={{ color: '#D97706' }} />
               </div>
-              <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                Click to upload or drag and drop
-              </p>
-              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                PNG, JPG, GIF up to 10MB
-              </p>
+              <p className="text-sm font-semibold" style={{ color: '#1F2937' }}>Click to upload or drag &amp; drop</p>
+              <p className="text-xs mt-1" style={{ color: '#9CA3AF' }}>PNG, JPG up to 10MB</p>
             </div>
             <input
               ref={fileInputRef}

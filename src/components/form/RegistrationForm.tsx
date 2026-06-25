@@ -215,7 +215,7 @@ export default function RegistrationForm({ standalone = false }: { standalone?: 
   };
 
   return (
-    <section id="registration-form" className={standalone ? 'py-6 pb-16' : 'py-20 bg-gradient-to-br from-gray-50 to-indigo-50 dark:from-gray-900 dark:to-gray-800'}>
+    <section id="registration-form" className={standalone ? 'py-6 pb-20' : 'py-20'} style={{ backgroundColor: '#FCF3E8' }}>
       <div className="container mx-auto px-4">
         {!standalone && (
           <motion.div
@@ -225,10 +225,10 @@ export default function RegistrationForm({ standalone = false }: { standalone?: 
             transition={{ duration: 0.6 }}
             className="text-center mb-12"
           >
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">
+            <h2 className="text-4xl md:text-5xl font-black tracking-tight mb-4" style={{ color: '#1F2937' }}>
               Start Your Journey
             </h2>
-            <p className="text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+            <p className="text-xl max-w-2xl mx-auto" style={{ color: '#6B7280' }}>
               Complete the registration form to enroll your child in our STEM programs
             </p>
           </motion.div>
@@ -236,54 +236,69 @@ export default function RegistrationForm({ standalone = false }: { standalone?: 
 
         <FormProvider {...methods}>
           <form onSubmit={(e) => e.preventDefault()}>
-            <div className="max-w-4xl mx-auto">
-              <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-2xl p-5 sm:p-8 md:p-12 border border-gray-100 dark:border-gray-700">
+            <div className="max-w-[900px] mx-auto">
+              <div
+                className="bg-white rounded-[20px] p-5 sm:p-8 md:p-10"
+                style={{
+                  border: '1px solid #E7DCCB',
+                  boxShadow: '0 4px 32px rgba(215,119,6,0.10), 0 1px 4px rgba(0,0,0,0.04)',
+                }}
+              >
                 <StepIndicator steps={steps} currentStep={currentStep} />
 
                 <AnimatePresence mode="wait">
                   <motion.div
                     key={currentStep}
-                    initial={{ opacity: 0, x: 50 }}
+                    initial={{ opacity: 0, x: 30 }}
                     animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: -50 }}
-                    transition={{ duration: 0.3 }}
+                    exit={{ opacity: 0, x: -30 }}
+                    transition={{ duration: 0.25 }}
                   >
                     {renderStep()}
                   </motion.div>
                 </AnimatePresence>
 
                 {submitError && (
-                  <div className="mt-6 px-4 py-3 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm font-medium">
+                  <div className="mt-6 px-4 py-3 rounded-2xl text-sm font-medium" style={{ backgroundColor: '#FEF2F2', border: '1px solid #FECACA', color: '#DC2626' }}>
                     ⚠️ {submitError}
                   </div>
                 )}
 
-                <div className="flex justify-between mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
+                <div className="flex justify-between items-center mt-8 pt-6" style={{ borderTop: '1px solid #E7DCCB' }}>
                   <button
                     type="button"
                     onClick={handlePrevious}
                     disabled={currentStep === 0}
-                    className="px-6 py-3 rounded-xl border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-semibold"
+                    className="px-6 py-3 rounded-2xl font-semibold text-sm transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed"
+                    style={{ border: '1.5px solid #E7DCCB', color: '#6B7280', backgroundColor: 'transparent' }}
+                    onMouseEnter={e => { if (currentStep !== 0) { (e.currentTarget as HTMLButtonElement).style.backgroundColor = '#FDF0DC'; (e.currentTarget as HTMLButtonElement).style.borderColor = '#D97706'; (e.currentTarget as HTMLButtonElement).style.color = '#D97706'; } }}
+                    onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = 'transparent'; (e.currentTarget as HTMLButtonElement).style.borderColor = '#E7DCCB'; (e.currentTarget as HTMLButtonElement).style.color = '#6B7280'; }}
                   >
-                    Previous
+                    ← Previous
                   </button>
 
                   {currentStep < steps.length - 1 ? (
                     <button
                       type="button"
                       onClick={handleNext}
-                      className="px-6 py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 text-white hover:from-indigo-700 hover:to-purple-700 transition-all font-semibold shadow-lg shadow-indigo-500/30"
+                      className="px-8 py-3 rounded-2xl font-bold text-sm text-white transition-all duration-200 shadow-md active:scale-95"
+                      style={{ backgroundColor: '#D97706', boxShadow: '0 4px 14px rgba(217,119,6,0.35)' }}
+                      onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = '#B45309'; }}
+                      onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = '#D97706'; }}
                     >
-                      Next
+                      Continue →
                     </button>
                   ) : (
                     <button
                       type="button"
                       disabled={isSubmitting}
                       onClick={methods.handleSubmit(handleSubmit)}
-                      className="px-6 py-3 rounded-xl bg-gradient-to-r from-green-500 to-emerald-500 text-white hover:from-green-600 hover:to-emerald-600 transition-all font-semibold shadow-lg shadow-green-500/30 disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="px-8 py-3 rounded-2xl font-bold text-sm text-white transition-all duration-200 shadow-md disabled:opacity-50 disabled:cursor-not-allowed active:scale-95"
+                      style={{ backgroundColor: '#15803D', boxShadow: '0 4px 14px rgba(21,128,61,0.30)' }}
+                      onMouseEnter={e => { if (!isSubmitting) (e.currentTarget as HTMLButtonElement).style.backgroundColor = '#166534'; }}
+                      onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = '#15803D'; }}
                     >
-                      {isSubmitting ? 'Submitting...' : 'Confirm & Submit Registration'}
+                      {isSubmitting ? 'Submitting…' : '✓ Confirm & Submit'}
                     </button>
                   )}
                 </div>
