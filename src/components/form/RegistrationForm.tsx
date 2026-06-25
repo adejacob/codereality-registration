@@ -87,23 +87,24 @@ export default function RegistrationForm({ standalone = false }: { standalone?: 
   const isWorkshopOnly = selectedPrograms.length === 1 && freeProgramIds.includes(selectedPrograms[0]);
 
   const handleNext = async () => {
-    const fieldsToValidate = [
-      ['student'],
-      ['parent'],
-      ['programs'],
-      ['schedule'],
-      ['payment.paymentType', 'payment.coupon'], // Payment step - validate specific fields
-      ['payment.selectedPlan'], // Pricing step - validate plan selection
-      [], // Review step
-    ];
-
-    const isStepValid = await trigger(fieldsToValidate[currentStep] as any);
-
     // On the Payment step, block navigation if coupon is typed but not yet confirmed valid
     if (currentStep === 4) {
       const couponVal = (methods.getValues('payment.coupon') ?? '').trim();
       if (couponVal && couponStatus !== 'valid') return;
     }
+
+    // For free/workshop programs on the Payment step, skip paymentType validation
+    const fieldsToValidate = [
+      ['student'],
+      ['parent'],
+      ['programs'],
+      ['schedule'],
+      isWorkshopOnly ? ['payment.coupon'] : ['payment.paymentType', 'payment.coupon'],
+      ['payment.selectedPlan'],
+      [],
+    ];
+
+    const isStepValid = await trigger(fieldsToValidate[currentStep] as any);
 
     if (isStepValid) {
       let nextStep = currentStep + 1;

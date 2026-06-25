@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useMemo, useEffect, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { 
   User, Mail, Phone, MapPin, Briefcase, Calendar, CreditCard, Tag, CheckCircle, 
@@ -13,18 +13,13 @@ export default function ReviewStep() {
   const { watch } = useFormContext();
   const formData = watch();
 
-  const programs = [
-    { id: 'coding', name: 'Coding & Programming' },
-    { id: 'robotics', name: 'Robotics Engineering' },
-    { id: 'ai', name: 'Artificial Intelligence' },
-    { id: 'web', name: 'Web Development' },
-    { id: 'mobile', name: 'Mobile App Development' },
-    { id: 'game', name: 'Game Development' },
-    { id: '3d', name: '3D Design & Modeling' },
-    { id: 'graphic', name: 'Graphic Design' },
-    { id: 'digital', name: 'Digital Literacy' },
-    { id: 'scratch', name: 'Scratch Programming' },
-  ];
+  const [apiPrograms, setApiPrograms] = useState<{ id: string; name: string }[]>([]);
+  useEffect(() => {
+    fetch('/api/programs')
+      .then(r => r.json())
+      .then(d => { if (d.success) setApiPrograms(d.data); })
+      .catch(() => {});
+  }, []);
 
   const schedules = {
     weekend: 'Weekend Classes',
@@ -61,8 +56,8 @@ export default function ReviewStep() {
   };
 
   const selectedPrograms = formData.programs?.programs || [];
-  const selectedProgramNames = selectedPrograms.map((id: string) => 
-    programs.find(p => p.id === id)?.name || id
+  const selectedProgramNames = selectedPrograms.map((id: string) =>
+    apiPrograms.find(p => p.id === id)?.name || id
   );
 
   // Get photo preview URL
@@ -158,7 +153,7 @@ export default function ReviewStep() {
                 </span>
               ))}
             </div>
-            <InfoRow label="Schedule" value={schedules[formData.schedule?.schedule as keyof typeof schedules]} icon={Calendar} />
+            <InfoRow label="Schedule" value={formData.schedule?.schedule ? schedules[formData.schedule.schedule as keyof typeof schedules] : 'Online (Free Program)'} icon={Calendar} />
           </div>
         </Card>
       </div>
@@ -210,7 +205,13 @@ export default function ReviewStep() {
               </div>
             </div>
           ) : (
-            <p className="text-sm" style={{ color: '#6B7280' }}>No payment information available.</p>
+            <div className="flex items-center gap-3 p-4 rounded-2xl" style={{ backgroundColor: '#F0FDF4', border: '1px solid #86EFAC' }}>
+              <div className="p-2 rounded-xl" style={{ backgroundColor: '#15803D' }}><CheckCircle size={18} className="text-white" /></div>
+              <div>
+                <p className="font-bold text-sm" style={{ color: '#14532D' }}>Free Program Registration</p>
+                <p className="text-xs mt-0.5" style={{ color: '#166534' }}>No payment required for this program.</p>
+              </div>
+            </div>
           )}
         </div>
       </Card>
