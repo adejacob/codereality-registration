@@ -113,7 +113,7 @@ export default function PaymentStep({ couponStatus, onCouponStatusChange }: Paym
                 type="text"
                 placeholder="Enter coupon code (optional)"
                 {...register('payment.coupon', { onChange: handleCouponChange })}
-                className={`w-full px-4 py-3 pr-10 rounded-2xl border bg-white text-base font-mono uppercase focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-200 ${
+                className={`w-full px-4 py-3 pr-10 rounded-2xl border bg-white text-base font-mono uppercase focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-200 reg-input ${
                   couponStatus === 'valid'   ? 'border-green-300 focus:ring-green-400' :
                   couponStatus === 'invalid' ? 'border-red-300 focus:ring-red-400' :
                   'border-[#E7DCCB] focus:ring-[#D97706]'
@@ -153,7 +153,7 @@ export default function PaymentStep({ couponStatus, onCouponStatusChange }: Paym
             return (
               <motion.div key={option.id} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: index * 0.08 }}>
                 <Card
-                  className={`p-5 transition-all duration-200 relative ${option.comingSoon ? 'opacity-60 cursor-not-allowed' : 'cursor-pointer'}`}
+                  className={`p-5 transition-all duration-200 relative reg-select-card ${option.comingSoon ? 'opacity-60 cursor-not-allowed' : 'cursor-pointer'}`}
                   style={isSelected ? { outline: '2px solid #D97706', outlineOffset: '2px', backgroundColor: '#FFFAF3' } : {}}
                   onClick={() => {
                     if (option.comingSoon) return;

@@ -18,7 +18,7 @@ export default function StepIndicator({ steps, currentStep }: StepIndicatorProps
           </span>
           <span className="text-xs font-semibold" style={{ color: '#6B7280' }}>{steps[currentStep]}</span>
         </div>
-        <div className="w-full h-1.5 rounded-full" style={{ backgroundColor: '#E7DCCB' }}>
+        <div className="w-full h-1.5 rounded-full reg-progress-track" style={{ backgroundColor: '#E7DCCB' }}>
           <motion.div
             className="h-1.5 rounded-full"
             style={{ backgroundColor: '#D97706' }}

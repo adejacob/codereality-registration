@@ -59,12 +59,12 @@ export default function ParentInfoStep() {
         />
         
         <div className="md:col-span-2">
-          <label className="block text-sm font-semibold mb-2" style={{ color: '#1F2937' }}>Home Address</label>
+          <label className="block text-sm font-semibold mb-2 reg-label" style={{ color: '#1F2937' }}>Home Address</label>
           <textarea
             {...register('parent.address')}
             placeholder="Enter your full home address"
             rows={3}
-            className={`w-full px-4 py-3.5 rounded-2xl border bg-white text-base placeholder-[#9CA3AF] focus:outline-none focus:ring-2 focus:ring-[#D97706] focus:border-[#D97706] transition-all duration-200 resize-none ${getError('address') ? 'border-red-400 focus:ring-red-400' : 'border-[#E7DCCB] hover:border-[#D97706]/50'}`}
+            className={`w-full px-4 py-3.5 rounded-2xl border bg-white text-base placeholder-[#9CA3AF] focus:outline-none focus:ring-2 focus:ring-[#D97706] focus:border-[#D97706] transition-all duration-200 resize-none reg-input ${getError('address') ? 'border-red-400 focus:ring-red-400' : 'border-[#E7DCCB] hover:border-[#D97706]/50'}`}
             style={{ color: '#1F2937' }}
           />
           {getError('address') && (

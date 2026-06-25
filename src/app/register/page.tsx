@@ -9,9 +9,9 @@ export const metadata: Metadata = {
 
 export default function RegisterPage() {
   return (
-    <main className="min-h-screen" style={{ backgroundColor: '#FCF3E8' }}>
+    <main className="min-h-screen reg-page-shell" style={{ backgroundColor: '#FCF3E8' }}>
       {/* Header */}
-      <header className="bg-white border-b sticky top-0 z-20 px-4 py-3.5" style={{ borderColor: '#E7DCCB', boxShadow: '0 1px 12px rgba(215,119,6,0.08)' }}>
+      <header className="bg-white border-b sticky top-0 z-20 px-4 py-3.5 reg-header" style={{ borderColor: '#E7DCCB', boxShadow: '0 1px 12px rgba(215,119,6,0.08)' }}>
         <div className="max-w-5xl mx-auto flex items-center justify-between">
           <a href="/" className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl overflow-hidden shadow-md" style={{ boxShadow: '0 2px 8px rgba(215,119,6,0.2)' }}>
@@ -44,10 +44,10 @@ export default function RegisterPage() {
         <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest mb-4" style={{ backgroundColor: '#D97706', color: '#fff' }}>
           Enrolment Form
         </div>
-        <h1 className="text-3xl md:text-4xl font-black tracking-tight mb-3" style={{ color: '#1F2937' }}>
+        <h1 className="text-3xl md:text-4xl font-black tracking-tight mb-3 reg-hero-title" style={{ color: '#1F2937' }}>
           Register Your Child
         </h1>
-        <p className="text-base max-w-md mx-auto" style={{ color: '#6B7280' }}>
+        <p className="text-base max-w-md mx-auto reg-hero-sub" style={{ color: '#6B7280' }}>
           Complete the steps below to secure your child&apos;s spot in our STEM programs.
         </p>
       </div>

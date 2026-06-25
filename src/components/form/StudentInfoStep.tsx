@@ -117,7 +117,7 @@ export default function StudentInfoStep() {
 
       {/* Photo Upload Section */}
       <div className="mt-8">
-        <label className="block text-sm font-semibold mb-3" style={{ color: '#1F2937' }}>
+        <label className="block text-sm font-semibold mb-3 reg-label" style={{ color: '#1F2937' }}>
           <span className="flex items-center gap-2">
             <Camera size={16} style={{ color: '#D97706' }} />
             Student Photo <span className="text-xs font-normal" style={{ color: '#9CA3AF' }}>(Optional)</span>
@@ -155,7 +155,7 @@ export default function StudentInfoStep() {
             onClick={() => fileInputRef.current?.click()}
           >
             <div
-              className="flex flex-col items-center justify-center w-full h-44 rounded-2xl transition-all duration-300"
+              className="flex flex-col items-center justify-center w-full h-44 rounded-2xl transition-all duration-300 reg-dropzone"
               style={{ border: '2px dashed #E7DCCB', backgroundColor: '#FFFAF3' }}
               onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.borderColor = '#D97706'; (e.currentTarget as HTMLDivElement).style.backgroundColor = '#FDF0DC'; }}
               onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.borderColor = '#E7DCCB'; (e.currentTarget as HTMLDivElement).style.backgroundColor = '#FFFAF3'; }}

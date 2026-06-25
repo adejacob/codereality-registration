@@ -45,7 +45,7 @@ export default function ScheduleStep() {
               transition={{ delay: index * 0.1 }}
             >
               <Card
-                className={`p-6 cursor-pointer transition-all duration-300 ${isSelected ? '' : ''}`}
+                className={`p-6 cursor-pointer transition-all duration-300 reg-select-card`}
                 style={isSelected ? { outline: '2px solid #D97706', outlineOffset: '2px', backgroundColor: '#FFFAF3' } : {}}
                 onClick={() => {
                   const radio = document.getElementById(`schedule-${schedule.id}`) as HTMLInputElement;
