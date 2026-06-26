@@ -216,7 +216,7 @@ export default function RegistrationForm({ standalone = false }: { standalone?: 
   };
 
   return (
-    <section id="registration-form" className={`${standalone ? 'py-6 pb-20' : 'py-20'} reg-page-shell`} style={{ backgroundColor: '#FCF3E8' }}>
+    <section id="registration-form" className={standalone ? 'py-6 pb-20' : 'py-20'} style={{ backgroundColor: '#FCF3E8' }}>
       <div className="container mx-auto px-4">
         {!standalone && (
           <motion.div
@@ -239,7 +239,7 @@ export default function RegistrationForm({ standalone = false }: { standalone?: 
           <form onSubmit={(e) => e.preventDefault()}>
             <div className="max-w-[900px] mx-auto">
               <div
-                className="bg-white rounded-[20px] p-5 sm:p-8 md:p-10 reg-card"
+                className="bg-white rounded-[20px] p-5 sm:p-8 md:p-10"
                 style={{
                   border: '1px solid #E7DCCB',
                   boxShadow: '0 4px 32px rgba(215,119,6,0.10), 0 1px 4px rgba(0,0,0,0.04)',
@@ -265,12 +265,12 @@ export default function RegistrationForm({ standalone = false }: { standalone?: 
                   </div>
                 )}
 
-                <div className="flex justify-between items-center mt-8 pt-6 reg-nav-border" style={{ borderTop: '1px solid #E7DCCB' }}>
+                <div className="flex justify-between items-center mt-8 pt-6" style={{ borderTop: '1px solid #E7DCCB' }}>
                   <button
                     type="button"
                     onClick={handlePrevious}
                     disabled={currentStep === 0}
-                    className="px-6 py-3 rounded-2xl font-semibold text-sm transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed reg-btn-prev"
+                    className="px-6 py-3 rounded-2xl font-semibold text-sm transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed"
                     style={{ border: '1.5px solid #E7DCCB', color: '#6B7280', backgroundColor: 'transparent' }}
                     onMouseEnter={e => { if (currentStep !== 0) { (e.currentTarget as HTMLButtonElement).style.backgroundColor = '#FDF0DC'; (e.currentTarget as HTMLButtonElement).style.borderColor = '#D97706'; (e.currentTarget as HTMLButtonElement).style.color = '#D97706'; } }}
                     onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = 'transparent'; (e.currentTarget as HTMLButtonElement).style.borderColor = '#E7DCCB'; (e.currentTarget as HTMLButtonElement).style.color = '#6B7280'; }}

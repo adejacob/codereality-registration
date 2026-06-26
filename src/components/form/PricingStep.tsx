@@ -127,7 +127,7 @@ export default function PricingStep() {
                 return (
                   <label
                     key={plan.id}
-                    className="relative cursor-pointer rounded-2xl border-2 p-4 transition-all block reg-select-card"
+                    className="relative cursor-pointer rounded-2xl border-2 p-4 transition-all block"
                     style={isSelected
                       ? { borderColor: '#D97706', backgroundColor: '#FFFAF3' }
                       : { borderColor: '#E7DCCB', backgroundColor: '#fff' }
@@ -174,7 +174,7 @@ export default function PricingStep() {
 
       {/* Selected Plan Summary */}
       {selectedPlan && (
-        <div className="rounded-2xl p-4 reg-inner-card" style={{ backgroundColor: '#FFFAF3', border: '1px solid #E7DCCB' }}>
+        <div className="rounded-2xl p-4" style={{ backgroundColor: '#FFFAF3', border: '1px solid #E7DCCB' }}>
           <p className="text-xs font-bold uppercase tracking-widest mb-2" style={{ color: '#D97706' }}>Selected Plan</p>
           <div className="flex justify-between items-center">
             <span className="font-bold text-sm" style={{ color: '#1F2937' }}>{selectedPlan.name}</span>
@@ -185,7 +185,7 @@ export default function PricingStep() {
       )}
 
       {/* Premium Features */}
-      <div className="rounded-2xl p-5 reg-inner-card" style={{ backgroundColor: '#FFFAF3', border: '1px solid #E7DCCB' }}>
+      <div className="rounded-2xl p-5" style={{ backgroundColor: '#FFFAF3', border: '1px solid #E7DCCB' }}>
         <h3 className="text-sm font-black uppercase tracking-widest mb-4 flex items-center gap-2" style={{ color: '#1F2937' }}>
           <Award size={16} style={{ color: '#D97706' }} />
           What Makes Our Program Premium
@@ -201,7 +201,7 @@ export default function PricingStep() {
       </div>
 
       {/* Additional Information */}
-      <div className="rounded-2xl p-5 reg-inner-card" style={{ backgroundColor: '#F9FAFB', border: '1px solid #E7DCCB' }}>
+      <div className="rounded-2xl p-5" style={{ backgroundColor: '#F9FAFB', border: '1px solid #E7DCCB' }}>
         <h3 className="text-sm font-black uppercase tracking-widest mb-3 flex items-center gap-2" style={{ color: '#1F2937' }}>
           <GraduationCap size={16} style={{ color: '#D97706' }} />
           Additional Information

@@ -130,7 +130,7 @@ export default function ProgramSelectionStep() {
                 className={program.isFree ? 'sm:col-span-2 lg:col-span-3' : ''}
               >
                 <Card
-                  className={`p-6 cursor-pointer transition-all duration-300 relative reg-select-card ${
+                  className={`p-6 cursor-pointer transition-all duration-300 relative ${
                     isSelected && program.isFree
                       ? 'ring-2 ring-emerald-500 bg-emerald-50 dark:bg-emerald-900/20'
                       : isSelected
