@@ -54,6 +54,7 @@ export async function GET(
     });
   } catch (error) {
     console.error('Certificate error:', error);
-    return NextResponse.json({ success: false, message: 'Failed to generate certificate' }, { status: 500 });
+    const msg = error instanceof Error ? error.message : String(error);
+    return NextResponse.json({ success: false, message: msg }, { status: 500 });
   }
 }
