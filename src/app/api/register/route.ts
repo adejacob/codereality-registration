@@ -151,6 +151,7 @@ export async function POST(request: NextRequest) {
         schedule: registration.schedule.schedule,
         paymentType: registration.payment.paymentType,
         coupon: registration.payment.coupon,
+        selectedPlan: registration.payment.selectedPlan,
       },
       { status: 201 }
     );

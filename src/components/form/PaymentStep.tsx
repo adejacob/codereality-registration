@@ -1,14 +1,14 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { motion } from 'framer-motion';
 import { CreditCard, Calendar, Tag, CheckCircle, XCircle, Loader2 } from 'lucide-react';
 import Card from '../ui/Card';
 
-const paymentOptions = [
-  { id: 'full', name: 'Full Payment', description: 'Pay the complete amount upfront', icon: CreditCard, color: 'from-green-500 to-emerald-500', comingSoon: false },
-  { id: 'installment', name: 'Installment Plan', description: 'Pay in convenient monthly installments', icon: Calendar, color: 'from-blue-500 to-indigo-500', comingSoon: true },
+const ALL_PAYMENT_OPTIONS = [
+  { id: 'full',        name: 'Full Payment',      description: 'Pay the complete amount upfront',              icon: CreditCard, color: 'from-green-500 to-emerald-500' },
+  { id: 'installment', name: 'Installment Plan',  description: 'Pay in convenient monthly installments',       icon: Calendar,   color: 'from-blue-500 to-indigo-500'  },
 ];
 
 export type CouponStatus = 'idle' | 'validating' | 'valid' | 'invalid';
@@ -24,7 +24,19 @@ export default function PaymentStep({ couponStatus, onCouponStatusChange }: Paym
   const couponCode = watch('payment.coupon') || '';
 
   const [couponMessage, setCouponMessage] = useState('');
+  const [installmentEnabled, setInstallmentEnabled] = useState(false);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    fetch('/api/admin/settings?key=installment_enabled')
+      .then(r => r.json())
+      .then(d => { if (d.success) setInstallmentEnabled(d.value === 'true'); })
+      .catch(() => {});
+  }, []);
+
+  const paymentOptions = installmentEnabled
+    ? ALL_PAYMENT_OPTIONS
+    : ALL_PAYMENT_OPTIONS.filter(o => o.id !== 'installment');
 
   const hasCoupon = couponCode.trim() !== '' && couponStatus === 'valid';
 
@@ -153,23 +165,19 @@ export default function PaymentStep({ couponStatus, onCouponStatusChange }: Paym
             return (
               <motion.div key={option.id} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: index * 0.08 }}>
                 <Card
-                  className={`p-5 transition-all duration-200 relative ${option.comingSoon ? 'opacity-60 cursor-not-allowed' : 'cursor-pointer'}`}
+                  className="p-5 transition-all duration-200 relative cursor-pointer"
                   style={isSelected ? { outline: '2px solid #D97706', outlineOffset: '2px', backgroundColor: '#FFFAF3' } : {}}
                   onClick={() => {
-                    if (option.comingSoon) return;
                     setValue('payment.paymentType', option.id as 'full' | 'installment', { shouldValidate: true, shouldDirty: true, shouldTouch: true });
                   }}
                 >
-                  {option.comingSoon && (
-                    <span className="absolute top-3 right-3 px-2 py-0.5 text-xs font-bold rounded-full" style={{ backgroundColor: '#FEF3C7', color: '#D97706', border: '1px solid #FDE68A' }}>Coming Soon</span>
-                  )}
                   <div className="flex items-start gap-4">
                     <div className={`flex-shrink-0 p-2.5 rounded-xl bg-gradient-to-br ${option.color} text-white`}><Icon size={22} /></div>
                     <div className="flex-1">
                       <h3 className="font-bold text-sm mb-0.5" style={{ color: '#1F2937' }}>{option.name}</h3>
                       <p className="text-xs mb-2" style={{ color: '#6B7280' }}>{option.description}</p>
-                      <input id={`payment-${option.id}`} type="radio" value={option.id} {...register('payment.paymentType')} className="sr-only" disabled={option.comingSoon} />
-                      {isSelected && !option.comingSoon && (
+                      <input id={`payment-${option.id}`} type="radio" value={option.id} {...register('payment.paymentType')} className="sr-only" />
+                      {isSelected && (
                         <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} className="inline-flex items-center gap-1 text-xs font-bold" style={{ color: '#D97706' }}>
                           <span className="w-2 h-2 rounded-full" style={{ backgroundColor: '#D97706' }} /> Selected
                         </motion.div>

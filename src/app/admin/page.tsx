@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 import {
   Users, Clock, CheckCircle, UserCheck, XCircle, PhoneCall,
   TrendingUp, ArrowRight, CreditCard, BadgeCheck, AlertCircle,
-  Lock, X, Eye, EyeOff, Loader2, Tag,
+  Lock, X, Eye, EyeOff, Loader2, Tag, ToggleLeft, ToggleRight, Settings,
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -211,6 +211,8 @@ export default function AdminDashboard() {
   const [recent, setRecent]   = useState<Registration[]>([]);
   const [loading, setLoading] = useState(true);
   const [showChangePassword, setShowChangePassword] = useState(false);
+  const [installmentEnabled, setInstallmentEnabled] = useState(false);
+  const [installmentSaving, setInstallmentSaving]   = useState(false);
 
   useEffect(() => {
     fetch('/api/admin/registrations?limit=6')
@@ -219,7 +221,28 @@ export default function AdminDashboard() {
         if (d.success) { setStats(d.stats); setRecent(d.data); }
       })
       .finally(() => setLoading(false));
+
+    fetch('/api/admin/settings?key=installment_enabled')
+      .then(r => r.json())
+      .then(d => { if (d.success) setInstallmentEnabled(d.value === 'true'); })
+      .catch(() => {});
   }, []);
+
+  async function toggleInstallment() {
+    const newValue = !installmentEnabled;
+    setInstallmentSaving(true);
+    try {
+      const res = await fetch('/api/admin/settings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ key: 'installment_enabled', value: String(newValue) }),
+      });
+      const data = await res.json();
+      if (data.success) setInstallmentEnabled(newValue);
+    } catch { /* silent */ } finally {
+      setInstallmentSaving(false);
+    }
+  }
 
   const conversionRate = stats && stats.total > 0
     ? ((stats.enrolled / stats.total) * 100).toFixed(1)
@@ -251,6 +274,40 @@ export default function AdminDashboard() {
       </div>
 
       <ChangePasswordModal isOpen={showChangePassword} onClose={() => setShowChangePassword(false)} />
+
+      {/* Site Settings */}
+      <motion.div
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.1 }}
+        className="bg-white rounded-2xl p-5"
+        style={{ border: '1px solid #E7DCCB', boxShadow: '0 2px 12px rgba(215,119,6,0.06)' }}
+      >
+        <div className="flex items-center gap-2 mb-4">
+          <Settings size={15} style={{ color: '#D97706' }} />
+          <h2 className="font-bold text-sm" style={{ color: '#1F2937' }}>Site Settings</h2>
+        </div>
+        <div className="flex items-center justify-between py-3 px-4 rounded-xl" style={{ backgroundColor: '#FFFAF3', border: '1px solid #E7DCCB' }}>
+          <div>
+            <p className="text-sm font-semibold" style={{ color: '#1F2937' }}>Installment Plan</p>
+            <p className="text-xs mt-0.5" style={{ color: '#6B7280' }}>Allow registrants to select the installment payment option</p>
+          </div>
+          <button
+            onClick={toggleInstallment}
+            disabled={installmentSaving}
+            className="flex items-center gap-2 transition-all"
+            style={{ color: installmentEnabled ? '#15803D' : '#9CA3AF' }}
+          >
+            {installmentSaving
+              ? <Loader2 size={28} className="animate-spin" style={{ color: '#D97706' }} />
+              : installmentEnabled
+              ? <ToggleRight size={36} />
+              : <ToggleLeft size={36} />
+            }
+            <span className="text-xs font-bold">{installmentEnabled ? 'ON' : 'OFF'}</span>
+          </button>
+        </div>
+      </motion.div>
 
       {/* Registration Stats */}
       <div>

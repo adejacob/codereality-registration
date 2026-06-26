@@ -20,6 +20,16 @@ const PAYMENT_LABELS: Record<string, string> = {
   installment:  'Installment Plan',
 };
 
+const PLAN_LABELS: Record<string, string> = {
+  'starter':           'Starter Plan (1 Month)',
+  'stem-explorer':     'STEM Explorer Program (2 Months)',
+  'growth':            'Growth Plan (3 Months)',
+  'mastery':           'Mastery Plan (6 Months)',
+  'platinum':          'Platinum Plan (6 Months)',
+  'holiday-explorer':  'Starter Plan (1 Month)',
+  'holiday-innovator': 'STEM Explorer Program (2 Months)',
+};
+
 function SuccessContent() {
   const searchParams  = useSearchParams();
   const registrationId = searchParams.get('id')       ?? '';
@@ -28,6 +38,7 @@ function SuccessContent() {
   const schedule       = searchParams.get('schedule') ?? '';
   const paymentType    = searchParams.get('payment')  ?? '';
   const coupon         = searchParams.get('coupon')   ?? '';
+  const selectedPlan   = searchParams.get('plan')     ?? '';
   const hasCoupon      = coupon.trim() !== '';
 
   const confettiTriggered = useRef(false);
@@ -208,7 +219,7 @@ function SuccessContent() {
         )}
 
         {/* Summary */}
-        {(programs.length > 0 || schedule || paymentType) && (
+        {(programs.length > 0 || schedule || paymentType || hasCoupon || selectedPlan) && (
           <motion.div
             initial={{ opacity: 0, y: 15 }}
             animate={{ opacity: 1, y: 0 }}
@@ -233,10 +244,22 @@ function SuccessContent() {
                   <span className="text-sm font-semibold text-gray-800">{SCHEDULE_LABELS[schedule] ?? schedule}</span>
                 </div>
               )}
-              {paymentType && (
+              {hasCoupon && (
                 <div className="flex justify-between items-center py-2 border-t border-gray-50">
-                  <span className="text-sm text-gray-500">Payment Plan</span>
+                  <span className="text-sm text-gray-500">Coupon Applied</span>
+                  <span className="text-sm font-semibold font-mono uppercase text-emerald-700">{coupon}</span>
+                </div>
+              )}
+              {!hasCoupon && paymentType && (
+                <div className="flex justify-between items-center py-2 border-t border-gray-50">
+                  <span className="text-sm text-gray-500">Payment Method</span>
                   <span className="text-sm font-semibold text-gray-800">{PAYMENT_LABELS[paymentType] ?? paymentType}</span>
+                </div>
+              )}
+              {selectedPlan && (
+                <div className="flex justify-between items-center py-2 border-t border-gray-50">
+                  <span className="text-sm text-gray-500">Pricing Plan</span>
+                  <span className="text-sm font-semibold text-gray-800">{PLAN_LABELS[selectedPlan] ?? selectedPlan}</span>
                 </div>
               )}
             </div>

@@ -178,9 +178,11 @@ export default function RegistrationForm({ standalone = false }: { standalone?: 
           schedule: result.schedule        ?? '',
           payment:  result.paymentType     ?? '',
         });
-        // Add coupon to URL if present
         if (result.coupon) {
           params.set('coupon', result.coupon);
+        }
+        if (result.selectedPlan) {
+          params.set('plan', result.selectedPlan);
         }
         window.location.href = `/success?${params.toString()}`;
       } else {
