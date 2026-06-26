@@ -4,7 +4,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import {
   LayoutDashboard, Users, LogOut, ShieldCheck, Menu,
-  ChevronRight, Bell, Tag, X, BookOpen,
+  ChevronRight, Bell, Tag, X, BookOpen, CreditCard,
 } from 'lucide-react';
 import Image from 'next/image';
 import { useState } from 'react';
@@ -14,6 +14,7 @@ const navItems = [
   { href: '/admin/registrations', label: 'Registrations',  icon: Users,           badge: null },
   { href: '/admin/coupons',       label: 'Coupons',        icon: Tag,             badge: null },
   { href: '/admin/programs',      label: 'Programs',       icon: BookOpen,        badge: null },
+  { href: '/admin/plans',         label: 'Plans',          icon: CreditCard,      badge: null },
 ];
 
 const BREADCRUMBS: Record<string, string> = {
@@ -21,6 +22,7 @@ const BREADCRUMBS: Record<string, string> = {
   '/admin/registrations': 'Registrations',
   '/admin/coupons':       'Coupons',
   '/admin/programs':      'Programs',
+  '/admin/plans':         'Plans',
 };
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
