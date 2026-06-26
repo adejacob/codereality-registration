@@ -216,7 +216,7 @@ export default function RegistrationForm({ standalone = false }: { standalone?: 
   };
 
   return (
-    <section id="registration-form" className={standalone ? 'py-6 pb-20' : 'py-20'} style={{ backgroundColor: '#FCF3E8' }}>
+    <section id="registration-form" className={`${standalone ? 'py-6 pb-20' : 'py-20'} reg-light-scheme`} style={{ backgroundColor: '#FCF3E8' }}>
       <div className="container mx-auto px-4">
         {!standalone && (
           <motion.div

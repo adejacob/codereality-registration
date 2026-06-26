@@ -35,6 +35,24 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
+/*
+ * Registration form — always render in light mode.
+ * iOS Safari and Android Chrome respect `color-scheme` and will NOT
+ * apply forced dark colors to any descendant (text, inputs, selects,
+ * option elements, or cards) when this is set.
+ */
+.reg-light-scheme {
+  color-scheme: light;
+}
+
+/* Belt-and-suspenders: also force explicit colors on native select/option
+ * so Android WebView and Samsung Internet don't override them. */
+.reg-light-scheme select,
+.reg-light-scheme select option {
+  background-color: #ffffff;
+  color: #1F2937;
+}
+
 @layer utilities {
   .glass {
     background: rgba(255, 255, 255, 0.1);

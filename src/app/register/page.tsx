@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 
 export default function RegisterPage() {
   return (
-    <main className="min-h-screen" style={{ backgroundColor: '#FCF3E8' }}>
+    <main className="min-h-screen reg-light-scheme" style={{ backgroundColor: '#FCF3E8' }}>
       {/* Header */}
       <header className="bg-white border-b sticky top-0 z-20 px-4 py-3.5" style={{ borderColor: '#E7DCCB', boxShadow: '0 1px 12px rgba(215,119,6,0.08)' }}>
         <div className="max-w-5xl mx-auto flex items-center justify-between">
