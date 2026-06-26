@@ -132,13 +132,19 @@ export default function ProgramSelectionStep() {
                 <Card
                   className={`p-6 cursor-pointer transition-all duration-300 relative ${
                     isSelected && program.isFree
-                      ? 'ring-2 ring-emerald-500 bg-emerald-50 dark:bg-emerald-900/20'
+                      ? 'ring-2 ring-emerald-500'
                       : isSelected
-                      ? 'ring-2 ring-indigo-500 bg-indigo-50 dark:bg-indigo-900/20'
+                      ? 'ring-2 ring-indigo-500'
                       : program.isFree
-                      ? 'hover:shadow-lg border-dashed border-emerald-300 bg-emerald-50/30'
+                      ? 'hover:shadow-lg border-dashed border-emerald-300'
                       : 'hover:shadow-lg'
                   }`}
+                  style={
+                    isSelected && program.isFree ? { backgroundColor: '#ecfdf5' }
+                    : isSelected ? { backgroundColor: '#eef2ff' }
+                    : program.isFree ? { backgroundColor: '#f0fdf4' }
+                    : undefined
+                  }
                   onClick={() => handleProgramClick(program)}
                 >
                   <div className="flex items-start gap-4">
@@ -147,7 +153,10 @@ export default function ProgramSelectionStep() {
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex flex-wrap items-start gap-2 mb-1">
-                        <h3 className={`font-semibold dark:text-white ${program.isFree ? 'text-emerald-800' : 'text-gray-900'}`}>
+                        <h3
+                          className="font-semibold"
+                          style={{ color: program.isFree ? '#065f46' : '#111827' }}
+                        >
                           {program.name}
                         </h3>
                         {program.isFree && (
@@ -161,7 +170,7 @@ export default function ProgramSelectionStep() {
                           </span>
                         )}
                       </div>
-                      <p className="text-xs text-gray-500 mb-2">{program.description}</p>
+                      <p className="text-xs mb-2" style={{ color: '#6B7280' }}>{program.description}</p>
                       {program.isFree && program.isLimited && (
                         <p className="flex items-center gap-1 text-xs font-semibold text-red-600 mb-2">
                           <AlertTriangle size={11} /> Limited entry — secure your spot now!
@@ -178,7 +187,8 @@ export default function ProgramSelectionStep() {
                         <motion.div
                           initial={{ scale: 0 }}
                           animate={{ scale: 1 }}
-                          className={`inline-flex items-center gap-1 text-sm font-medium ${program.isFree ? 'text-emerald-600' : 'text-indigo-600 dark:text-indigo-400'}`}
+                          className="inline-flex items-center gap-1 text-sm font-medium"
+                          style={{ color: program.isFree ? '#059669' : '#4f46e5' }}
                         >
                           <span className={`w-2 h-2 rounded-full ${program.isFree ? 'bg-emerald-600' : 'bg-indigo-600'}`} />
                           Selected
@@ -193,7 +203,7 @@ export default function ProgramSelectionStep() {
         </div>
       )}
 
-      <p className="text-sm text-gray-600 dark:text-gray-400 mt-4">
+      <p className="text-sm mt-4" style={{ color: '#4B5563' }}>
         You can select multiple programs. Free programs require a coupon code.
       </p>
     </div>

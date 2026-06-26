@@ -36,21 +36,31 @@ body {
 }
 
 /*
- * Registration form — always render in light mode.
- * iOS Safari and Android Chrome respect `color-scheme` and will NOT
- * apply forced dark colors to any descendant (text, inputs, selects,
- * option elements, or cards) when this is set.
+ * Registration form — always render in light mode regardless of OS theme.
+ *
+ * color-scheme: light  → tells iOS Safari / Android Chrome / Samsung Internet
+ *   to use the light UA stylesheet for all descendants (inputs, selects,
+ *   option text, scrollbars). This is the primary fix.
+ *
+ * forced-color-adjust: none → prevents Windows/Android forced-colors /
+ *   high-contrast mode from overriding any explicit color declarations.
  */
 .reg-light-scheme {
   color-scheme: light;
+  forced-color-adjust: none;
 }
 
-/* Belt-and-suspenders: also force explicit colors on native select/option
- * so Android WebView and Samsung Internet don't override them. */
+/* Belt-and-suspenders: lock select/option colors explicitly so
+ * Android WebView, Samsung Internet and older iOS versions comply. */
 .reg-light-scheme select,
 .reg-light-scheme select option {
-  background-color: #ffffff;
-  color: #1F2937;
+  background-color: #ffffff !important;
+  color: #1F2937 !important;
+}
+
+/* Prevent any child element's color from being overridden by the browser */
+.reg-light-scheme * {
+  forced-color-adjust: none;
 }
 
 @layer utilities {
