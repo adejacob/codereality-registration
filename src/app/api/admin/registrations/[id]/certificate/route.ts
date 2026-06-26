@@ -40,7 +40,7 @@ export async function GET(
       studentName:      `${reg.student.firstName} ${reg.student.lastName}`,
       enrollmentNumber: reg.enrollmentNumber,
       programs:         reg.programs.programs,
-      schedule:         reg.schedule.schedule,
+      schedule:         reg.schedule?.schedule ?? 'N/A',
       enrollmentDate:   enrollmentDateStr,
       registrationId:   reg.registrationId,
     });
