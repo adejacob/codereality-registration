@@ -5,6 +5,7 @@ import Registration from '@/models/Registration';
 import Coupon from '@/models/Coupon';
 import { sendRegistrationEmails } from '@/lib/sendEmails';
 import { rateLimit, getClientIp } from '@/lib/rateLimit';
+import { calcInstallment, formatNaira, isInstallmentEligible } from '@/lib/installment';
 
 const MAX_BODY_BYTES = 16 * 1024; // 16 KB
 
@@ -115,6 +116,14 @@ export async function POST(request: NextRequest) {
       ? `₦${(parseInt(planAmount.replace(/[^0-9]/g, '')) + 5000).toLocaleString()}`
       : undefined;
 
+    // Calculate installment breakdown if applicable
+    const selectedPlanId = registration.payment.selectedPlan;
+    const isInstallment =
+      registration.payment.paymentType === 'installment' &&
+      !!selectedPlanId &&
+      isInstallmentEligible(selectedPlanId);
+    const installmentBreakdown = isInstallment && selectedPlanId ? calcInstallment(selectedPlanId) : null;
+
     // Send emails (blocking in serverless to ensure delivery)
     const emailData = {
       parentName:     registration.parent.fullName,
@@ -131,6 +140,10 @@ export async function POST(request: NextRequest) {
       planAmount:     planAmount,
       registrationFee: registrationFee,
       totalAmount:    totalAmount,
+      ...(installmentBreakdown && {
+        installmentAmountDue:    formatNaira(installmentBreakdown.amountDueToday),
+        installmentOutstanding:  formatNaira(installmentBreakdown.outstandingBalance),
+      }),
     };
 
     try {

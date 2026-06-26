@@ -6,6 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { motion, AnimatePresence } from 'framer-motion';
 import { registrationSchema, RegistrationFormData } from '../../lib/validation';
 import StepIndicator from './StepIndicator';
+import { calcInstallment, formatNaira, isInstallmentEligible } from '../../lib/installment';
 import StudentInfoStep from './StudentInfoStep';
 import ParentInfoStep from './ParentInfoStep';
 import ProgramSelectionStep from './ProgramSelectionStep';
@@ -21,7 +22,7 @@ const steps = [
   'Programs',
   'Schedule',
   'Payment',
-  'Pricing',
+  'Plan & Pricing',
   'Review',
 ];
 
@@ -183,6 +184,12 @@ export default function RegistrationForm({ standalone = false }: { standalone?: 
         }
         if (result.selectedPlan) {
           params.set('plan', result.selectedPlan);
+        }
+        if (result.paymentType === 'installment' && result.selectedPlan && isInstallmentEligible(result.selectedPlan)) {
+          const bd = calcInstallment(result.selectedPlan);
+          params.set('amountDue', String(bd.amountDueToday));
+          params.set('outstanding', String(bd.outstandingBalance));
+          params.set('planFee', String(bd.planFee));
         }
         window.location.href = `/success?${params.toString()}`;
       } else {

@@ -1,7 +1,8 @@
 'use client';
 
-import { Check, Clock, GraduationCap, Star, Award, Users, Circle } from 'lucide-react';
+import { Check, Clock, GraduationCap, Star, Award, Users, AlertTriangle, CalendarClock } from 'lucide-react';
 import { useFormContext, Controller } from 'react-hook-form';
+import { isInstallmentEligible, calcInstallment, formatNaira, REGISTRATION_FEE } from '@/lib/installment';
 
 const pricingPlans = [
   {
@@ -97,6 +98,8 @@ export default function PricingStep() {
   const { watch, control } = useFormContext();
   const coupon = watch('payment.coupon');
   const selectedPlanId = watch('payment.selectedPlan');
+  const paymentType = watch('payment.paymentType');
+  const isInstallment = paymentType === 'installment';
   const hasCoupon = coupon && coupon.trim() !== '';
 
   // If coupon is applied, this step shouldn't render
@@ -151,6 +154,11 @@ export default function PricingStep() {
                           <Clock size={12} style={{ color: '#D97706' }} /> {plan.duration}
                         </p>
                         <p className="text-lg font-black" style={{ color: '#D97706' }}>{plan.totalFee}</p>
+                        {isInstallmentEligible(plan.id) ? (
+                          <p className="text-[10px] mt-1 font-semibold" style={{ color: '#059669' }}>✓ Installment eligible</p>
+                        ) : (
+                          <p className="text-[10px] mt-1 font-semibold" style={{ color: '#9CA3AF' }}>Full payment only</p>
+                        )}
                         <ul className="mt-2 space-y-1">
                           {plan.features.slice(0, 2).map((feature, idx) => (
                             <li key={idx} className="text-xs flex items-start gap-1" style={{ color: '#6B7280' }}>
@@ -173,14 +181,62 @@ export default function PricingStep() {
       />
 
       {/* Selected Plan Summary */}
-      {selectedPlan && (
-        <div className="rounded-2xl p-4" style={{ backgroundColor: '#FFFAF3', border: '1px solid #E7DCCB' }}>
-          <p className="text-xs font-bold uppercase tracking-widest mb-2" style={{ color: '#D97706' }}>Selected Plan</p>
-          <div className="flex justify-between items-center">
-            <span className="font-bold text-sm" style={{ color: '#1F2937' }}>{selectedPlan.name}</span>
-            <span className="font-black text-base" style={{ color: '#D97706' }}>{selectedPlan.totalFee}</span>
+      {selectedPlan && (() => {
+        const eligible = isInstallmentEligible(selectedPlan.id);
+        const breakdown = isInstallment && eligible ? calcInstallment(selectedPlan.id) : null;
+        return (
+          <div className="rounded-2xl p-4 space-y-3" style={{ backgroundColor: '#FFFAF3', border: '1px solid #E7DCCB' }}>
+            <p className="text-xs font-bold uppercase tracking-widest" style={{ color: '#D97706' }}>Selected Plan</p>
+            <div className="flex justify-between items-center">
+              <span className="font-bold text-sm" style={{ color: '#1F2937' }}>{selectedPlan.name}</span>
+              <span className="font-black text-base" style={{ color: '#D97706' }}>{selectedPlan.totalFee}</span>
+            </div>
+            <p className="text-xs" style={{ color: '#6B7280' }}>{selectedPlan.duration}</p>
+            {breakdown && (
+              <div className="rounded-xl p-3 space-y-1.5" style={{ backgroundColor: '#EFF6FF', border: '1px solid #BFDBFE' }}>
+                <p className="text-xs font-bold uppercase tracking-wide mb-2" style={{ color: '#1D4ED8' }}>Installment Breakdown</p>
+                {[
+                  ['Program Fee', formatNaira(breakdown.planFee)],
+                  ['50% Due Today', formatNaira(breakdown.halfPlanFee)],
+                  ['Registration Fee', formatNaira(REGISTRATION_FEE)],
+                ].map(([l, v]) => (
+                  <div key={l} className="flex justify-between text-xs">
+                    <span style={{ color: '#3B82F6' }}>{l}</span>
+                    <span className="font-semibold" style={{ color: '#1E3A8A' }}>{v}</span>
+                  </div>
+                ))}
+                <div className="flex justify-between text-sm font-black pt-1.5" style={{ borderTop: '1px solid #BFDBFE', color: '#1D4ED8' }}>
+                  <span>Amount Due Today</span>
+                  <span>{formatNaira(breakdown.amountDueToday)}</span>
+                </div>
+                <div className="flex justify-between text-xs" style={{ color: '#6B7280' }}>
+                  <span>Outstanding Balance</span>
+                  <span className="font-semibold" style={{ color: '#DC2626' }}>{formatNaira(breakdown.outstandingBalance)}</span>
+                </div>
+              </div>
+            )}
+            {isInstallment && !eligible && (
+              <div className="rounded-xl p-3 flex items-start gap-2" style={{ backgroundColor: '#FFF7ED', border: '1px solid #FED7AA' }}>
+                <AlertTriangle size={14} className="mt-0.5 flex-shrink-0" style={{ color: '#D97706' }} />
+                <p className="text-xs" style={{ color: '#92400E' }}>Installment payment is not available for the Starter Plan. Please choose Full Payment or select a higher plan.</p>
+              </div>
+            )}
           </div>
-          <p className="text-xs mt-1" style={{ color: '#6B7280' }}>{selectedPlan.duration}</p>
+        );
+      })()}
+
+      {/* Installment deadline notice */}
+      {isInstallment && selectedPlan && isInstallmentEligible(selectedPlan.id) && (
+        <div className="rounded-2xl p-4 flex items-start gap-3" style={{ backgroundColor: '#FFF7ED', border: '1px solid #FED7AA' }}>
+          <CalendarClock size={18} className="flex-shrink-0 mt-0.5" style={{ color: '#D97706' }} />
+          <div>
+            <p className="text-sm font-bold mb-1" style={{ color: '#92400E' }}>Installment Payment Selected</p>
+            <p className="text-xs leading-relaxed" style={{ color: '#78350F' }}>
+              You are paying <strong>50% of the program fee plus the registration fee</strong> today.
+              The remaining balance must be paid <strong>on or before the end of your child's first month of enrollment</strong>.
+              Failure to complete the outstanding payment by this deadline will result in your child's classes being placed on hold.
+            </p>
+          </div>
         </div>
       )}
 

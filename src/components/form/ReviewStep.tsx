@@ -4,8 +4,9 @@ import { useMemo, useEffect, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { 
   User, Mail, Phone, MapPin, Briefcase, Calendar, CreditCard, Tag, CheckCircle, 
-  GraduationCap, DollarSign, Award, Camera, FileText
+  GraduationCap, DollarSign, Award, Camera, AlertTriangle
 } from 'lucide-react';
+import { calcInstallment, formatNaira, REGISTRATION_FEE, PLAN_FEES, isInstallmentEligible } from '@/lib/installment';
 import { motion } from 'framer-motion';
 import Card from '../ui/Card';
 
@@ -30,7 +31,7 @@ export default function ReviewStep() {
 
   const payments = {
     full: 'Full Payment',
-    installment: 'Installment Plan',
+    installment: 'Installment (50%)',
   };
 
   const planAmounts: Record<string, string> = {
@@ -54,6 +55,8 @@ export default function ReviewStep() {
     'holiday-explorer': 'Holiday Explorer Track',
     'holiday-innovator': 'Holiday Innovator Track',
   };
+
+  const isInstallment = formData.payment?.paymentType === 'installment';
 
   const selectedPrograms = formData.programs?.programs || [];
   const selectedProgramNames = selectedPrograms.map((id: string) =>
@@ -176,17 +179,62 @@ export default function ReviewStep() {
           ) : formData.payment?.selectedPlan ? (
             <div className="space-y-3">
               <div className="flex items-center gap-2 pb-3" style={{ borderBottom: '1px solid #E7DCCB' }}>
-                <div className="p-1.5 rounded-lg" style={{ backgroundColor: '#FEF3C7' }}><DollarSign size={14} style={{ color: '#D97706' }} /></div>
+                <div className="p-1.5 rounded-lg" style={{ backgroundColor: isInstallment ? '#DBEAFE' : '#FEF3C7' }}>
+                  <DollarSign size={14} style={{ color: isInstallment ? '#1D4ED8' : '#D97706' }} />
+                </div>
                 <div>
                   <p className="text-xs" style={{ color: '#6B7280' }}>Payment Method</p>
-                  <p className="font-bold text-sm" style={{ color: '#1F2937' }}>{payments[formData.payment?.paymentType as keyof typeof payments] || 'Full Payment'}</p>
+                  <p className="font-bold text-sm" style={{ color: isInstallment ? '#1D4ED8' : '#1F2937' }}>
+                    {payments[formData.payment?.paymentType as keyof typeof payments] || 'Full Payment'}
+                  </p>
                 </div>
               </div>
+
+              {isInstallment && isInstallmentEligible(formData.payment!.selectedPlan!) ? (() => {
+                const bd = calcInstallment(formData.payment!.selectedPlan!);
+                return (
+                  <>
+                    <div className="rounded-2xl p-4 space-y-2.5" style={{ backgroundColor: '#EFF6FF', border: '1px solid #BFDBFE' }}>
+                      {[
+                        { label: 'Selected Plan', value: planNames[formData.payment!.selectedPlan!] },
+                        { label: 'Program Fee (Full)', value: formatNaira(bd.planFee) },
+                        { label: '50% Due Today', value: formatNaira(bd.halfPlanFee) },
+                        { label: 'Registration Fee', value: formatNaira(REGISTRATION_FEE) },
+                      ].map(({ label, value }) => (
+                        <div key={label} className="flex justify-between items-center">
+                          <span className="text-sm" style={{ color: '#6B7280' }}>{label}</span>
+                          <span className="font-semibold text-sm" style={{ color: '#1F2937' }}>{value}</span>
+                        </div>
+                      ))}
+                      <div className="flex justify-between items-center pt-2.5" style={{ borderTop: '2px solid #BFDBFE' }}>
+                        <span className="font-bold" style={{ color: '#1D4ED8' }}>Amount Payable Today</span>
+                        <span className="text-xl font-black" style={{ color: '#1D4ED8' }}>{formatNaira(bd.amountDueToday)}</span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm" style={{ color: '#6B7280' }}>Outstanding Balance</span>
+                        <span className="font-bold text-sm" style={{ color: '#DC2626' }}>{formatNaira(bd.outstandingBalance)}</span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm" style={{ color: '#6B7280' }}>Balance Due By</span>
+                        <span className="font-semibold text-sm" style={{ color: '#DC2626' }}>End of 1st Month</span>
+                      </div>
+                    </div>
+                    <div className="rounded-xl p-3 flex items-start gap-2" style={{ backgroundColor: '#FFF7ED', border: '1px solid #FED7AA' }}>
+                      <AlertTriangle size={14} className="flex-shrink-0 mt-0.5" style={{ color: '#D97706' }} />
+                      <p className="text-xs leading-relaxed" style={{ color: '#78350F' }}>
+                        You are paying <strong>50% of the program fee plus the registration fee</strong> today.
+                        The remaining balance must be paid <strong>on or before the end of your child's first month of enrollment</strong>.
+                        Failure to pay by this deadline will result in classes being placed on hold.
+                      </p>
+                    </div>
+                  </>
+                );
+              })() : (
               <div className="rounded-2xl p-4 space-y-2.5" style={{ backgroundColor: '#FFFAF3', border: '1px solid #E7DCCB' }}>
                 {[
-                  { label: 'Selected Plan', value: planNames[formData.payment.selectedPlan] },
-                  { label: 'Plan Amount', value: planAmounts[formData.payment.selectedPlan] },
-                  { label: 'Registration Fee', value: '₦5,000' },
+                  { label: 'Selected Plan', value: planNames[formData.payment!.selectedPlan!] },
+                  { label: 'Plan Amount', value: planAmounts[formData.payment!.selectedPlan!] },
+                  { label: 'Registration Fee', value: formatNaira(REGISTRATION_FEE) },
                 ].map(({ label, value }) => (
                   <div key={label} className="flex justify-between items-center">
                     <span className="text-sm" style={{ color: '#6B7280' }}>{label}</span>
@@ -196,13 +244,11 @@ export default function ReviewStep() {
                 <div className="flex justify-between items-center pt-2.5" style={{ borderTop: '2px solid #E7DCCB' }}>
                   <span className="font-bold" style={{ color: '#1F2937' }}>Total Amount</span>
                   <span className="text-xl font-black" style={{ color: '#15803D' }}>
-                    {(() => {
-                      const amt = parseInt(planAmounts[formData.payment!.selectedPlan!].replace(/[^0-9]/g, ''));
-                      return `₦${(amt + 5000).toLocaleString()}`;
-                    })()}
+                    {formatNaira((PLAN_FEES[formData.payment!.selectedPlan!] ?? 0) + REGISTRATION_FEE)}
                   </span>
                 </div>
               </div>
+              )}
             </div>
           ) : (
             <div className="flex items-center gap-3 p-4 rounded-2xl" style={{ backgroundColor: '#F0FDF4', border: '1px solid #86EFAC' }}>

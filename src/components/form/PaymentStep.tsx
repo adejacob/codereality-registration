@@ -3,7 +3,8 @@
 import { useState, useRef, useEffect } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { motion } from 'framer-motion';
-import { CreditCard, Calendar, Tag, CheckCircle, XCircle, Loader2 } from 'lucide-react';
+import { CreditCard, Calendar, Tag, CheckCircle, XCircle, Loader2, AlertTriangle } from 'lucide-react';
+import { isInstallmentEligible } from '@/lib/installment';
 import Card from '../ui/Card';
 
 const ALL_PAYMENT_OPTIONS = [
@@ -22,6 +23,8 @@ export default function PaymentStep({ couponStatus, onCouponStatusChange }: Paym
   const { register, watch, setValue, setError, clearErrors, formState: { errors } } = useFormContext();
   const selectedPayment = watch('payment.paymentType');
   const couponCode = watch('payment.coupon') || '';
+  const selectedPlan = watch('payment.selectedPlan') as string | undefined;
+  const starterSelected = selectedPlan ? !isInstallmentEligible(selectedPlan) : false;
 
   const [couponMessage, setCouponMessage] = useState('');
   const [installmentEnabled, setInstallmentEnabled] = useState(false);
@@ -34,9 +37,14 @@ export default function PaymentStep({ couponStatus, onCouponStatusChange }: Paym
       .catch(() => {});
   }, []);
 
-  const paymentOptions = installmentEnabled
+  const paymentOptions = (installmentEnabled
     ? ALL_PAYMENT_OPTIONS
-    : ALL_PAYMENT_OPTIONS.filter(o => o.id !== 'installment');
+    : ALL_PAYMENT_OPTIONS.filter(o => o.id !== 'installment')
+  ).map(o =>
+    o.id === 'installment' && starterSelected
+      ? { ...o, disabled: true }
+      : { ...o, disabled: false }
+  );
 
   const hasCoupon = couponCode.trim() !== '' && couponStatus === 'valid';
 
@@ -158,37 +166,52 @@ export default function PaymentStep({ couponStatus, onCouponStatusChange }: Paym
 
       {/* Payment Options */}
       {!hasCoupon && (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {paymentOptions.map((option, index) => {
-            const Icon = option.icon;
-            const isSelected = selectedPayment === option.id;
-            return (
-              <motion.div key={option.id} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: index * 0.08 }}>
-                <Card
-                  className="p-5 transition-all duration-200 relative cursor-pointer"
-                  style={isSelected ? { outline: '2px solid #D97706', outlineOffset: '2px', backgroundColor: '#FFFAF3' } : {}}
-                  onClick={() => {
-                    setValue('payment.paymentType', option.id as 'full' | 'installment', { shouldValidate: true, shouldDirty: true, shouldTouch: true });
-                  }}
-                >
-                  <div className="flex items-start gap-4">
-                    <div className={`flex-shrink-0 p-2.5 rounded-xl bg-gradient-to-br ${option.color} text-white`}><Icon size={22} /></div>
-                    <div className="flex-1">
-                      <h3 className="font-bold text-sm mb-0.5" style={{ color: '#1F2937' }}>{option.name}</h3>
-                      <p className="text-xs mb-2" style={{ color: '#6B7280' }}>{option.description}</p>
-                      <input id={`payment-${option.id}`} type="radio" value={option.id} {...register('payment.paymentType')} className="sr-only" />
-                      {isSelected && (
-                        <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} className="inline-flex items-center gap-1 text-xs font-bold" style={{ color: '#D97706' }}>
-                          <span className="w-2 h-2 rounded-full" style={{ backgroundColor: '#D97706' }} /> Selected
-                        </motion.div>
-                      )}
+        <>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {paymentOptions.map((option, index) => {
+              const Icon = option.icon;
+              const isSelected = selectedPayment === option.id;
+              const isDisabled = option.disabled;
+              return (
+                <motion.div key={option.id} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: index * 0.08 }}>
+                  <Card
+                    className={`p-5 transition-all duration-200 relative ${isDisabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+                    style={isSelected && !isDisabled ? { outline: '2px solid #D97706', outlineOffset: '2px', backgroundColor: '#FFFAF3' } : {}}
+                    onClick={() => {
+                      if (isDisabled) return;
+                      setValue('payment.paymentType', option.id as 'full' | 'installment', { shouldValidate: true, shouldDirty: true, shouldTouch: true });
+                    }}
+                  >
+                    {isDisabled && (
+                      <span className="absolute top-3 right-3 px-2 py-0.5 text-[10px] font-bold rounded-full" style={{ backgroundColor: '#FEF3C7', color: '#92400E', border: '1px solid #FDE68A' }}>Not eligible</span>
+                    )}
+                    <div className="flex items-start gap-4">
+                      <div className={`flex-shrink-0 p-2.5 rounded-xl bg-gradient-to-br ${option.color} text-white`}><Icon size={22} /></div>
+                      <div className="flex-1">
+                        <h3 className="font-bold text-sm mb-0.5" style={{ color: '#1F2937' }}>{option.name}</h3>
+                        <p className="text-xs mb-2" style={{ color: '#6B7280' }}>{option.description}</p>
+                        <input id={`payment-${option.id}`} type="radio" value={option.id} {...register('payment.paymentType')} className="sr-only" disabled={isDisabled} />
+                        {isSelected && !isDisabled && (
+                          <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} className="inline-flex items-center gap-1 text-xs font-bold" style={{ color: '#D97706' }}>
+                            <span className="w-2 h-2 rounded-full" style={{ backgroundColor: '#D97706' }} /> Selected
+                          </motion.div>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                </Card>
-              </motion.div>
-            );
-          })}
-        </div>
+                  </Card>
+                </motion.div>
+              );
+            })}
+          </div>
+          {starterSelected && installmentEnabled && (
+            <div className="flex items-start gap-3 rounded-2xl p-4" style={{ backgroundColor: '#FFF7ED', border: '1px solid #FED7AA' }}>
+              <AlertTriangle size={16} className="flex-shrink-0 mt-0.5" style={{ color: '#D97706' }} />
+              <p className="text-xs" style={{ color: '#92400E' }}>
+                <strong>Installment not available for the Starter Plan.</strong> Please choose Full Payment, or go back and select a higher plan to use the Installment option.
+              </p>
+            </div>
+          )}
+        </>
       )}
 
       {/* Free Registration Notice */}

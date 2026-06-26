@@ -37,9 +37,13 @@ function SuccessContent() {
   const programs       = (searchParams.get('programs') ?? '').split(',').filter(Boolean);
   const schedule       = searchParams.get('schedule') ?? '';
   const paymentType    = searchParams.get('payment')  ?? '';
-  const coupon         = searchParams.get('coupon')   ?? '';
-  const selectedPlan   = searchParams.get('plan')     ?? '';
+  const coupon         = searchParams.get('coupon')     ?? '';
+  const selectedPlan   = searchParams.get('plan')       ?? '';
+  const amountDue      = searchParams.get('amountDue')  ?? '';
+  const outstanding    = searchParams.get('outstanding') ?? '';
+  const planFee        = searchParams.get('planFee')    ?? '';
   const hasCoupon      = coupon.trim() !== '';
+  const isInstallment  = paymentType === 'installment';
 
   const confettiTriggered = useRef(false);
   const [copied, setCopied] = useState(false);
@@ -253,7 +257,9 @@ function SuccessContent() {
               {!hasCoupon && paymentType && (
                 <div className="flex justify-between items-center py-2 border-t border-gray-50">
                   <span className="text-sm text-gray-500">Payment Method</span>
-                  <span className="text-sm font-semibold text-gray-800">{PAYMENT_LABELS[paymentType] ?? paymentType}</span>
+                  <span className={`text-sm font-semibold ${isInstallment ? 'text-blue-700' : 'text-gray-800'}`}>
+                    {isInstallment ? 'Installment (50%)' : (PAYMENT_LABELS[paymentType] ?? paymentType)}
+                  </span>
                 </div>
               )}
               {selectedPlan && (
@@ -261,6 +267,29 @@ function SuccessContent() {
                   <span className="text-sm text-gray-500">Pricing Plan</span>
                   <span className="text-sm font-semibold text-gray-800">{PLAN_LABELS[selectedPlan] ?? selectedPlan}</span>
                 </div>
+              )}
+              {isInstallment && amountDue && (
+                <>
+                  <div className="flex justify-between items-center py-2 border-t border-gray-50">
+                    <span className="text-sm text-gray-500">Program Fee (Full)</span>
+                    <span className="text-sm font-semibold text-gray-800">₦{Number(planFee).toLocaleString('en-NG')}</span>
+                  </div>
+                  <div className="flex justify-between items-center py-2 border-t border-gray-50">
+                    <span className="text-sm text-gray-500">Amount Paid Today (50% + Reg. Fee)</span>
+                    <span className="text-sm font-bold text-blue-700">₦{Number(amountDue).toLocaleString('en-NG')}</span>
+                  </div>
+                  <div className="flex justify-between items-center py-2 border-t border-gray-50">
+                    <span className="text-sm text-gray-500">Outstanding Balance</span>
+                    <span className="text-sm font-bold text-red-600">₦{Number(outstanding).toLocaleString('en-NG')}</span>
+                  </div>
+                  <div className="flex justify-between items-center py-2 border-t border-gray-50">
+                    <span className="text-sm text-gray-500">Balance Due By</span>
+                    <span className="text-sm font-semibold text-red-600">End of 1st Month</span>
+                  </div>
+                  <div className="mt-3 p-3 rounded-xl text-xs leading-relaxed" style={{ backgroundColor: '#FFF7ED', border: '1px solid #FED7AA', color: '#78350F' }}>
+                    ⚠️ The outstanding balance must be paid <strong>on or before the end of your child's first month of enrollment</strong>. Failure to do so will result in classes being placed on hold.
+                  </div>
+                </>
               )}
             </div>
           </motion.div>

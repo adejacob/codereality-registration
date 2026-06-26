@@ -21,6 +21,8 @@ export interface EmailData {
   planAmount?: string;
   registrationFee?: string;
   totalAmount?: string;
+  installmentAmountDue?: string;
+  installmentOutstanding?: string;
 }
 
 function formatSchedule(s: string) {
@@ -64,6 +66,7 @@ export function parentConfirmationEmail(data: EmailData): string {
   const accNumber = process.env.ACCOUNT_NUMBER   ?? 'YOUR ACCOUNT NUMBER';
 
   const hasCoupon = !!data.coupon && data.coupon.trim() !== '';
+  const isInstallment = data.paymentType === 'installment' && !!data.installmentAmountDue;
 
   const waMessage = hasCoupon
     ? encodeURIComponent(
@@ -80,6 +83,13 @@ export function parentConfirmationEmail(data: EmailData): string {
         ['1', '#4f46e5', 'Registration Confirmed', 'Your free registration has been confirmed with coupon code.'],
         ['2', '#7c3aed', 'Await Enrollment', 'We will process your enrollment and contact you within 24 hours.'],
         ['3', '#059669', 'Check Your Email', 'You will receive orientation details and class schedule shortly.'],
+      ]
+    : isInstallment
+    ? [
+        ['1', '#1d4ed8', 'Pay First Installment', `Transfer ${data.installmentAmountDue} (50% + registration fee) using the bank details below.`],
+        ['2', '#059669', 'Send Payment Receipt', 'Send your payment proof via WhatsApp to confirm your spot.'],
+        ['3', '#7c3aed', 'Await Confirmation', 'We will confirm your enrollment within 24 hours of payment.'],
+        ['4', '#dc2626', 'Pay Remaining Balance', `Your outstanding balance of ${data.installmentOutstanding} is due by the end of your child's first month.`],
       ]
     : [
         ['1', '#4f46e5', 'Complete Payment', 'Use the bank details below to make your payment.'],
@@ -145,24 +155,39 @@ export function parentConfirmationEmail(data: EmailData): string {
               ${!hasCoupon ? `
               <tr>
                 <td style="padding:6px 0;color:#6b7280;font-size:14px;">Payment Plan</td>
-                <td style="padding:6px 0;color:#111827;font-size:14px;font-weight:600;">${formatPayment(data.paymentType)}</td>
+                <td style="padding:6px 0;color:#111827;font-size:14px;font-weight:600;">${isInstallment ? 'Installment (50%)' : formatPayment(data.paymentType)}</td>
               </tr>
               <tr>
                 <td style="padding:6px 0;color:#6b7280;font-size:14px;">Selected Plan</td>
                 <td style="padding:6px 0;color:#111827;font-size:14px;font-weight:600;">${formatPlan(data.selectedPlan).name}</td>
               </tr>
               <tr>
-                <td style="padding:6px 0;color:#6b7280;font-size:14px;">Plan Amount</td>
+                <td style="padding:6px 0;color:#6b7280;font-size:14px;">Program Fee (Full)</td>
                 <td style="padding:6px 0;color:#111827;font-size:14px;font-weight:600;">${data.planAmount || formatPlan(data.selectedPlan).amount}</td>
               </tr>
               <tr>
                 <td style="padding:6px 0;color:#6b7280;font-size:14px;">Registration Fee</td>
                 <td style="padding:6px 0;color:#111827;font-size:14px;font-weight:600;">${data.registrationFee || '₦5,000'}</td>
               </tr>
+              ${isInstallment ? `
+              <tr>
+                <td style="padding:8px 0;border-top:2px solid #dbeafe;"><strong style="color:#1d4ed8;font-size:15px;">Amount Due Today (50% + Reg. Fee)</strong></td>
+                <td style="padding:8px 0;border-top:2px solid #dbeafe;color:#1d4ed8;font-size:18px;font-weight:800;">${data.installmentAmountDue}</td>
+              </tr>
+              <tr>
+                <td style="padding:6px 0;color:#6b7280;font-size:14px;">Outstanding Balance</td>
+                <td style="padding:6px 0;color:#dc2626;font-size:14px;font-weight:700;">${data.installmentOutstanding}</td>
+              </tr>
+              <tr>
+                <td style="padding:6px 0;color:#6b7280;font-size:14px;">Balance Due By</td>
+                <td style="padding:6px 0;color:#dc2626;font-size:14px;font-weight:700;">End of 1st Month of Enrollment</td>
+              </tr>
+              ` : `
               <tr>
                 <td style="padding:8px 0;border-top:2px solid #e0e7ff;"><strong style="color:#111827;font-size:15px;">Total Amount to Pay</strong></td>
                 <td style="padding:8px 0;border-top:2px solid #e0e7ff;color:#059669;font-size:18px;font-weight:800;">${data.totalAmount || '₦' + (parseInt((data.planAmount || formatPlan(data.selectedPlan).amount).replace(/[^0-9]/g, '')) + 5000).toLocaleString()}</td>
               </tr>
+              `}
               ` : ''}
               <tr>
                 <td style="padding:6px 0;color:#6b7280;font-size:14px;">Date Submitted</td>
@@ -194,6 +219,21 @@ export function parentConfirmationEmail(data: EmailData): string {
             </td></tr>`).join('')}
           </table>
         </td></tr>
+
+        ${isInstallment ? `
+        <!-- Installment Warning Notice -->
+        <tr><td style="background:#fff;padding:0 40px 20px;">
+          <div style="background:#fff7ed;border:2px solid #fed7aa;border-radius:14px;padding:20px 24px;">
+            <p style="margin:0 0 8px;color:#92400e;font-size:14px;font-weight:800;">⚠️ Important Installment Payment Notice</p>
+            <p style="margin:0 0 10px;color:#78350f;font-size:13px;line-height:1.6;">Your registration has been completed using the <strong>Installment Payment Plan</strong>. This payment covers:</p>
+            <ul style="margin:0 0 10px;padding-left:18px;color:#78350f;font-size:13px;line-height:1.8;">
+              <li>50% of your selected program fee</li>
+              <li>One-time registration fee</li>
+            </ul>
+            <p style="margin:0;color:#78350f;font-size:13px;line-height:1.6;">The remaining tuition balance of <strong style="color:#dc2626;">${data.installmentOutstanding}</strong> must be paid <strong>on or before the end of your child's first month of enrollment</strong>. Failure to complete the outstanding balance by this deadline will result in your child's classes being placed on hold until payment has been received.</p>
+          </div>
+        </td></tr>
+        ` : ''}
 
         ${!hasCoupon ? `
         <!-- Payment Details - Only show when NO coupon -->
