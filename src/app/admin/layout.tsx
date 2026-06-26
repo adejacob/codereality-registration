@@ -58,7 +58,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           fixed top-0 left-0 z-30 h-screen w-64 flex flex-col flex-shrink-0
           transition-transform duration-300 ease-in-out
           ${open ? 'translate-x-0' : '-translate-x-full'}
-          lg:translate-x-0 lg:sticky lg:top-0 lg:z-auto lg:h-screen
+          lg:static lg:translate-x-0 lg:z-auto lg:h-screen
         `}
         style={{ backgroundColor: '#1F2937', borderRight: '1px solid rgba(215,119,6,0.15)', boxShadow: '4px 0 24px rgba(0,0,0,0.15)' }}
       >
@@ -148,9 +148,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </div>
       </aside>
 
-      {/* Desktop sidebar spacer — keeps main content from going under the fixed sidebar */}
-      <div className="hidden lg:block w-64 flex-shrink-0" />
-
       {/* ── Main ────────────────────────────────────────────── */}
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
 
@@ -191,7 +188,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
         {/* Page content */}
         <main className="flex-1 overflow-auto p-4 sm:p-6 lg:p-8" style={{ backgroundColor: '#FCF3E8' }}>
-          {children}
+          <div className="w-full max-w-7xl">
+            {children}
+          </div>
         </main>
       </div>
     </div>
