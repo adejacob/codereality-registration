@@ -53,11 +53,13 @@ export async function POST(
       day: 'numeric', month: 'long', year: 'numeric',
     });
 
+    const scheduleStr = reg.schedule?.schedule ?? 'N/A';
+
     const certData = {
       studentName:      `${reg.student.firstName} ${reg.student.lastName}`,
       enrollmentNumber,
       programs:         reg.programs.programs,
-      schedule:         reg.schedule.schedule,
+      schedule:         scheduleStr,
       enrollmentDate:   enrollmentDateStr,
       registrationId:   reg.registrationId,
     };
@@ -81,7 +83,7 @@ export async function POST(
         registrationId:   reg.registrationId,
         enrollmentNumber,
         programs:         reg.programs.programs,
-        schedule:         reg.schedule.schedule,
+        schedule:         scheduleStr,
         enrollmentDate:   enrollmentDateStr,
       };
 

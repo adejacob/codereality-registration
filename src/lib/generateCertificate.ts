@@ -155,17 +155,18 @@ export async function generateEnrollmentCertificate(data: CertificateData): Prom
   page.drawRectangle({ x: bodyL, y: curY + 10, width: bodyW, height: 16, color: C.indigo });
   centreText(page, 'STUDENT NAME', curY + 14, 7.5, regular, C.white, W);
 
-  const nameSize = data.studentName.length > 24 ? 18 : 22;
-  centreText(page, data.studentName.toUpperCase(), curY - 18, nameSize, bold, C.indigoDark, W);
+  const safeName = data.studentName ?? '';
+  const nameSize = safeName.length > 24 ? 18 : 22;
+  centreText(page, safeName.toUpperCase(), curY - 18, nameSize, bold, C.indigoDark, W);
   curY -= nameBoxH + 18;
 
   // ── 7. DETAILS TABLE ─────────────────────────────────────────
   const rows: [string, string][] = [
-    ['Enrollment Number', data.enrollmentNumber],
-    ['Registration ID',   data.registrationId],
-    ['Enrollment Date',   data.enrollmentDate],
-    ['Schedule',          scheduleLabel(data.schedule)],
-    ['Program(s)',        data.programs.map(p => p.charAt(0).toUpperCase() + p.slice(1)).join(', ')],
+    ['Enrollment Number', data.enrollmentNumber ?? ''],
+    ['Registration ID',   data.registrationId   ?? ''],
+    ['Enrollment Date',   data.enrollmentDate   ?? ''],
+    ['Schedule',          scheduleLabel(data.schedule ?? 'N/A')],
+    ['Program(s)',        (data.programs ?? []).filter(Boolean).map(p => p.charAt(0).toUpperCase() + p.slice(1)).join(', ') || 'N/A'],
   ];
 
   const rowH    = 26;
