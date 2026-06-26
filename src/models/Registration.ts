@@ -27,7 +27,7 @@ export interface IRegistration extends Document {
   payment: {
     paymentType: 'full' | 'installment';
     coupon?: string;
-    selectedPlan?: 'starter' | 'stem-explorer' | 'growth' | 'short' | 'mastery' | 'platinum' | 'holiday-explorer' | 'holiday-innovator';
+    selectedPlan?: string;
   };
   status: 'pending' | 'contacted' | 'approved' | 'enrolled' | 'rejected';
   paymentStatus: 'pending_payment' | 'payment_submitted' | 'payment_confirmed';
@@ -71,10 +71,7 @@ const RegistrationSchema = new Schema<IRegistration>(
     payment: {
       paymentType: { type: String, enum: ['full', 'installment'], required: false },
       coupon:      { type: String },
-      selectedPlan: {
-        type: String,
-        enum: ['starter', 'stem-explorer', 'growth', 'short', 'mastery', 'platinum', 'holiday-explorer', 'holiday-innovator'],
-      },
+      selectedPlan: { type: String },
     },
     status: {
       type: String,

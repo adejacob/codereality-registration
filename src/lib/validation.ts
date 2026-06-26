@@ -35,7 +35,7 @@ export const scheduleSchema = z.object({
 export const paymentSchema = z.object({
   paymentType: z.enum(['full', 'installment']).optional(),
   coupon: z.string().max(50).optional(),
-  selectedPlan: z.enum(['starter', 'stem-explorer', 'growth', 'short', 'mastery', 'platinum', 'holiday-explorer', 'holiday-innovator']).optional(),
+  selectedPlan: z.string().min(1).optional(),
 });
 
 export const registrationSchema = z.object({
