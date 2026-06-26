@@ -4,7 +4,6 @@ import { useState, useRef, useEffect } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { motion } from 'framer-motion';
 import { CreditCard, Calendar, Tag, CheckCircle, XCircle, Loader2, AlertTriangle } from 'lucide-react';
-import { isInstallmentEligible } from '@/lib/installment';
 import Card from '../ui/Card';
 
 const ALL_PAYMENT_OPTIONS = [
@@ -17,17 +16,18 @@ export type CouponStatus = 'idle' | 'validating' | 'valid' | 'invalid';
 interface PaymentStepProps {
   couponStatus: CouponStatus;
   onCouponStatusChange: (status: CouponStatus) => void;
+  isWorkshopOnly?: boolean;
 }
 
-export default function PaymentStep({ couponStatus, onCouponStatusChange }: PaymentStepProps) {
+export default function PaymentStep({ couponStatus, onCouponStatusChange, isWorkshopOnly = false }: PaymentStepProps) {
   const { register, watch, setValue, setError, clearErrors, formState: { errors } } = useFormContext();
   const selectedPayment = watch('payment.paymentType');
   const couponCode = watch('payment.coupon') || '';
   const selectedPlan = watch('payment.selectedPlan') as string | undefined;
-  const starterSelected = selectedPlan ? !isInstallmentEligible(selectedPlan) : false;
 
   const [couponMessage, setCouponMessage] = useState('');
   const [installmentEnabled, setInstallmentEnabled] = useState(false);
+  const [planEligibility, setPlanEligibility] = useState<Record<string, boolean>>({});
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
@@ -35,7 +35,21 @@ export default function PaymentStep({ couponStatus, onCouponStatusChange }: Paym
       .then(r => r.json())
       .then(d => { if (d.success) setInstallmentEnabled(d.value === 'true'); })
       .catch(() => {});
+    fetch('/api/plans-config')
+      .then(r => r.json())
+      .then(d => {
+        if (d.success && d.data) {
+          const map: Record<string, boolean> = {};
+          for (const p of d.data) map[p.id] = p.installmentEligible;
+          setPlanEligibility(map);
+        }
+      })
+      .catch(() => {});
   }, []);
+
+  const starterSelected = selectedPlan
+    ? (planEligibility[selectedPlan] === false || (!(selectedPlan in planEligibility) && ['starter', 'holiday-explorer'].includes(selectedPlan)))
+    : false;
 
   const paymentOptions = (installmentEnabled
     ? ALL_PAYMENT_OPTIONS
@@ -164,8 +178,8 @@ export default function PaymentStep({ couponStatus, onCouponStatusChange }: Paym
         </div>
       </Card>
 
-      {/* Payment Options */}
-      {!hasCoupon && (
+      {/* Payment Options — hidden for workshop/free programs */}
+      {!hasCoupon && !isWorkshopOnly && (
         <>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {paymentOptions.map((option, index) => {

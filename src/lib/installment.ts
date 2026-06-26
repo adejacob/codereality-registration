@@ -29,8 +29,7 @@ export interface InstallmentBreakdown {
   outstandingBalance: number; // remaining 50%
 }
 
-export function calcInstallment(planId: string): InstallmentBreakdown {
-  const planFee = PLAN_FEES[planId] ?? 0;
+export function calcInstallmentFromFee(planFee: number): InstallmentBreakdown {
   const halfPlanFee = Math.round(planFee / 2);
   return {
     planFee,
@@ -39,6 +38,10 @@ export function calcInstallment(planId: string): InstallmentBreakdown {
     amountDueToday: halfPlanFee + REGISTRATION_FEE,
     outstandingBalance: planFee - halfPlanFee,
   };
+}
+
+export function calcInstallment(planId: string): InstallmentBreakdown {
+  return calcInstallmentFromFee(PLAN_FEES[planId] ?? 0);
 }
 
 export function formatNaira(amount: number): string {

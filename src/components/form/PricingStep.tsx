@@ -1,84 +1,26 @@
 'use client';
 
-import { Check, Clock, GraduationCap, Star, Award, Users, AlertTriangle, CalendarClock } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Check, Clock, GraduationCap, Star, Award, Users, AlertTriangle, CalendarClock, Loader2 } from 'lucide-react';
 import { useFormContext, Controller } from 'react-hook-form';
-import { isInstallmentEligible, calcInstallment, formatNaira, REGISTRATION_FEE } from '@/lib/installment';
+import { calcInstallmentFromFee, formatNaira, REGISTRATION_FEE } from '@/lib/installment';
 
-const pricingPlans = [
-  {
-    id: 'starter',
-    name: 'Starter Plan',
-    duration: '1 Month (4 Weeks)',
-    totalFee: '₦50,000',
-    features: [
-      'Introduction to STEM fundamentals',
-      'Hands-on beginner coding projects',
-      'Creative problem-solving activities',
-      'Certificate of Participation',
-      'Flexible learning schedule'
-    ],
-    popular: false,
-  },
-  {
-    id: 'stem-explorer',
-    name: 'STEM Explorer Program',
-    duration: '2 Months (8 Weeks)',
-    totalFee: '₦80,000',
-    features: [
-      'Project-based STEM curriculum',
-      'Coding, robotics & AI fundamentals',
-      'Real-world applications & activities',
-      'Skill certification on completion',
-      'Perfect for semester break learning'
-    ],
-    popular: true,
-  },
-  {
-    id: 'growth',
-    name: 'Growth Plan',
-    duration: '3 Months (12 Weeks)',
-    totalFee: '₦150,000',
-    features: [
-      'Comprehensive skill building across STEM modules',
-      'Hands-on coding, robotics & AI projects',
-      'Monthly progress reports & parent updates',
-      'Personalized learning pathway',
-      'Access to all course materials & resources',
-      'Certificate of Participation upon completion'
-    ],
-    popular: false,
-  },
-  {
-    id: 'mastery',
-    name: 'Mastery Plan',
-    duration: '6 Months (24 Weeks)',
-    totalFee: '₦250,000',
-    features: [
-      'Advanced comprehensive curriculum',
-      'Professional portfolio development',
-      'Industry-standard project experience',
-      'Internship placement assistance',
-      'Career guidance & mentorship support',
-      'Premium certification & recommendation letters'
-    ],
-    popular: false,
-  },
-  {
-    id: 'platinum',
-    name: 'Platinum Plan',
-    duration: '6 Months (24 Weeks)',
-    totalFee: '₦300,000',
-    features: [
-      'Extended comprehensive learning experience',
-      'All-inclusive premium curriculum access',
-      'Advanced specialization tracks (Coding, AI, Robotics)',
-      'Guaranteed internship placement',
-      '1-on-1 mentorship from industry experts',
-      'Lifetime alumni network access',
-      'Premium certification with job placement support'
-    ],
-    popular: false,
-  },
+interface ApiPlan {
+  id: string;
+  name: string;
+  duration: string;
+  fee: number;
+  features: string[];
+  installmentEligible: boolean;
+  popular: boolean;
+}
+
+const FALLBACK_PLANS: ApiPlan[] = [
+  { id: 'starter',       name: 'Starter Plan',          duration: '1 Month (4 Weeks)',   fee: 50000,  features: ['Introduction to STEM fundamentals', 'Hands-on beginner coding projects', 'Creative problem-solving activities', 'Certificate of Participation', 'Flexible learning schedule'], installmentEligible: false, popular: false },
+  { id: 'stem-explorer', name: 'STEM Explorer Program',  duration: '2 Months (8 Weeks)',  fee: 80000,  features: ['Project-based STEM curriculum', 'Coding, robotics & AI fundamentals', 'Real-world applications & activities', 'Skill certification on completion'], installmentEligible: true, popular: true },
+  { id: 'growth',        name: 'Growth Plan',            duration: '3 Months (12 Weeks)', fee: 150000, features: ['Comprehensive skill building across STEM modules', 'Hands-on coding, robotics & AI projects', 'Monthly progress reports & parent updates', 'Personalized learning pathway'], installmentEligible: true, popular: false },
+  { id: 'mastery',       name: 'Mastery Plan',           duration: '6 Months (24 Weeks)', fee: 250000, features: ['Advanced comprehensive curriculum', 'Professional portfolio development', 'Industry-standard project experience', 'Internship placement assistance'], installmentEligible: true, popular: false },
+  { id: 'platinum',      name: 'Platinum Plan',          duration: '6 Months (24 Weeks)', fee: 300000, features: ['Extended comprehensive learning experience', 'All-inclusive premium curriculum access', 'Advanced specialization tracks', 'Guaranteed internship placement'], installmentEligible: true, popular: false },
 ];
 
 const premiumFeatures = [
@@ -101,6 +43,17 @@ export default function PricingStep() {
   const paymentType = watch('payment.paymentType');
   const isInstallment = paymentType === 'installment';
   const hasCoupon = coupon && coupon.trim() !== '';
+
+  const [pricingPlans, setPricingPlans] = useState<ApiPlan[]>(FALLBACK_PLANS);
+  const [loadingPlans, setLoadingPlans] = useState(true);
+
+  useEffect(() => {
+    fetch('/api/plans-config')
+      .then(r => r.json())
+      .then(d => { if (d.success && d.data.length > 0) setPricingPlans(d.data); })
+      .catch(() => {})
+      .finally(() => setLoadingPlans(false));
+  }, []);
 
   // If coupon is applied, this step shouldn't render
   if (hasCoupon) {
@@ -153,8 +106,8 @@ export default function PricingStep() {
                         <p className="text-xs flex items-center gap-1 mb-1.5" style={{ color: '#6B7280' }}>
                           <Clock size={12} style={{ color: '#D97706' }} /> {plan.duration}
                         </p>
-                        <p className="text-lg font-black" style={{ color: '#D97706' }}>{plan.totalFee}</p>
-                        {isInstallmentEligible(plan.id) ? (
+                        <p className="text-lg font-black" style={{ color: '#D97706' }}>{formatNaira(plan.fee)}</p>
+                        {plan.installmentEligible ? (
                           <p className="text-[10px] mt-1 font-semibold" style={{ color: '#059669' }}>✓ Installment eligible</p>
                         ) : (
                           <p className="text-[10px] mt-1 font-semibold" style={{ color: '#9CA3AF' }}>Full payment only</p>
@@ -182,14 +135,14 @@ export default function PricingStep() {
 
       {/* Selected Plan Summary */}
       {selectedPlan && (() => {
-        const eligible = isInstallmentEligible(selectedPlan.id);
-        const breakdown = isInstallment && eligible ? calcInstallment(selectedPlan.id) : null;
+        const eligible = selectedPlan.installmentEligible;
+        const breakdown = isInstallment && eligible ? calcInstallmentFromFee(selectedPlan.fee) : null;
         return (
           <div className="rounded-2xl p-4 space-y-3" style={{ backgroundColor: '#FFFAF3', border: '1px solid #E7DCCB' }}>
             <p className="text-xs font-bold uppercase tracking-widest" style={{ color: '#D97706' }}>Selected Plan</p>
             <div className="flex justify-between items-center">
               <span className="font-bold text-sm" style={{ color: '#1F2937' }}>{selectedPlan.name}</span>
-              <span className="font-black text-base" style={{ color: '#D97706' }}>{selectedPlan.totalFee}</span>
+              <span className="font-black text-base" style={{ color: '#D97706' }}>{formatNaira(selectedPlan.fee)}</span>
             </div>
             <p className="text-xs" style={{ color: '#6B7280' }}>{selectedPlan.duration}</p>
             {breakdown && (
@@ -218,7 +171,7 @@ export default function PricingStep() {
             {isInstallment && !eligible && (
               <div className="rounded-xl p-3 flex items-start gap-2" style={{ backgroundColor: '#FFF7ED', border: '1px solid #FED7AA' }}>
                 <AlertTriangle size={14} className="mt-0.5 flex-shrink-0" style={{ color: '#D97706' }} />
-                <p className="text-xs" style={{ color: '#92400E' }}>Installment payment is not available for the Starter Plan. Please choose Full Payment or select a higher plan.</p>
+                <p className="text-xs" style={{ color: '#92400E' }}>Installment payment is not available for this plan. Please choose Full Payment or select an installment-eligible plan.</p>
               </div>
             )}
           </div>
@@ -226,7 +179,7 @@ export default function PricingStep() {
       })()}
 
       {/* Installment deadline notice */}
-      {isInstallment && selectedPlan && isInstallmentEligible(selectedPlan.id) && (
+      {isInstallment && selectedPlan && selectedPlan.installmentEligible && (
         <div className="rounded-2xl p-4 flex items-start gap-3" style={{ backgroundColor: '#FFF7ED', border: '1px solid #FED7AA' }}>
           <CalendarClock size={18} className="flex-shrink-0 mt-0.5" style={{ color: '#D97706' }} />
           <div>

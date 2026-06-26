@@ -5,7 +5,8 @@ import Registration from '@/models/Registration';
 import Coupon from '@/models/Coupon';
 import { sendRegistrationEmails } from '@/lib/sendEmails';
 import { rateLimit, getClientIp } from '@/lib/rateLimit';
-import { calcInstallment, formatNaira, isInstallmentEligible } from '@/lib/installment';
+import { calcInstallmentFromFee, formatNaira, isInstallmentEligible, PLAN_FEES } from '@/lib/installment';
+import Plan from '@/models/Plan';
 
 const MAX_BODY_BYTES = 16 * 1024; // 16 KB
 
@@ -97,32 +98,28 @@ export async function POST(request: NextRequest) {
     // Save to database
     const registration = await Registration.create(validatedData);
 
-    // Get plan amount for email
-    const planAmounts: Record<string, string> = {
-      starter: '₦50,000',
-      'stem-explorer': '₦80,000',
-      growth: '₦150,000',
-      short: '₦100,000',
-      mastery: '₦250,000',
-      platinum: '₦300,000',
-      'holiday-explorer': '₦50,000',
-      'holiday-innovator': '₦80,000',
-    };
+    // Get plan fee from DB (falls back to hardcoded PLAN_FEES for built-in plans)
+    const selectedPlanId = registration.payment.selectedPlan;
+    let planFeeNum = selectedPlanId ? (PLAN_FEES[selectedPlanId] ?? 0) : 0;
+    let planEligible = selectedPlanId ? isInstallmentEligible(selectedPlanId) : false;
+    if (selectedPlanId) {
+      const dbPlan = await Plan.findOne({ id: selectedPlanId }).lean();
+      if (dbPlan) {
+        planFeeNum = dbPlan.fee;
+        planEligible = dbPlan.installmentEligible;
+      }
+    }
 
-    // Calculate total amount
     const registrationFee = '₦5,000';
-    const planAmount = registration.payment.selectedPlan ? planAmounts[registration.payment.selectedPlan] : undefined;
-    const totalAmount = planAmount
-      ? `₦${(parseInt(planAmount.replace(/[^0-9]/g, '')) + 5000).toLocaleString()}`
-      : undefined;
+    const planAmount = planFeeNum > 0 ? formatNaira(planFeeNum) : undefined;
+    const totalAmount = planFeeNum > 0 ? formatNaira(planFeeNum + 5000) : undefined;
 
     // Calculate installment breakdown if applicable
-    const selectedPlanId = registration.payment.selectedPlan;
     const isInstallment =
       registration.payment.paymentType === 'installment' &&
       !!selectedPlanId &&
-      isInstallmentEligible(selectedPlanId);
-    const installmentBreakdown = isInstallment && selectedPlanId ? calcInstallment(selectedPlanId) : null;
+      planEligible;
+    const installmentBreakdown = isInstallment ? calcInstallmentFromFee(planFeeNum) : null;
 
     // Send emails (blocking in serverless to ensure delivery)
     const emailData = {

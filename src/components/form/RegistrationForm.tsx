@@ -214,7 +214,7 @@ export default function RegistrationForm({ standalone = false }: { standalone?: 
       case 3:
         return <ScheduleStep />;
       case 4:
-        return <PaymentStep couponStatus={couponStatus} onCouponStatusChange={setCouponStatus} />;
+        return <PaymentStep couponStatus={couponStatus} onCouponStatusChange={setCouponStatus} isWorkshopOnly={isWorkshopOnly} />;
       case 5:
         return isHolidayBootcamp ? <HolidayPricingStep /> : <PricingStep />;
       case 6:

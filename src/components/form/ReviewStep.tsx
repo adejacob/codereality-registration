@@ -6,7 +6,7 @@ import {
   User, Mail, Phone, MapPin, Briefcase, Calendar, CreditCard, Tag, CheckCircle, 
   GraduationCap, DollarSign, Award, Camera, AlertTriangle
 } from 'lucide-react';
-import { calcInstallment, formatNaira, REGISTRATION_FEE, PLAN_FEES, isInstallmentEligible } from '@/lib/installment';
+import { calcInstallmentFromFee, formatNaira, REGISTRATION_FEE } from '@/lib/installment';
 import { motion } from 'framer-motion';
 import Card from '../ui/Card';
 
@@ -15,10 +15,15 @@ export default function ReviewStep() {
   const formData = watch();
 
   const [apiPrograms, setApiPrograms] = useState<{ id: string; name: string }[]>([]);
+  const [apiPlans, setApiPlans] = useState<{ id: string; name: string; fee: number; installmentEligible: boolean }[]>([]);
   useEffect(() => {
     fetch('/api/programs')
       .then(r => r.json())
       .then(d => { if (d.success) setApiPrograms(d.data); })
+      .catch(() => {});
+    fetch('/api/plans-config')
+      .then(r => r.json())
+      .then(d => { if (d.success) setApiPlans(d.data); })
       .catch(() => {});
   }, []);
 
@@ -34,29 +39,11 @@ export default function ReviewStep() {
     installment: 'Installment (50%)',
   };
 
-  const planAmounts: Record<string, string> = {
-    starter: '₦50,000',
-    'stem-explorer': '₦80,000',
-    growth: '₦150,000',
-    short: '₦100,000',
-    mastery: '₦250,000',
-    platinum: '₦300,000',
-    'holiday-explorer': '₦50,000',
-    'holiday-innovator': '₦80,000',
-  };
-
-  const planNames: Record<string, string> = {
-    starter: 'Starter Plan',
-    'stem-explorer': 'STEM Explorer Program',
-    growth: 'Growth Plan',
-    short: 'Short Program',
-    mastery: 'Mastery Plan',
-    platinum: 'Platinum Plan',
-    'holiday-explorer': 'Holiday Explorer Track',
-    'holiday-innovator': 'Holiday Innovator Track',
-  };
+  const selectedPlanId = formData.payment?.selectedPlan as string | undefined;
+  const apiPlan = apiPlans.find(p => p.id === selectedPlanId);
 
   const isInstallment = formData.payment?.paymentType === 'installment';
+  const isInstallmentEligible = apiPlan ? apiPlan.installmentEligible : false;
 
   const selectedPrograms = formData.programs?.programs || [];
   const selectedProgramNames = selectedPrograms.map((id: string) =>
@@ -190,13 +177,13 @@ export default function ReviewStep() {
                 </div>
               </div>
 
-              {isInstallment && isInstallmentEligible(formData.payment!.selectedPlan!) ? (() => {
-                const bd = calcInstallment(formData.payment!.selectedPlan!);
+              {isInstallment && isInstallmentEligible ? (() => {
+                const bd = calcInstallmentFromFee(apiPlan!.fee);
                 return (
                   <>
                     <div className="rounded-2xl p-4 space-y-2.5" style={{ backgroundColor: '#EFF6FF', border: '1px solid #BFDBFE' }}>
                       {[
-                        { label: 'Selected Plan', value: planNames[formData.payment!.selectedPlan!] },
+                        { label: 'Selected Plan', value: apiPlan?.name ?? selectedPlanId ?? '' },
                         { label: 'Program Fee (Full)', value: formatNaira(bd.planFee) },
                         { label: '50% Due Today', value: formatNaira(bd.halfPlanFee) },
                         { label: 'Registration Fee', value: formatNaira(REGISTRATION_FEE) },
@@ -232,8 +219,8 @@ export default function ReviewStep() {
               })() : (
               <div className="rounded-2xl p-4 space-y-2.5" style={{ backgroundColor: '#FFFAF3', border: '1px solid #E7DCCB' }}>
                 {[
-                  { label: 'Selected Plan', value: planNames[formData.payment!.selectedPlan!] },
-                  { label: 'Plan Amount', value: planAmounts[formData.payment!.selectedPlan!] },
+                  { label: 'Selected Plan', value: apiPlan?.name ?? selectedPlanId ?? '' },
+                  { label: 'Plan Amount', value: apiPlan ? formatNaira(apiPlan.fee) : '' },
                   { label: 'Registration Fee', value: formatNaira(REGISTRATION_FEE) },
                 ].map(({ label, value }) => (
                   <div key={label} className="flex justify-between items-center">
@@ -244,7 +231,7 @@ export default function ReviewStep() {
                 <div className="flex justify-between items-center pt-2.5" style={{ borderTop: '2px solid #E7DCCB' }}>
                   <span className="font-bold" style={{ color: '#1F2937' }}>Total Amount</span>
                   <span className="text-xl font-black" style={{ color: '#15803D' }}>
-                    {formatNaira((PLAN_FEES[formData.payment!.selectedPlan!] ?? 0) + REGISTRATION_FEE)}
+                    {formatNaira((apiPlan?.fee ?? 0) + REGISTRATION_FEE)}
                   </span>
                 </div>
               </div>
