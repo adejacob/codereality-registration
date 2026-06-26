@@ -2,9 +2,10 @@
 
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import Link from 'next/link';
 import {
   CreditCard, CheckCircle, ToggleLeft, ToggleRight,
-  AlertTriangle, Info, Loader2, Plus, Trash2, X,
+  AlertTriangle, Info, Loader2, Plus, Trash2, X, Users,
 } from 'lucide-react';
 import { REGISTRATION_FEE, calcInstallmentFromFee, formatNaira } from '@/lib/installment';
 
@@ -246,6 +247,13 @@ export default function PlansPage() {
 
                   {/* Actions */}
                   <div className="flex items-center gap-2 flex-shrink-0">
+                    {/* View Registrations */}
+                    <Link href={`/admin/plans/${plan.id}/registrations`}
+                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all"
+                      style={{ backgroundColor: '#EFF6FF', color: '#3B82F6', border: '1px solid #BFDBFE' }}
+                      title="View registered students">
+                      <Users size={13} /> Students
+                    </Link>
                     {/* Installment eligibility toggle */}
                     <button
                       onClick={() => togglePlanEligibility(plan)}

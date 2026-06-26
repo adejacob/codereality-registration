@@ -2,10 +2,11 @@
 
 import { useEffect, useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import Link from 'next/link';
 import {
   Code, Bot, Brain, Globe, Smartphone, Gamepad2, Box, Palette,
   Monitor, Sparkles, Gift, Pencil, Save, X, Check, AlertTriangle,
-  Plus, Trash2, Loader2, ToggleLeft, ToggleRight, BookOpen,
+  Plus, Trash2, Loader2, ToggleLeft, ToggleRight, BookOpen, Users,
 } from 'lucide-react';
 
 interface Program {
@@ -400,6 +401,12 @@ export default function ProgramsPage() {
 
                         {/* Actions */}
                         <div className="flex items-center gap-1.5 flex-shrink-0">
+                          <Link href={`/admin/programs/${program.id}/registrations`}
+                            className="flex items-center gap-1.5 p-2 rounded-xl transition-colors"
+                            style={{ backgroundColor: '#EFF6FF', color: '#3B82F6', border: '1px solid #BFDBFE' }}
+                            title="View Registrations">
+                            <Users size={13} />
+                          </Link>
                           <button onClick={() => startEdit(program)}
                             className="p-2 rounded-xl transition-colors"
                             style={{ backgroundColor: '#FEF3C7', color: '#D97706', border: '1px solid #FDE68A' }}

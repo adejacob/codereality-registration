@@ -49,7 +49,7 @@ const STATUS_META: Record<string, { label: string; color: string; icon: React.Co
 };
 
 /* ─── Detail Modal ───────────────────────────────────────────── */
-function DetailModal({ reg, onClose, onUpdate }: { reg: Registration; onClose: () => void; onUpdate: (r: Registration) => void }) {
+function DetailModal({ reg, onClose, onUpdate, onDelete }: { reg: Registration; onClose: () => void; onUpdate: (r: Registration) => void; onDelete: (id: string) => void }) {
   const [tab, setTab]                      = useState<'view' | 'edit'>('view');
   const [status, setStatus]               = useState(reg.status);
   const [paymentStatus, setPaymentStatus]  = useState(reg.paymentStatus ?? 'pending_payment');
@@ -141,11 +141,11 @@ function DetailModal({ reg, onClose, onUpdate }: { reg: Registration; onClose: (
   }
 
   async function remove() {
-    if (!confirm(`Delete registration ${reg.registrationId}? This cannot be undone.`)) return;
+    if (!confirm(`Are you sure you want to delete this registration? This action cannot be undone.`)) return;
     setDeleting(true);
     const res = await fetch(`/api/admin/registrations/${reg._id}`, { method: 'DELETE' });
     const d = await res.json();
-    if (d.success) onClose();
+    if (d.success) { onDelete(reg._id); onClose(); }
     setDeleting(false);
   }
 
@@ -547,6 +547,11 @@ export default function RegistrationsPage() {
     setSelected(updated);
   }
 
+  function handleDelete(id: string) {
+    setRegistrations((prev) => prev.filter((r) => r._id !== id));
+    setPagination((prev) => ({ ...prev, total: Math.max(0, prev.total - 1) }));
+  }
+
   async function handleExport(fmt: 'xlsx' | 'csv') {
     setExporting(fmt);
     const res = await fetch(`/api/admin/export?format=${fmt}`);
@@ -800,6 +805,7 @@ export default function RegistrationsPage() {
             reg={selected}
             onClose={() => setSelected(null)}
             onUpdate={handleUpdate}
+            onDelete={handleDelete}
           />
         )}
       </AnimatePresence>
