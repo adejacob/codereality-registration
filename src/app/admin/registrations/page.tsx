@@ -501,6 +501,7 @@ export default function RegistrationsPage() {
   const [error, setError]                 = useState('');
   const [selected, setSelected]           = useState<Registration | null>(null);
   const [exporting, setExporting]         = useState<'xlsx' | 'csv' | null>(null);
+  const [deletingRowId, setDeletingRowId] = useState<string | null>(null);
 
   const [search,   setSearch]   = useState('');
   const [status,   setStatus]   = useState('');
@@ -550,6 +551,15 @@ export default function RegistrationsPage() {
   function handleDelete(id: string) {
     setRegistrations((prev) => prev.filter((r) => r._id !== id));
     setPagination((prev) => ({ ...prev, total: Math.max(0, prev.total - 1) }));
+  }
+
+  async function inlineDelete(r: Registration) {
+    if (!confirm(`Are you sure you want to delete this registration? This action cannot be undone.`)) return;
+    setDeletingRowId(r._id);
+    const res = await fetch(`/api/admin/registrations/${r._id}`, { method: 'DELETE' });
+    const d = await res.json();
+    if (d.success) handleDelete(r._id);
+    setDeletingRowId(null);
   }
 
   async function handleExport(fmt: 'xlsx' | 'csv') {
@@ -696,11 +706,18 @@ export default function RegistrationsPage() {
                           ))}
                         </div>
                       </div>
-                      <button onClick={() => setSelected(r)}
-                        className="flex-shrink-0 flex items-center gap-1 px-3 py-2 text-xs font-bold rounded-xl transition-colors"
-                        style={{ backgroundColor: '#FEF3C7', color: '#D97706' }}>
-                        <Eye size={12} /> View
-                      </button>
+                      <div className="flex flex-col gap-1.5 flex-shrink-0">
+                        <button onClick={() => setSelected(r)}
+                          className="flex items-center gap-1 px-3 py-2 text-xs font-bold rounded-xl transition-colors"
+                          style={{ backgroundColor: '#FEF3C7', color: '#D97706' }}>
+                          <Eye size={12} /> View
+                        </button>
+                        <button onClick={() => inlineDelete(r)} disabled={deletingRowId === r._id}
+                          className="flex items-center gap-1 px-3 py-2 text-xs font-bold rounded-xl transition-colors disabled:opacity-50"
+                          style={{ backgroundColor: '#FEF2F2', color: '#DC2626', border: '1px solid #FECACA' }}>
+                          {deletingRowId === r._id ? <Loader2 size={11} className="animate-spin" /> : <Trash2 size={11} />} Delete
+                        </button>
+                      </div>
                     </div>
                   </div>
                 );
@@ -762,11 +779,18 @@ export default function RegistrationsPage() {
                           {new Date(r.createdAt).toLocaleDateString()}
                         </td>
                         <td className="px-5 py-4 text-right">
-                          <button onClick={() => setSelected(r)}
-                            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-xl transition-colors"
-                            style={{ backgroundColor: '#FEF3C7', color: '#D97706', border: '1px solid #FDE68A' }}>
-                            <Eye size={12} /> View
-                          </button>
+                          <div className="inline-flex items-center gap-2">
+                            <button onClick={() => setSelected(r)}
+                              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-xl transition-colors"
+                              style={{ backgroundColor: '#FEF3C7', color: '#D97706', border: '1px solid #FDE68A' }}>
+                              <Eye size={12} /> View
+                            </button>
+                            <button onClick={() => inlineDelete(r)} disabled={deletingRowId === r._id}
+                              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-xl transition-colors disabled:opacity-50"
+                              style={{ backgroundColor: '#FEF2F2', color: '#DC2626', border: '1px solid #FECACA' }}>
+                              {deletingRowId === r._id ? <Loader2 size={12} className="animate-spin" /> : <Trash2 size={12} />} Delete
+                            </button>
+                          </div>
                         </td>
                       </tr>
                     );
